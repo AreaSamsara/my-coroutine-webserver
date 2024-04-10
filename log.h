@@ -154,12 +154,17 @@ namespace SylarSpace
 		class DataTimeFormatItem :public FormatItem
 		{
 		public:
-			DataTimeFormatItem(const string format = "%Y:%m:%d %H:%M:%S");
+			DataTimeFormatItem(const string& format = "%Y:%m:%d %H:%M:%S");
 			virtual void format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event) override;
 		private:
 			string m_format;
 		};
 		class LineFormatItem :public FormatItem
+		{
+		public:
+			virtual void format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event) override;
+		};
+		class EnterFormatItem :public FormatItem
 		{
 		public:
 			virtual void format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event) override;
