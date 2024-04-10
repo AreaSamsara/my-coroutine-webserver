@@ -1,0 +1,23 @@
+#pragma once
+#include <iostream>
+#include <string>
+#include <memory>
+#include <list>
+#include <sstream>
+#include <fstream>
+#include <vector>
+#include <map>
+#include <functional>
+
+using std::string;
+using std::list;
+using std::vector;
+using std::map;
+using std::tuple;
+using std::make_tuple;
+using std::shared_ptr;
+using std::ostream;
+using std::stringstream;
+using std::cout;
+using std::endl;
+using std::function;
