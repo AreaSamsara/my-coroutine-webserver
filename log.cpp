@@ -2,7 +2,9 @@
 namespace SylarSpace
 {
 	//class LogLevel
-	const string LogLevel::ToString(Level level)
+	
+	//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
+	const string LogLevel::ToString(const Level level)
 	{
 		switch (level)
 		{
@@ -27,49 +29,58 @@ namespace SylarSpace
 		}
 	}
 
-	//class Logger:
-	Logger::Logger(const string& name):m_name(name){}
-	//日志输出函数
-	void Logger::log(LogLevel::Level level, shared_ptr<LogEvent> event)
+
+
+	//class LogEvent
+	LogEvent::LogEvent(const string& filename, const string& threadname, const int32_t line, const uint32_t elapse,
+		const uint32_t thread_id, const uint64_t fiber_id, const uint64_t time)
+		:m_filename(filename),m_threadname(threadname), m_line(line), m_elapse(elapse), m_thread_id(thread_id),
+		m_fiber_id(fiber_id), m_time(time) {}
+	//设置stringstream
+	void LogEvent::setSstream(const string& str)
 	{
-		//只有日志等级大于Logger类的日志等级才输出
+		//清空stringstream标志
+		m_sstream.clear();
+		//清空stringstream内容
+		m_sstream.str("");
+		//写入新内容
+		m_sstream << str;
+	}
+
+
+
+	//class Logger:
+	Logger::Logger(const string& name) :m_name(name), m_level(LogLevel::DEBUG)
+	{
+		//构造Logger对象时自动设置formatter为默认日志模式
+		m_formatter.reset(new LogFormatter(Default_FormatPattern));
+	}
+
+	//日志输出函数
+	void Logger::log(const LogLevel::Level level,const shared_ptr<const LogEvent> event)
+	{
+		//只有日志等级大于或等于Logger类的日志等级才输出
 		if (level >= m_level)
 		{
 			for (auto& appender : m_appenders)
 			{
-				appender->log(level, event);
+				//调用Appender对象的log方法
+				appender->log(m_name, level, event);
 			}
 		}
 	}
 
-	//各个日志级别对应的日志输出函数
-	void Logger::debug(shared_ptr<LogEvent> event)
-	{
-		log(LogLevel::DEBUG, event);
-	}
-	void Logger::info(shared_ptr<LogEvent> event)
-	{
-		log(LogLevel::INFO, event);
-	}
-	void Logger::warn(shared_ptr<LogEvent> event)
-	{
-		log(LogLevel::WARN, event);
-	}
-	void Logger::error(shared_ptr<LogEvent> event)
-	{
-		log(LogLevel::ERROR, event);
-	}
-	void Logger::fatal(shared_ptr<LogEvent> event)
-	{
-		log(LogLevel::FATAL, event);
-	}
-
 	//添加或删除Appender
-	void Logger::addAppender(shared_ptr<LogAppender> appender)
+	void Logger::addAppender(const shared_ptr<LogAppender> appender)
 	{
+		//如果即将新增的Appender没有设置Formatter，则继承Logger对象的Formatter
+		if (!appender->getFormatter())
+		{
+			appender->setFormatter(m_formatter);
+		}
 		m_appenders.push_back(appender);
 	}
-	void Logger::deleteAppender(shared_ptr<LogAppender> appender)
+	void Logger::deleteAppender(const shared_ptr<const LogAppender> appender)
 	{
 		for (auto iterator = m_appenders.begin(); iterator != m_appenders.end(); ++iterator)
 		{
@@ -81,210 +92,289 @@ namespace SylarSpace
 		}
 	}
 
+	//默认日志格式模式
+	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%p]%T[%c]%T%f:%l%T%m%n";
+	//默认日志名称
+	const string Logger::Default_LoggerName = "root_logger";
+	//默认日志时间模式
+	const string Logger::Default_DataTimePattern = "%Y-%m-%d %H:%M:%S";
+
+
+
+	//class LogAppender
+	LogAppender::LogAppender(const LogLevel::Level level, const string& logger_name) :m_level(level),m_logger_name(logger_name){}
+
 
 	//class StdoutLogAppender:
-	void StdoutLogAppender::log(shared_ptr<Logger> logger,LogLevel::Level level, shared_ptr<LogEvent> event)
+	StdoutLogAppender::StdoutLogAppender(const LogLevel::Level level, const string& logger_name) :LogAppender(level, logger_name) {}
+	void StdoutLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		if (level > m_level)
+		//只有日志等级大于或等于Appender类的日志等级才输出
+		if (level >= m_level)
 		{
-			cout << m_formatter->format(event);
+			cout << m_formatter->format(logger_name, level, event);
 		}
 	}
 
 
 	//class FileLogAppender:
-	FileLogAppender::FileLogAppender(const string& filename) :m_filename(filename){}
-	void FileLogAppender::log(shared_ptr<Logger> logger,LogLevel::Level level, shared_ptr<LogEvent> event)
+	FileLogAppender::FileLogAppender(const LogLevel::Level level, const string& logger_name,const string& filename)
+		:LogAppender(level,logger_name), m_filename(filename) {}
+	void FileLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		if (level > m_level)
+		//先重启文件，并判断文件是否成功打开
+		assert(reopen());
+		//只有日志等级大于或等于Appender类的日志等级才输出
+		if (level >= m_level)
 		{
-			m_filestream << m_formatter->format(event);
+			m_filestream << m_formatter->format(logger_name, level, event);
 		}
 	}
 	bool FileLogAppender::reopen()
 	{
-		if (m_filestream)
+		//如果文件已打开，先将其关闭
+		if (m_filestream.is_open())
 		{
 			m_filestream.close();
 		}
-		m_filestream.open(m_filename);
+		//文件以追加模式打开，防止覆盖日志文件原有的内容
+		m_filestream.open(m_filename, std::ios_base::app);
+		//文件打开成功返回true
 		return m_filestream.is_open();
 	}
 
+
+
 	//class LogFormatter:
-	LogFormatter::LogFormatter(const string& pattern)
+	LogFormatter::LogFormatter(const string& pattern) :m_pattern(pattern)
 	{
-
+		//构造LogFormatter对象后立即按照日志模式（pattern）初始化日志格式
+		initialize();
 	}
-	//%t	%thread_id%m%n
-	string LogFormatter::format(shared_ptr<Logger> logger,LogLevel::Level level,shared_ptr<LogEvent> event)
+	
+	//formatter主函数，由Appender调用
+	string LogFormatter::format(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		stringstream ss;
-		for (auto& i : m_items)
+		string str;
+		//将解析完毕的日志模式写入
+		for (auto x : m_modes_and_formats)	//被解析的单段日志模式集合,前者为解析'%'得到的模式，后者为'{}'内的内容
 		{
-			i->format(logger, ss, level ,event);
+			str += write_piece(logger_name, level, event, x.first, x.second);
 		}
-		return ss.str();
+		return str;
 	}
 
+	//按照日志模式（pattern）初始化日志格式
 	void LogFormatter::initialize()
 	{
-		//string,format,type
-		vector<tuple<string,string, int>> vec;
-		string normal_str;
-		for (size_t i = 0; i < m_pattern.size(); ++i)
+		//表示当前的解析阶段
+		enum Status
 		{
+			//等待'{'
+			WAIT_FOR_OPEN_BRACE = 1,
+			//等待'}'
+			WAIT_FOR_CLOSE_BRACE = 2,
+			//等待已结束
+			WAIT_FOR_NOTHING = 3
+		};
+
+		//常规字符串
+		string normal_str;
+		//逐个分析pattern内的字符
+		for (int i = 0; i < m_pattern.size(); ++i)
+		{
+			//如果不是%则加入常规字符串
 			if (m_pattern[i] != '%')
 			{
-				normal_str.append(1,m_pattern[i]);
+				normal_str.push_back(m_pattern[i]);
 			}
-			else if (i+1<m_pattern.size())
+			else if (i + 1 < m_pattern.size())
 			{
+				//如果连续两个%，说明真的是%，加入常规字符串
 				if (m_pattern[i + 1] == '%')
 				{
-					normal_str.append(1, '%');
+					++i;
+					normal_str.push_back(m_pattern[i]);
 				}
-			}
-			else
-			{
-				size_t n = i + 1, format_begin = 0;
-				int format_status = 0;
-				string str, fmt;
-				while (n < m_pattern.size())
+				//否则开始解析
+				else
 				{
-					if (isspace(m_pattern[n]))
+					//解析之前先把已读的常规字符串写入m_modes_and_formats
+					if (!normal_str.empty())
 					{
-						break;
+						m_modes_and_formats.push_back(make_pair(normal_str, ""));
 					}
-					if (format_status == 0)
+					//写入后清空常规字符串，避免重复
+					normal_str.clear();
+
+					//设置初始解析阶段
+					Status format_status = WAIT_FOR_OPEN_BRACE;
+					int str_inbrace_begin = 0, mode_begin = i + 1;	//str_inbrace_begin待定，mode_begin从'%'的下一个位置开始
+					string mode("%"), str_inbrace;
+
+					//逐个解析'%'后面的字符
+					for (; i + 1 < m_pattern.size();++i)
 					{
-						if (m_pattern[n] == '{')
+						//如果尚未遇到'{'
+						if (format_status == WAIT_FOR_OPEN_BRACE)
 						{
-							str = m_pattern.substr(i + 1, n - i);
-							format_status = 1;		//解析格式
-							++n;
-							format_begin = n;
-							continue;
+							//如果第i + 1个字符是字母，设置mode
+							if (isalpha(m_pattern[i + 1]))
+							{
+								mode.push_back(m_pattern[i + 1]);
+							}
+							//如果第i + 1个字符是'{'
+							else if (m_pattern[i + 1] == '{')
+							{
+								//切换状态
+								format_status = WAIT_FOR_CLOSE_BRACE;
+								str_inbrace_begin = i + 2;		//str_inbrace_begin定为'{'的下一个位置，即i+2
+							}
+							//否则直接结束循环
+							else
+							{
+								break;
+							}
 						}
-					}
-					if (format_status == 1)
-					{
-						if (m_pattern[n] == '}')
+						//如果遇到了'{',但尚未遇到'}'且遇到'}'
+						else if (format_status == WAIT_FOR_CLOSE_BRACE && m_pattern[i + 1] == '}')
 						{
-							fmt = m_pattern.substr(format_begin + 1, n - format_begin);
-							format_status = 2;
+							//遇到'}'切换状态并结束循环
+							format_status = WAIT_FOR_NOTHING;
+							//把'{}'内的字符串写入str_inbrace
+							str_inbrace = m_pattern.substr(str_inbrace_begin, i + 1 - str_inbrace_begin);	
 							break;
 						}
 					}
-				}
-				if (format_status == 0)
-				{
-					if (!normal_str.empty())
+
+					//如果从未遇到过{
+					if (format_status == WAIT_FOR_OPEN_BRACE)
 					{
-						vec.push_back(make_tuple(normal_str, "", 0));
+						if (!mode.empty())
+						{
+							//说明没有'{}'，直接把mode和空字符串写入日志模式集合
+							m_modes_and_formats.push_back(make_pair(mode, ""));
+						}
 					}
-					str = m_pattern.substr(i + 1, n - i - 1);
-					vec.push_back(make_tuple(str, fmt, 1));
-					i = n;
-				}
-				else if (format_status == 1)
-				{
-					cout << "pattern parse error: " << m_pattern << " - " << m_pattern.substr(i) << endl;
-					vec.push_back(make_tuple("<<pattern_error>>", fmt, 0));
-				}
-				else if (format_status == 2)
-				{
-					if (!normal_str.empty())
+					//在状态1就结束了解析，说明缺失了'}'，报错
+					else if (format_status == WAIT_FOR_CLOSE_BRACE)
 					{
-						vec.push_back(make_tuple(normal_str, "", 0));
+						cout << "pattern parse error: " << m_pattern << " - " << m_pattern.substr(i) << endl;
+						//将错误提示写入日志模式集合
+						m_modes_and_formats.push_back(make_pair("<<pattern_error>>", ""));
 					}
-					vec.push_back(make_tuple(str, fmt, 1));
-					i = n;
+					//如果完成了{}内容的读取
+					else if (format_status == WAIT_FOR_NOTHING)
+					{
+						if (!mode.empty())
+						{
+							//把mode和str_inbrace一起写入日志模式集合
+							m_modes_and_formats.push_back(make_pair(mode, str_inbrace));
+						}
+					}
 				}
 			}
-			if (!normal_str.empty())
-			{
-				vec.push_back(make_tuple(normal_str, "", 0));
-			}
-
-			static map<string, function<shared_ptr<FormatItem>(const string& str)>> s_format_items =
-			{
-				{"m",[](const string& fmt) { return shared_ptr<FormatItem>(new  MessageFormatItem(fmt)); } }
-			};
-
-			for (auto& i : vec)
-			{
-				if (std::get<2>(i) == 0)
-				{
-					m_items.push_back(shared_ptr<FormatItem>(new  StringFormatItem(std::get<0>(i))));
-				}
-				else
-				{
-					auto it = s_format_items.find(std::get<0>(i));
-					if (it == s_format_items.end())
-					{
-						m_items.push_back(shared_ptr<FormatItem>(new  StringFormatItem("<<error_format %" + std::get<0>(i) + ">>")));
-					}
-					else
-					{
-						m_items.push_back(it->second(std::get<1>(i)));
-					}
-				}
-				cout << std::get<0>(i) << " - " << std::get<1>(i) << " - " << std::get<2>(i) << endl;
-			}
-
-			//%m 消息体
-			//%p level
-			//%r 启动后时间
-			//%c 日志名称
-			//%t 线程id
-			//%n 回车换行
-			//%d 时间
-			//%f 文件名
-			//%i 行号
+		}
+		//如果还有余下的常规字符串，将其写入日志模式集合
+		if (!normal_str.empty())
+		{
+			m_modes_and_formats.push_back(make_pair(normal_str, ""));
 		}
 	}
 
-	void LogFormatter::MessageFormatItem::format(shared_ptr<Logger> logger,ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
+	//输出单段被解析的日志
+	string LogFormatter::write_piece(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event, const string& mode, const string& format)
 	{
-		os << event->getContent();
+		//解析规则：
+		//%m 消息体
+		//%p level
+		//%r 启动后时间
+		//%c 日志名称
+		//%t 线程id
+		//%n 回车换行
+		//%d 时间
+		//%f 文件名（含路径）
+		//%l 行号
+		//%T tab
+		//%N 线程名称
+		// 常用模式示例：
+		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
+		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
+		
+		if (mode == "%m")
+		{
+			//%m 消息体
+			return event->getContent();
+		}
+		else if (mode == "%p")
+		{
+			//%p level
+			return LogLevel::ToString(level);	//将LogLevel::Level类型转换为string类型
+		}
+		else if (mode == "%r")
+		{
+			//%r 启动后时间
+			return to_string(event->getElapse());
+		}
+		else if (mode == "%c")
+		{
+			//%c 日志名称
+			return logger_name;
+		}
+		else if (mode == "%t")
+		{
+			//%t 线程id
+			return to_string(event->getThread_id());
+		}
+		else if (mode == "%n")
+		{
+			//%n 回车换行
+			return "\n";
+		}
+		else if (mode == "%d")
+		{
+			//%d 时间
+			struct tm tm;
+			time_t time = event->getTime();
+			//将Unix纪元时间转换为本地时间，考虑了时区和夏令时等因素
+			localtime_r(&time, &tm);
+			char buffer[64];
+			//如果没有'{}'内的格式，赋予默认日志时间格式
+			if (format.empty())
+			{
+				strftime(buffer, sizeof(buffer), Logger::Default_DataTimePattern.c_str(), &tm);
+			}
+			else
+			{
+				strftime(buffer, sizeof(buffer), format.c_str(), &tm);
+			}
+			string str = buffer;
+			return str;
+		}
+		else if (mode == "%f")
+		{
+			//%f 文件名
+			return event->getFilename();
+		}
+		else if (mode == "%l")
+		{
+			//%l 行号
+			return to_string(event->getLine());
+		}
+		else if (mode == "%T")
+		{
+			//%T tab
+			return "\t";
+		}
+		else if (mode == "%N")
+		{
+			//%N 线程名称
+			return event->getThreadname();
+		}
+		//如果识别失败，当作常规字符串处理
+		else
+		{
+			return mode;
+		}
 	}
-	void LogFormatter::LevelFormatItem::format(shared_ptr<Logger> logger,ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << LogLevel::ToString(level);
-	}
-	void LogFormatter::ElapseFormatItem::format(shared_ptr<Logger> logger,ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getElapse();
-	}
-	void LogFormatter::FilenameFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getFilename();
-	}
-	void LogFormatter::Thread_idFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getThread_id();
-	}
-	void LogFormatter::Fiber_idFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getFiber_id();
-	}
-	void LogFormatter::DataTimeFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getTime();
-	}
-	LogFormatter::DataTimeFormatItem::DataTimeFormatItem(const string& format):m_format(format){}
-	void LogFormatter::LineFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << event->getLine();
-	}
-	void LogFormatter::EnterFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << endl;
-	}
-	void LogFormatter::StringFormatItem::format(shared_ptr<Logger> logger, ostream& os, LogLevel::Level level, shared_ptr<LogEvent> event)
-	{
-		os << m_string;
-	}
-	LogFormatter::StringFormatItem::StringFormatItem(const string& str) :m_string(str) {}
 }
