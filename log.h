@@ -114,7 +114,7 @@ namespace SylarSpace
 
 		//读取或修改formatter
 		shared_ptr<LogFormatter> getFormatter()const { return m_formatter; }
-		void setFormatter(const shared_ptr<const LogFormatter> formatter) { m_formatter = formatter; }
+		void setFormatter(const shared_ptr<LogFormatter> formatter) { m_formatter = formatter; }	//传递的是shared_ptr，故不能声明const
 
 		//读取或修改LogLevel
 		LogLevel::Level getLevel()const { return m_level; }

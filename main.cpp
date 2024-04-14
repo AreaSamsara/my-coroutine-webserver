@@ -30,12 +30,17 @@ int main(int argc, char** argv)
 	shared_ptr<LogEvent> event(new LogEvent(__FILE__, "main_thread", __LINE__, 0, thread_id, 2, time(0)));
 
 	event->setSstream("test macro info");
-	logger->log(LogLevel::INFO, event);
+	//logger->log(LogLevel::INFO, event);
 
 	event->setSstream("test macro error");
-	logger->log(LogLevel::ERROR, event);
+	//logger->log(LogLevel::ERROR, event);
 
-	//auto temp_logger = Singleton<Logger>::GetInstance();
+	//使用单例模式创建Logger，重复上述测试流程
+	auto temp_logger = Singleton<Logger>::GetInstance_shared_ptr();
+	temp_logger->addAppender(shared_ptr<LogAppender>(new StdoutLogAppender));
+	event->setSstream("test macro error in Singleton Logger STD.");
+	temp_logger->addAppender(file_appender);
+	temp_logger->log(LogLevel::ERROR, event);
 
 	return 0;
 }
