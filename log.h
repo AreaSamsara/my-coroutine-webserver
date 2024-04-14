@@ -4,9 +4,16 @@ namespace SylarSpace
 {
 	/*
 	* 类关系：
-	* 先创建LogEvent作为日志事件，
+	* 先创建LogEvent添加日志事件内容，
 	* Logger类（包含多个LogAppender）调用所有LogAppender对象，
 	* LogAppender调用LogFormatter解析日志格式并输出LogEvent
+	*/
+	/*
+	* 日志系统调用方法：
+	* 1.先创建LogEvent对象并用setSstream()等方法添加日志事件内容，
+	* 2.再创建Logger、LoggerAppender对象，需要时再创建LogFormatter对象，
+	* 3.然后调用Logger对象的addAppender()方法添加LogAppender对象到Logger对象内部，
+	* 4.最后Logger对象以LogEvent对象为参数调用log()方法输出日志
 	*/
 	class LogLevel;			//日志级别
 	class LogEvent;			//日志事件
@@ -71,7 +78,7 @@ namespace SylarSpace
 	class Logger
 	{
 	public:
-		Logger(const string& name = Default_LoggerName);	//设置默认日志名称Default_LoggerName
+		Logger(const string& name = Default_LoggerName);	//设置默认日志名称Default_LoggerName，以及默认日志模式Default_FormatPattern
 
 		//日志输出函数
 		void log(const LogLevel::Level level,const shared_ptr<const LogEvent> event);
