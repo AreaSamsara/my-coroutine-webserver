@@ -1,7 +1,34 @@
 #pragma once
-#include "global.h"
-namespace SylarSpace
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <memory>
+
+#include <map>
+#include <list>
+#include <vector>
+
+#include <cassert>
+
+#include "utility.h"
+
+namespace LogSpace
 {
+	using std::string;
+	using std::map;
+	using std::list;
+	using std::vector;
+	using std::pair;
+	using std::make_pair;
+
+	using std::shared_ptr;
+
+	using std::ofstream;
+	using std::stringstream;
+	using std::to_string;
+	using std::cout;
+	using std::endl;
+
 	/*
 	* 类关系：
 	* 先创建LogEvent添加日志事件内容，
@@ -19,6 +46,7 @@ namespace SylarSpace
 	class LogEvent;			//日志事件
 	class LogAppender;		//日志输出地址
 	class LogFormatter;		//日志格式器
+	class LoggerManager;	//日志输出器管理者
 
 
 
@@ -35,7 +63,7 @@ namespace SylarSpace
 			FATAL = 5
 		};
 		//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
-		static const string ToString(const Level level);
+		static const string toString(const Level level);
 	};
 
 
@@ -44,30 +72,32 @@ namespace SylarSpace
 	class LogEvent
 	{
 	public:
-		LogEvent(const string& filename,const string& threadname,const int32_t line,const uint32_t elapse,
-			const uint32_t thread_id, const uint64_t fiber_id, const uint64_t time);
+		/*LogEvent(const string& filename,const string& threadname,const int32_t line,const uint32_t elapse,
+			const uint32_t thread_id, const uint64_t fiber_id, const uint64_t time);*/
+		LogEvent(const string& filename, const int32_t line, const uint32_t elapse,const uint64_t time);
 
 		//设置stringstream
 		void setSstream(const string& str);
 
 		//获取私有变量
 		const string getFilename()const { return m_filename; }
-		const string getThreadname()const { return m_threadname; }
 		int32_t getLine()const { return m_line; }
-		uint32_t getElapse()const { return m_elapse; }
 		uint32_t getThread_id()const { return m_thread_id; }
+		const string getThreadname()const { return m_threadname; }
 		uint32_t getFiber_id()const { return m_fiber_id; }
+		uint32_t getElapse()const { return m_elapse; }
 		uint64_t getTime()const { return m_time; }
 		const string getContent()const { return m_sstream.str(); }
-		const stringstream& getSstream()const { return m_sstream; }
-
+		stringstream& getSstream() { return m_sstream; }
+	private:
+		
 	private:
 		const string m_filename;			//文件名（自带路径）
-		const string m_threadname = 0;		//线程名称
 		int32_t m_line = 0;					//行号
-		uint32_t m_elapse = 0;				//程序启动至今的毫秒数
 		uint32_t m_thread_id = 0;			//线程id
+		string m_threadname;			//线程名称
 		uint32_t m_fiber_id = 0;			//协程id
+		uint32_t m_elapse = 0;				//程序启动至今的毫秒数
 		uint64_t m_time;					//时间戳
 		stringstream m_sstream;				//事件内容的stringstream
 	};
@@ -196,6 +226,21 @@ namespace SylarSpace
 	private:
 		string m_pattern;	//日志的模式，由Logger类初始化
 		vector<pair<string,string>> m_modes_and_formats;	//被解析的单段日志模式集合,前者为解析'%'得到的模式，后者为'{}'内的内容
+	};
+
+
+
+	//日志输出器管理者
+	class LoggerManager
+	{
+	public:
+		LoggerManager();	//初始化默认logger
+
+		//按logger_name获取logger，若未查询到则创建之
+		shared_ptr<Logger> getLogger(const string& logger_name = Logger::Default_LoggerName);
+	private:
+		map<string, shared_ptr<Logger>> m_loggers;	//使用logger_name为键进行查找的logger集合
+		shared_ptr<Logger> m_default_logger;	//默认logger
 	};
 }
 

@@ -1,8 +1,10 @@
 #pragma once
-#include "global.h"
+#include <memory>
 
-namespace SylarSpace 
+namespace SingletonSpace 
 {
+    using std::shared_ptr;
+
     /**
      * @brief 单例模式封装类
      * @details T 类型

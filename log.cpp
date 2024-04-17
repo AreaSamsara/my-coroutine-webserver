@@ -1,26 +1,26 @@
 #include "log.h"
-namespace SylarSpace
+namespace LogSpace
 {
 	//class LogLevel
 	
 	//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
-	const string LogLevel::ToString(const Level level)
+	const string LogLevel::toString(const Level level)
 	{
 		switch (level)
 		{
-		case SylarSpace::LogLevel::DEBUG:
+		case LogLevel::DEBUG:
 			return "DEBUG";
 			break;
-		case SylarSpace::LogLevel::INFO:
+		case LogLevel::INFO:
 			return "INFO";
 			break;
-		case SylarSpace::LogLevel::WARN:
+		case LogLevel::WARN:
 			return "WARN";
 			break;
-		case SylarSpace::LogLevel::ERROR:
+		case LogLevel::ERROR:
 			return "ERROR";
 			break;
-		case SylarSpace::LogLevel::FATAL:
+		case LogLevel::FATAL:
 			return "FATAL";
 			break;
 		default:
@@ -32,10 +32,16 @@ namespace SylarSpace
 
 
 	//class LogEvent
-	LogEvent::LogEvent(const string& filename, const string& threadname, const int32_t line, const uint32_t elapse,
-		const uint32_t thread_id, const uint64_t fiber_id, const uint64_t time)
-		:m_filename(filename),m_threadname(threadname), m_line(line), m_elapse(elapse), m_thread_id(thread_id),
-		m_fiber_id(fiber_id), m_time(time) {}
+	LogEvent::LogEvent(const string& filename, const int32_t line, const uint32_t elapse, const uint64_t time)
+		:m_filename(filename),m_line(line), m_elapse(elapse),m_time(time) 
+	{
+		m_thread_id = UtilitySpace::getThread_id();
+
+		//线程名称待定
+		m_threadname = "";
+		//协程id待定
+		m_fiber_id = 0;			
+	}
 	//设置stringstream
 	void LogEvent::setSstream(const string& str)
 	{
@@ -309,7 +315,7 @@ namespace SylarSpace
 		else if (mode == "%p")
 		{
 			//%p level
-			return LogLevel::ToString(level);	//将LogLevel::Level类型转换为string类型
+			return LogLevel::toString(level);	//将LogLevel::Level类型转换为string类型
 		}
 		else if (mode == "%r")
 		{
@@ -376,5 +382,37 @@ namespace SylarSpace
 		{
 			return mode;
 		}
+	}
+
+
+
+	//class LogManager:
+	LoggerManager::LoggerManager()
+	{
+		//初始化默认logger
+		m_default_logger.reset(new Logger);
+
+		//添加默认StdoutLogAppender
+		m_default_logger->addAppender(shared_ptr<LogAppender>(new StdoutLogAppender));
+
+		//添加默认FileLogAppender
+		shared_ptr<FileLogAppender> file_appender(new FileLogAppender);
+		m_default_logger->addAppender(file_appender);
+	}
+
+	//按logger_name获取logger
+	shared_ptr<Logger> LoggerManager::getLogger(const string& logger_name)
+	{
+		//如果查找到了相应logger则返回
+		auto iterator = m_loggers.find(logger_name);
+		if (iterator != m_loggers.end())
+		{
+			return iterator->second;
+		}
+
+		//否则创建对应logger并返回
+		shared_ptr<Logger> logger(new Logger(logger_name));
+		m_loggers[logger_name] = logger;
+		return logger;
 	}
 }
