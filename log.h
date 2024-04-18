@@ -237,7 +237,8 @@ namespace LogSpace
 		LoggerManager();	//初始化默认logger
 
 		//按logger_name获取logger，若未查询到则创建之
-		shared_ptr<Logger> getLogger(const string& logger_name = Logger::Default_LoggerName);
+		shared_ptr<Logger> getLogger(const string& logger_name);
+		shared_ptr<Logger> getDefault_logger()const { return m_default_logger; }
 	private:
 		map<string, shared_ptr<Logger>> m_loggers;	//使用logger_name为键进行查找的logger集合
 		shared_ptr<Logger> m_default_logger;	//默认logger
