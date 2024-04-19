@@ -34,12 +34,14 @@ namespace LogSpace
 	* 先创建LogEvent添加日志事件内容，
 	* Logger类（包含多个LogAppender）调用所有LogAppender对象，
 	* LogAppender调用LogFormatter解析日志格式并输出LogEvent
+	* LoggerManager是装有多个Logger的容器，且在创建单例时自带默认Logger，方便使用
 	*/
 	/*
 	* 日志系统调用方法：
 	* 1.先创建LogEvent对象并用setSstream()等方法添加日志事件内容，
 	* 2.再创建Logger、LoggerAppender对象，需要时再创建LogFormatter对象，
 	* 3.然后调用Logger对象的addAppender()方法添加LogAppender对象到Logger对象内部，
+	* （如果使用LoggerManager，第三第四步可以省略）
 	* 4.最后Logger对象以LogEvent对象为参数调用log()方法输出日志
 	*/
 	class LogLevel;			//日志级别
@@ -94,7 +96,7 @@ namespace LogSpace
 	private:
 		const string m_filename;			//文件名（自带路径）
 		int32_t m_line = 0;					//行号
-		uint32_t m_thread_id = 0;			//线程id
+		pid_t m_thread_id = 0;			//线程id
 		string m_threadname;			//线程名称
 		uint32_t m_fiber_id = 0;			//协程id
 		uint32_t m_elapse = 0;				//程序启动至今的毫秒数
