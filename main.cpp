@@ -9,22 +9,21 @@ using namespace LogSpace;
 using namespace ConfigSpace;
 using namespace ThreadSpace;
 
-RWMutex s_mutex;
+Mutex_Read_Write s_mutex;
 volatile int count = 0;
 
 void func1()
 {
 	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
-	event->getSstream() << "name: " << Thread::s_getName()
-		<< " this.name: " << Thread::getThis()->getName()
+	event->getSstream() << " name: " << Thread::getThis()->getName()
 		<< " id: " << UtilitySpace::getThread_id()
 		<< " this.id: " << Thread::getThis()->getId();
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
 	for (int i = 0; i < 100000; ++i)
 	{
-		//WriteScopedLockImpl<RWMutex> lock(s_mutex);
-		//ReadScopedLockImpl<RWMutex> lock(s_mutex);
+		WriteScopedLock<Mutex_Read_Write> lock(s_mutex);
+		//ReadScopedLock<RWMutex> lock(s_mutex);
 		++count;
 	}
 }
