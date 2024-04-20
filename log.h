@@ -11,9 +11,13 @@
 #include <cassert>
 
 #include "utility.h"
+#include "mutex.h"
+
 
 namespace LogSpace
 {
+	using namespace MutexSpace;
+
 	using std::string;
 	using std::map;
 	using std::list;
@@ -119,6 +123,10 @@ namespace LogSpace
 		void addAppender(const shared_ptr<LogAppender> appender);	//内含对appender的formatter的设置，故LogAppender不声明为const
 		void deleteAppender(const shared_ptr<const LogAppender> appender);
 
+		//修改formatter
+		void setFormatter(const shared_ptr<LogFormatter> formatter);	//传递的是shared_ptr且使用了互斥锁，故不能声明const
+		void setFormatter(const string& str);	
+
 		//读取或修改日志等级
 		LogLevel::Level getlevel()const { return m_level; }
 		void setLevel(const LogLevel::Level level) { m_level = level; }
@@ -131,6 +139,8 @@ namespace LogSpace
 		LogLevel::Level m_level;	//满足该日志级别才输出日志
 		list<shared_ptr<LogAppender>> m_appenders;	//appender集合
 		shared_ptr<LogFormatter> m_formatter;		//日志格式器
+
+		Mutex m_mutex;		//互斥锁
 	public:
 		//默认日志格式模式
 		const static string Default_FormatPattern;
@@ -151,18 +161,23 @@ namespace LogSpace
 		//日志输出函数，由 Logger::log调用（纯虚函数，子类必须实现）
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) = 0;
 
-		//读取或修改formatter
-		shared_ptr<LogFormatter> getFormatter()const { return m_formatter; }
-		void setFormatter(const shared_ptr<LogFormatter> formatter) { m_formatter = formatter; }	//传递的是shared_ptr，故不能声明const
-
 		//读取或修改LogLevel
 		LogLevel::Level getLevel()const { return m_level; }
 		void setLevel(const LogLevel::Level level) { m_level = level; }
 
+		//读取formatter
+		shared_ptr<LogFormatter> getFormatter();	//使用互斥锁，故不加const
+		//修改formatter
+		void setFormatter(const shared_ptr<LogFormatter> formatter);	//传递的是shared_ptr，故不能声明const
+
+		//获取可操作的互斥锁
+		//MutexType getMutex() { return m_mutex; }
 	protected:
 		string m_logger_name;		//日志名称
 		LogLevel::Level m_level;	//日志级别
 		shared_ptr<LogFormatter> m_formatter;	//日志格式器
+
+		Mutex m_mutex;		//互斥锁
 	};
 
 	//输出到控制台的Appender（公有继承自LogAppender）
@@ -244,6 +259,8 @@ namespace LogSpace
 	private:
 		map<string, shared_ptr<Logger>> m_loggers;	//使用logger_name为键进行查找的logger集合
 		shared_ptr<Logger> m_default_logger;	//默认logger
+
+		Mutex m_mutex;		//互斥锁
 	};
 }
 

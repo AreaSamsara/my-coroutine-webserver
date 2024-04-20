@@ -1,4 +1,5 @@
 #include "log.h"
+
 namespace LogSpace
 {
 	//class LogLevel
@@ -68,6 +69,8 @@ namespace LogSpace
 		//只有日志等级大于或等于Logger类的日志等级才输出
 		if (level >= m_level)
 		{
+			//先监视互斥锁，保护m_appenders和m_name
+			ScopedLock<Mutex> lock(m_mutex);
 			for (auto& appender : m_appenders)
 			{
 				//调用Appender对象的log方法
@@ -79,15 +82,22 @@ namespace LogSpace
 	//添加或删除Appender
 	void Logger::addAppender(const shared_ptr<LogAppender> appender)
 	{
+		//先监视互斥锁，保护m_appenders和m_formatter
+		ScopedLock<Mutex> lock(m_mutex);
 		//如果即将新增的Appender没有设置Formatter，则继承Logger对象的Formatter
 		if (!appender->getFormatter())
 		{
+			//先监视互斥锁
+			//MutexType mutex = appender->getMutex();
+			//ScopedLock<MutexType> appender_lock(mutex);
 			appender->setFormatter(m_formatter);
 		}
 		m_appenders.push_back(appender);
 	}
 	void Logger::deleteAppender(const shared_ptr<const LogAppender> appender)
 	{
+		//先监视互斥锁，保护m_appenders
+		ScopedLock<Mutex> lock(m_mutex);
 		for (auto iterator = m_appenders.begin(); iterator != m_appenders.end(); ++iterator)
 		{
 			if (*iterator == appender)
@@ -96,6 +106,29 @@ namespace LogSpace
 				break;
 			}
 		}
+	}
+
+	//修改formatter
+	void Logger::setFormatter(const shared_ptr<LogFormatter> formatter)
+	{
+		//先监视互斥锁，保护m_formatter
+		ScopedLock<Mutex> lock(m_mutex);
+		m_formatter = formatter;
+
+		//将所有包含的Appender的Formatter一并修改
+		for (auto& appender : m_appenders)
+		{
+			//先监视互斥锁
+			//MutexType mutex = appender->getMutex();
+			//ScopedLock<MutexType> appender_lock(mutex);
+			appender->setFormatter(formatter);
+		}
+	}
+	void Logger::setFormatter(const string& str)
+	{
+		//用string参数创建formatter对象，再调用另一个重载
+		shared_ptr<LogFormatter> formatter(new LogFormatter(str));
+		setFormatter(formatter);
 	}
 
 	//默认日志格式模式
@@ -109,6 +142,20 @@ namespace LogSpace
 
 	//class LogAppender
 	LogAppender::LogAppender(const LogLevel::Level level, const string& logger_name) :m_level(level),m_logger_name(logger_name){}
+	//读取formatter
+	shared_ptr<LogFormatter> LogAppender::getFormatter()
+	{
+		//先监视互斥锁，保护m_formatter
+		ScopedLock<Mutex> lock(m_mutex);
+		return m_formatter;
+	}
+	//修改formatter
+	void LogAppender::setFormatter(const shared_ptr<LogFormatter> formatter)
+	{
+		//先监视互斥锁，保护m_formatter
+		ScopedLock<Mutex> lock(m_mutex);
+		m_formatter = formatter; 
+	}
 
 
 	//class StdoutLogAppender:
@@ -118,6 +165,8 @@ namespace LogSpace
 		//只有日志等级大于或等于Appender类的日志等级才输出
 		if (level >= m_level)
 		{
+			//先监视互斥锁，保护m_formatter和cout
+			ScopedLock<Mutex> lock(m_mutex);
 			cout << m_formatter->format(logger_name, level, event);
 		}
 	}
@@ -133,6 +182,8 @@ namespace LogSpace
 		//只有日志等级大于或等于Appender类的日志等级才输出
 		if (level >= m_level)
 		{
+			//先监视互斥锁，保护m_formatter和m_filestream
+			ScopedLock<Mutex> lock(m_mutex);
 			m_filestream << m_formatter->format(logger_name, level, event);
 		}
 	}
@@ -403,6 +454,8 @@ namespace LogSpace
 	//按logger_name获取logger
 	shared_ptr<Logger> LoggerManager::getLogger(const string& logger_name)
 	{
+		//先监视互斥锁，保护m_loggers
+		ScopedLock<Mutex> lock(m_mutex);
 		//如果查找到了相应logger则返回
 		auto iterator = m_loggers.find(logger_name);
 		if (iterator != m_loggers.end())
