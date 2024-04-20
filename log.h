@@ -128,8 +128,8 @@ namespace LogSpace
 		void setFormatter(const string& str);	
 
 		//读取或修改日志等级
-		LogLevel::Level getlevel()const { return m_level; }
-		void setLevel(const LogLevel::Level level) { m_level = level; }
+		LogLevel::Level getlevel();
+		void setLevel(const LogLevel::Level level);
 
 		//读取logger名称
 		const string& getName()const { return m_name; }
@@ -140,7 +140,7 @@ namespace LogSpace
 		list<shared_ptr<LogAppender>> m_appenders;	//appender集合
 		shared_ptr<LogFormatter> m_formatter;		//日志格式器
 
-		Mutex m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁
 	public:
 		//默认日志格式模式
 		const static string Default_FormatPattern;
@@ -162,8 +162,8 @@ namespace LogSpace
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) = 0;
 
 		//读取或修改LogLevel
-		LogLevel::Level getLevel()const { return m_level; }
-		void setLevel(const LogLevel::Level level) { m_level = level; }
+		LogLevel::Level getLevel();
+		void setLevel(const LogLevel::Level level);
 
 		//读取formatter
 		shared_ptr<LogFormatter> getFormatter();	//使用互斥锁，故不加const
@@ -177,7 +177,7 @@ namespace LogSpace
 		LogLevel::Level m_level;	//日志级别
 		shared_ptr<LogFormatter> m_formatter;	//日志格式器
 
-		Mutex m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁
 	};
 
 	//输出到控制台的Appender（公有继承自LogAppender）
@@ -255,12 +255,13 @@ namespace LogSpace
 
 		//按logger_name获取logger，若未查询到则创建之
 		shared_ptr<Logger> getLogger(const string& logger_name);
-		shared_ptr<Logger> getDefault_logger()const { return m_default_logger; }
+		//获取默认logger
+		shared_ptr<Logger> getDefault_logger();
 	private:
 		map<string, shared_ptr<Logger>> m_loggers;	//使用logger_name为键进行查找的logger集合
 		shared_ptr<Logger> m_default_logger;	//默认logger
 
-		Mutex m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁
 	};
 }
 

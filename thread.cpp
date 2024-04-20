@@ -27,7 +27,7 @@ namespace ThreadSpace
 			throw logic_error("pthread_create error");
 		}
 
-		//等待信号量大于0再结束构造函数
+		//阻塞主线程，等待信号量大于0（run函数的指令）再结束构造函数
 		m_semaphore.wait();
 	}
 
@@ -83,7 +83,7 @@ namespace ThreadSpace
 		function<void()> callback;
 		callback.swap(thread->m_callback);
 
-		//共享资源的访问已经结束，先增加信号量再运行回调函数
+		//基本设置已经结束，先增加信号量解放主线程，再运行回调函数
 		thread->m_semaphore.notify();
 		callback();
 

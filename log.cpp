@@ -70,7 +70,7 @@ namespace LogSpace
 		if (level >= m_level)
 		{
 			//先监视互斥锁，保护m_appenders和m_name
-			ScopedLock<Mutex> lock(m_mutex);
+			ScopedLock<SpinLock> lock(m_mutex);
 			for (auto& appender : m_appenders)
 			{
 				//调用Appender对象的log方法
@@ -83,7 +83,7 @@ namespace LogSpace
 	void Logger::addAppender(const shared_ptr<LogAppender> appender)
 	{
 		//先监视互斥锁，保护m_appenders和m_formatter
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		//如果即将新增的Appender没有设置Formatter，则继承Logger对象的Formatter
 		if (!appender->getFormatter())
 		{
@@ -97,7 +97,7 @@ namespace LogSpace
 	void Logger::deleteAppender(const shared_ptr<const LogAppender> appender)
 	{
 		//先监视互斥锁，保护m_appenders
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		for (auto iterator = m_appenders.begin(); iterator != m_appenders.end(); ++iterator)
 		{
 			if (*iterator == appender)
@@ -112,7 +112,7 @@ namespace LogSpace
 	void Logger::setFormatter(const shared_ptr<LogFormatter> formatter)
 	{
 		//先监视互斥锁，保护m_formatter
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		m_formatter = formatter;
 
 		//将所有包含的Appender的Formatter一并修改
@@ -131,6 +131,20 @@ namespace LogSpace
 		setFormatter(formatter);
 	}
 
+	//读取或修改日志等级
+	LogLevel::Level Logger::getlevel()
+	{
+		//先监视互斥锁，保护m_level
+		ScopedLock<SpinLock> lock(m_mutex);
+		return m_level; 
+	}
+	void Logger::setLevel(const LogLevel::Level level) 
+	{ 
+		//先监视互斥锁，保护m_level
+		ScopedLock<SpinLock> lock(m_mutex);
+		m_level = level;
+	}
+
 	//默认日志格式模式
 	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%p]%T[%c]%T%f:%l%T%m%n";
 	//默认日志名称
@@ -142,18 +156,32 @@ namespace LogSpace
 
 	//class LogAppender
 	LogAppender::LogAppender(const LogLevel::Level level, const string& logger_name) :m_level(level),m_logger_name(logger_name){}
+	//读取或修改LogLevel
+	LogLevel::Level LogAppender::getLevel()
+	{ 
+		//先监视互斥锁，保护m_level
+		ScopedLock<SpinLock> lock(m_mutex);
+		return m_level; 
+	}
+	void LogAppender::setLevel(const LogLevel::Level level) 
+	{ 
+		//先监视互斥锁，保护m_level
+		ScopedLock<SpinLock> lock(m_mutex);
+		m_level = level; 
+	}
+
 	//读取formatter
 	shared_ptr<LogFormatter> LogAppender::getFormatter()
 	{
 		//先监视互斥锁，保护m_formatter
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		return m_formatter;
 	}
 	//修改formatter
 	void LogAppender::setFormatter(const shared_ptr<LogFormatter> formatter)
 	{
 		//先监视互斥锁，保护m_formatter
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		m_formatter = formatter; 
 	}
 
@@ -166,7 +194,7 @@ namespace LogSpace
 		if (level >= m_level)
 		{
 			//先监视互斥锁，保护m_formatter和cout
-			ScopedLock<Mutex> lock(m_mutex);
+			ScopedLock<SpinLock> lock(m_mutex);
 			cout << m_formatter->format(logger_name, level, event);
 		}
 	}
@@ -183,7 +211,7 @@ namespace LogSpace
 		if (level >= m_level)
 		{
 			//先监视互斥锁，保护m_formatter和m_filestream
-			ScopedLock<Mutex> lock(m_mutex);
+			ScopedLock<SpinLock> lock(m_mutex);
 			m_filestream << m_formatter->format(logger_name, level, event);
 		}
 	}
@@ -455,7 +483,7 @@ namespace LogSpace
 	shared_ptr<Logger> LoggerManager::getLogger(const string& logger_name)
 	{
 		//先监视互斥锁，保护m_loggers
-		ScopedLock<Mutex> lock(m_mutex);
+		ScopedLock<SpinLock> lock(m_mutex);
 		//如果查找到了相应logger则返回
 		auto iterator = m_loggers.find(logger_name);
 		if (iterator != m_loggers.end())
@@ -467,5 +495,13 @@ namespace LogSpace
 		shared_ptr<Logger> logger(new Logger(logger_name));
 		m_loggers[logger_name] = logger;
 		return logger;
+	}
+
+	//获取默认logger
+	shared_ptr<Logger> LoggerManager::getDefault_logger()
+	{ 
+		//先监视互斥锁，保护m_default_logger
+		ScopedLock<SpinLock> lock(m_mutex);
+		return m_default_logger;
 	}
 }

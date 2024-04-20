@@ -7,7 +7,7 @@ using namespace SingletonSpace;
 using namespace LogSpace;
 using namespace ThreadSpace;
 
-Mutex s_mutex;
+SpinLock s_mutex;
 volatile int count = 0;
 
 void func1()
@@ -20,7 +20,7 @@ void func1()
 
 	for (int i = 0; i < 100000; ++i)
 	{
-		ScopedLock<Mutex> lock(s_mutex);
+		ScopedLock<SpinLock> lock(s_mutex);
 		//ReadScopedLock<RWMutex> lock(s_mutex);
 		++count;
 	}

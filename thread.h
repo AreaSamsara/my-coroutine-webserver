@@ -11,6 +11,12 @@ namespace ThreadSpace
 	using namespace LogSpace;
 	using std::function;
 
+	/*
+	* 线程类调用方法：
+	* 1.先用想执行的函数对象作为回调函数创建Thread对象，
+	* 2.再调用Thread对象的join()方法，即可开始线程的执行
+	*/
+
 	//线程类
 	class Thread
 	{
