@@ -75,7 +75,7 @@ namespace ThreadSpace
 		//t_thread_name = thread->m_name;
 
 		//获取线程id
-		thread->m_id = UtilitySpace::getThread_id();
+		thread->m_id = UtilitySpace::GetThread_id();
 		//设置线程名称（被限制在15个字符以内）
 		pthread_setname_np(pthread_self(), thread->m_name.substr(0, 15).c_str());
 		

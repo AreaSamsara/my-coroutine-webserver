@@ -1,4 +1,6 @@
 #include "log.h"
+#include "utility.h"
+#include "fiber.h"
 
 namespace LogSpace
 {
@@ -36,12 +38,12 @@ namespace LogSpace
 	LogEvent::LogEvent(const string& filename, const int32_t line, const uint32_t elapse, const uint64_t time)
 		:m_filename(filename),m_line(line), m_elapse(elapse),m_time(time) 
 	{
-		m_thread_id = UtilitySpace::getThread_id();
+		m_thread_id = UtilitySpace::GetThread_id();
 
 		//线程名称待定
 		m_threadname = "";
-		//协程id待定
-		m_fiber_id = 0;			
+		//协程id从协程系统的静态方法处获取
+		m_fiber_id = FiberSpace::Fiber::GetFiber_id();
 	}
 	//设置stringstream
 	void LogEvent::setSstream(const string& str)
@@ -146,7 +148,7 @@ namespace LogSpace
 	}
 
 	//默认日志格式模式
-	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%p]%T[%c]%T%f:%l%T%m%n";
+	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%X%T[%p]%T[%c]%T%f:%l%T%m%n";
 	//默认日志名称
 	const string Logger::Default_LoggerName = "root_logger";
 	//默认日志时间模式
@@ -382,6 +384,7 @@ namespace LogSpace
 		//%l 行号
 		//%T tab
 		//%N 线程名称
+		//%X 协程id
 		// 常用模式示例：
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
@@ -455,6 +458,11 @@ namespace LogSpace
 		{
 			//%N 线程名称
 			return event->getThreadname();
+		}
+		else if (mode == "%X")
+		{
+			//%X 协程id
+			return to_string(event->getFiber_id());
 		}
 		//如果识别失败，当作常规字符串处理
 		else

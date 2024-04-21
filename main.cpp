@@ -1,81 +1,58 @@
 #include "log.h"
 #include "singleton.h"
 #include "utility.h"
-#include "thread.h"
+#include "macro.h"
+#include "fiber.h"
 
 using namespace SingletonSpace;
 using namespace LogSpace;
-using namespace ThreadSpace;
+using namespace UtilitySpace;
+using namespace MacroSpace;
+using namespace FiberSpace;
 
-SpinLock s_mutex;
-volatile int count = 0;
-
-void func1()
+void run_in_fiber()
 {
 	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
-	event->getSstream() << " name: " << Thread::getThis()->getName()
-		<< " id: " << UtilitySpace::getThread_id()
-		<< " this.id: " << Thread::getThis()->getId();
+
+	event->getSstream() << "run_in_fiber begin";
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-	for (int i = 0; i < 100000; ++i)
-	{
-		ScopedLock<SpinLock> lock(s_mutex);
-		//ReadScopedLock<RWMutex> lock(s_mutex);
-		++count;
-	}
+	Fiber::YieldTOHold();
+
+	event->setSstream("run_in_fiber end");
+	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+
+	Fiber::YieldTOHold();
 }
 
-void func2()
+int main(int argc, char** argv) 
 {
-	while (true)
-	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
-		event->setSstream("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-	}
-}
-
-void func3()
-{
-	while (true)
-	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
-		event->setSstream("==============================");
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-	}
-}
-
-int main(int argc, char** argv)
-{
-	//设置日志事件
-	//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
 	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
-	event->getSstream() << "thread test begin";
-	//使用LoggerManager单例的默认logger输出日志
+	event->setSstream("main begin");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
+	
 
+	Fiber::GetThis();
 
-	vector<shared_ptr<Thread>> threads;
-	for (int i = 0; i < 2; ++i)
-	{
-		shared_ptr<Thread> thread1(new Thread(func2, "name_" + to_string(i)));
-		shared_ptr<Thread> thread2(new Thread(func3, "name_" + to_string(i)));
-		threads.push_back(thread1);
-		threads.push_back(thread2);
-	}
-
-	for (int i = 0; i < threads.size(); ++i)
-	{
-		threads[i]->join();
-	}
-
-	event->setSstream("thread test end");
+	event->setSstream("fiber test begin");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-	event->setSstream("");
-	event->getSstream() << "count=" << count;
+	shared_ptr<Fiber> fiber(new Fiber(run_in_fiber));
+
+	fiber->swapIn();
+
+	event->setSstream("after swapIn()");
+	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+
+	fiber->swapIn();
+
+	event->setSstream("fiber test end");
+	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+
+	fiber->swapIn();
+
+	event->setSstream("main end");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
 	return 0;

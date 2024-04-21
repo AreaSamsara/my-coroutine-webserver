@@ -10,9 +10,7 @@
 
 #include <cassert>
 
-#include "utility.h"
 #include "mutex.h"
-
 
 namespace LogSpace
 {
@@ -88,7 +86,7 @@ namespace LogSpace
 		//获取私有变量
 		const string getFilename()const { return m_filename; }
 		int32_t getLine()const { return m_line; }
-		uint32_t getThread_id()const { return m_thread_id; }
+		pid_t getThread_id()const { return m_thread_id; }
 		const string getThreadname()const { return m_threadname; }
 		uint32_t getFiber_id()const { return m_fiber_id; }
 		uint32_t getElapse()const { return m_elapse; }
@@ -224,6 +222,7 @@ namespace LogSpace
 		//%l 行号
 		//%T tab
 		//%N 线程名称
+		//%X 协程id
 		// 常用模式示例：
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
