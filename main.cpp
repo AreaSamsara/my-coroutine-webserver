@@ -1,13 +1,10 @@
 #include "log.h"
 #include "singleton.h"
 #include "utility.h"
-#include "macro.h"
 #include "fiber.h"
 
 using namespace SingletonSpace;
 using namespace LogSpace;
-using namespace UtilitySpace;
-using namespace MacroSpace;
 using namespace FiberSpace;
 
 void run_in_fiber()

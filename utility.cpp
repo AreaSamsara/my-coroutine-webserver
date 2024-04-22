@@ -1,10 +1,9 @@
 #include "utility.h"
-#include "log.h"
+#include <sys/syscall.h>
 #include "singleton.h"
 
 namespace UtilitySpace
 {
-	using namespace LogSpace;
 	using namespace SingletonSpace;
 
 	//获取当前线程id
@@ -53,5 +52,19 @@ namespace UtilitySpace
 			ss << prefix << bt[i] << endl;
 		}
 		return ss.str();
+	}
+
+	void Assert(shared_ptr<LogEvent> event)
+	{
+		event->getSstream() << "Assertion: " << "\nbacktrace:\n" << BacktraceToString(100, 2, "    ");
+		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		assert(false);
+	}
+
+	void Assert(shared_ptr<LogEvent> event, const string& message)
+	{
+		event->getSstream() << "Assertion: " << "\n" << message << "\nbacktrace:\n" << BacktraceToString(100, 2, "    ");
+		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		assert(false);
 	}
 }

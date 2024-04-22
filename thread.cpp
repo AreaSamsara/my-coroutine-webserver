@@ -12,8 +12,7 @@ namespace ThreadSpace
 			m_name = "UNKNOW";
 		}
 
-		//创建线程
-		//int rt = pthread_create(&m_thread, nullptr, &Thread::run, this);
+		//创建线程，一经创建线程便开始执行
 		int return_value = pthread_create(&m_thread, nullptr, &run, this);
 		if (return_value != 0)		//返回0表示创建成功，否则报错
 		{
@@ -41,10 +40,10 @@ namespace ThreadSpace
 		}
 	}
 
-	//阻塞正在运行的进程，将thread加入进程队列并开始执行
+	//阻塞正在运行的进程，将thread加入线程等待队列
 	void Thread::join()
 	{
-		//如果线程存在，将线程加入线程队列
+		//如果线程存在，将线程加入线程等待队列
 		if (m_thread)
 		{
 			int return_value = pthread_join(m_thread,nullptr);
@@ -59,7 +58,7 @@ namespace ThreadSpace
 				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 			}
 
-			//线程已加入队列并执行，重置m_thread为0
+			//线程已执行完毕，重置m_thread为0
 			m_thread = 0;
 		}
 	}
