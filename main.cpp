@@ -6,10 +6,12 @@
 using namespace SingletonSpace;
 using namespace LogSpace;
 using namespace FiberSpace;
+using namespace UtilitySpace;
+using namespace ThreadSpace;
 
 void run_in_fiber()
 {
-	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 
 	event->getSstream() << "run_in_fiber begin";
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
@@ -22,13 +24,12 @@ void run_in_fiber()
 	Fiber::YieldTOHold();
 }
 
-int main(int argc, char** argv) 
+void test_fiber()
 {
-	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 	event->setSstream("main begin");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-	
 
 	Fiber::GetThis();
 
@@ -51,6 +52,21 @@ int main(int argc, char** argv)
 
 	event->setSstream("main end");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+}
+
+int main(int argc, char** argv) 
+{
+	vector<shared_ptr<Thread>> threads;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		threads.push_back(shared_ptr<Thread>(new Thread(&test_fiber, "name_" + to_string(i))));
+	}
+
+	for (auto thread : threads)
+	{
+		thread->join();
+	}
 
 	return 0;
 }

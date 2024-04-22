@@ -21,8 +21,11 @@ namespace UtilitySpace
 	//获取当前线程id
 	pid_t GetThread_id();
 
+	//获取当前线程名称
+	string GetThread_name();
+
 	//获取当前协程id
-	//pid_t GetThread_id();
+	uint32_t GetFiber_id();
 
 	void Backtrace(vector<string>& bt, const int size, const int skip = 1);
 

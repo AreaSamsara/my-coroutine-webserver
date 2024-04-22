@@ -32,19 +32,13 @@ namespace LogSpace
 		}
 	}
 
-
-
 	//class LogEvent
-	LogEvent::LogEvent(const string& filename, const int32_t line, const uint32_t elapse, const uint64_t time)
-		:m_filename(filename),m_line(line), m_elapse(elapse),m_time(time) 
-	{
-		m_thread_id = UtilitySpace::GetThread_id();
+	LogEvent::LogEvent(const string& filename, const int32_t line, const pid_t thread_id,
+		const string& thread_name, const uint32_t fiber_id, const uint32_t elapse,
+		const uint64_t time)
+		:m_filename(filename), m_line(line), m_thread_id(thread_id),
+		m_thread_name(thread_name), m_fiber_id(fiber_id), m_elapse(elapse), m_time(time){}
 
-		//线程名称待定
-		m_threadname = "";
-		//协程id从协程系统的静态方法处获取
-		m_fiber_id = FiberSpace::Fiber::GetFiber_id();
-	}
 	//设置stringstream
 	void LogEvent::setSstream(const string& str)
 	{
@@ -148,7 +142,7 @@ namespace LogSpace
 	}
 
 	//默认日志格式模式
-	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%X%T[%p]%T[%c]%T%f:%l%T%m%n";
+	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%X%T[%p]%T[%c]%T%f:%l%T%m%n";
 	//默认日志名称
 	const string Logger::Default_LoggerName = "root_logger";
 	//默认日志时间模式

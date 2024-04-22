@@ -9,6 +9,7 @@ namespace ThreadSpace
 {
 	using namespace SingletonSpace;
 	using namespace LogSpace;
+	using namespace UtilitySpace;
 	using std::function;
 
 	/*

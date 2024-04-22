@@ -18,7 +18,7 @@ namespace ThreadSpace
 		{
 			//设置日志事件
 			//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(),GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << "pthread_create thread fail, return_value=" << return_value << " name=" << name;
 			//使用LoggerManager单例的默认logger输出日志
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
@@ -51,7 +51,7 @@ namespace ThreadSpace
 			{
 				//设置日志事件
 				//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
-				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				event->getSstream() << "pthread_join thread fail, return_value=" << return_value << " name=" << m_name;
 				throw logic_error("pthread_join error");
 				//使用LoggerManager单例的默认logger输出日志

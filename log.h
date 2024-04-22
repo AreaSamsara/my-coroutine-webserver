@@ -76,9 +76,9 @@ namespace LogSpace
 	class LogEvent
 	{
 	public:
-		/*LogEvent(const string& filename,const string& threadname,const int32_t line,const uint32_t elapse,
-			const uint32_t thread_id, const uint64_t fiber_id, const uint64_t time);*/
-		LogEvent(const string& filename, const int32_t line, const uint32_t elapse,const uint64_t time);
+		LogEvent(const string& filename, const int32_t line,const pid_t thread_id, 
+			const string& thread_name,const uint32_t fiber_id,const uint32_t elapse,
+			const uint64_t time);
 
 		//设置stringstream
 		void setSstream(const string& str);
@@ -87,7 +87,7 @@ namespace LogSpace
 		const string getFilename()const { return m_filename; }
 		int32_t getLine()const { return m_line; }
 		pid_t getThread_id()const { return m_thread_id; }
-		const string getThreadname()const { return m_threadname; }
+		const string getThreadname()const { return m_thread_name; }
 		uint32_t getFiber_id()const { return m_fiber_id; }
 		uint32_t getElapse()const { return m_elapse; }
 		uint64_t getTime()const { return m_time; }
@@ -98,8 +98,8 @@ namespace LogSpace
 	private:
 		const string m_filename;			//文件名（自带路径）
 		int32_t m_line = 0;					//行号
-		pid_t m_thread_id = 0;			//线程id
-		string m_threadname;			//线程名称
+		pid_t m_thread_id = 0;				//线程id
+		string m_thread_name;				//线程名称
 		uint32_t m_fiber_id = 0;			//协程id
 		uint32_t m_elapse = 0;				//程序启动至今的毫秒数
 		uint64_t m_time;					//时间戳

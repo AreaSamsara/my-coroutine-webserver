@@ -23,14 +23,14 @@ namespace FiberSpace
 		//获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "getcontext");
 		}
 
 		//静态变量：协程数加一
 		++s_fiber_count;
 
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::Fiber";
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 	}
@@ -48,7 +48,7 @@ namespace FiberSpace
 		//获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "getcontext");
 		}
 
@@ -59,7 +59,7 @@ namespace FiberSpace
 		//设置语境,0表示不传递任何参数
 		makecontext(&m_context, &Fiber::MainFunction, 0);
 
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::Fiber id=" << m_id;
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event); 
 	}
@@ -75,7 +75,7 @@ namespace FiberSpace
 			//栈将被销毁的协程必须处于终止、初始化或异常的状态中，否则报错
 			if (m_state != TERMINAL && m_state != INITIALIZE && m_state != EXCEPT)
 			{
-				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				Assert(event);
 			}
 			
@@ -87,7 +87,7 @@ namespace FiberSpace
 			//主协程不应具有回调函数，也不应该不处于执行状态，否则报错
 			if (m_callback || m_state != EXECUTE)
 			{
-				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				Assert(event);
 			}
 
@@ -99,7 +99,7 @@ namespace FiberSpace
 			}
 		}
 
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::~Fiber id=" << m_id;
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 	}
@@ -111,7 +111,7 @@ namespace FiberSpace
 		//要重置的协程栈不应为空（不应该为主协程），且必须处于终止、初始化或异常的状态中，否则报错
 		if (!m_stack || (m_state != TERMINAL && m_state != INITIALIZE && m_state != EXCEPT))
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event);
 		}
 
@@ -121,7 +121,7 @@ namespace FiberSpace
 		//获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "getcontext");
 		}
 
@@ -145,7 +145,7 @@ namespace FiberSpace
 		//协程状态不应该为执行状态，否则报错
 		if (m_state == EXECUTE)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event);
 		}
 
@@ -154,8 +154,9 @@ namespace FiberSpace
 
 		//保存主协程语境，切换到本协程语境，成功返回0，否则报错
 		if (swapcontext(&t_main_fiber->m_context, &m_context) != 0)
+
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "swapcontext");
 		}
 	}
@@ -169,7 +170,7 @@ namespace FiberSpace
 		//保存本协程语境，切换到主协程语境，成功返回0，否则报错
 		if (swapcontext(&m_context, &t_main_fiber->m_context) != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "swapcontext");
 		}
 	}
@@ -195,7 +196,7 @@ namespace FiberSpace
 			//主协程创建后，当前协程应当被设置为主协程，否则报错
 			if (t_fiber != main_fiber.get())
 			{
-				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				Assert(event);
 			}
 
@@ -253,7 +254,7 @@ namespace FiberSpace
 		//当前协程应该为子协程，而不应当为空指针，否则报错
 		if (current == nullptr)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event);
 		}
 		
@@ -271,7 +272,7 @@ namespace FiberSpace
 			//将当前协程状态设置为异常状态
 			current->m_state = EXCEPT;
 
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << "Fiber Except: " << ex.what();
 			//使用LoggerManager单例的默认logger输出日志
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
@@ -281,7 +282,7 @@ namespace FiberSpace
 			//将当前协程状态设置为异常状态
 			current->m_state = EXCEPT;
 
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << "Fiber Except";
 			//使用LoggerManager单例的默认logger输出日志
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
@@ -297,7 +298,7 @@ namespace FiberSpace
 		//按理来说永远不会到达此处，否则报错
 		if (true)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "should never reach");
 		}
 	}

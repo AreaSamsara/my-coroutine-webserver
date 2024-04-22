@@ -1,6 +1,9 @@
 #include "utility.h"
 #include <sys/syscall.h>
+
 #include "singleton.h"
+#include "thread.h"
+#include "fiber.h"
 
 namespace UtilitySpace
 {
@@ -19,6 +22,24 @@ namespace UtilitySpace
 		return syscall(SYS_gettid);
 	}
 
+	//获取当前线程名称
+	string GetThread_name()
+	{
+		//如果当前没有子线程被创建，返回"main_thread"
+		if (ThreadSpace::Thread::t_thread == nullptr)
+		{
+			return "main_thread";
+		}
+		//否则返回当前线程名称
+		return ThreadSpace::Thread::t_thread->getName();
+	}
+
+	//获取当前协程id
+	uint32_t GetFiber_id()
+	{
+		return FiberSpace::Fiber::GetFiber_id();
+	}
+
 	void Backtrace(vector<string>& bt, const int size, const int skip)
 	{
 		void** array = (void**)malloc((sizeof(void*) * size));
@@ -27,7 +48,7 @@ namespace UtilitySpace
 		char** strings = backtrace_symbols(array, s);
 		if (strings == NULL)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << " backtrace_symbols error ";
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 			return;
