@@ -29,7 +29,7 @@ namespace UtilitySpace
 
 	void Backtrace(vector<string>& bt, const int size, const int skip = 1);
 
-	string BacktraceToString(const int size, const int skip = 2, const string& prefix = "");
+	string BacktraceToString(const int size = 64, const int skip = 2, const string& prefix = "");
 
 	void Assert(shared_ptr<LogEvent> event);
 

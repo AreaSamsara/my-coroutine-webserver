@@ -2,71 +2,54 @@
 #include "singleton.h"
 #include "utility.h"
 #include "fiber.h"
+#include "scheduler.h"
 
 using namespace SingletonSpace;
 using namespace LogSpace;
 using namespace FiberSpace;
 using namespace UtilitySpace;
 using namespace ThreadSpace;
-
-void run_in_fiber()
-{
-	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-
-	event->getSstream() << "run_in_fiber begin";
-	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-
-	Fiber::YieldTOHold();
-
-	event->setSstream("run_in_fiber end");
-	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-
-	Fiber::YieldTOHold();
-}
+using namespace SchedulerSpace;
 
 void test_fiber()
+{
+	static int s_count = 5;
+
+	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+	event->getSstream() << "test in fiber s_count=" << s_count;
+	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+	
+	sleep(1);
+	
+	if (--s_count >= 0)
+	{
+		//Scheduler::GetThis()->schedule(&test_fiber);
+		Scheduler::GetThis()->schedule(&test_fiber,GetThread_id());
+	}
+}
+
+int main(int argc, char** argv) 
 {
 	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 	event->setSstream("main begin");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
+	Scheduler sche(3,true,"test");
+	//Scheduler sche(3, false, "test");
 
-	Fiber::GetThis();
+	sche.start();
 
-	event->setSstream("fiber test begin");
+	sleep(2);
+
+	event->setSstream("schedule");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+	sche.schedule(&test_fiber);
 
-	shared_ptr<Fiber> fiber(new Fiber(run_in_fiber));
-
-	fiber->swapIn();
-
-	event->setSstream("after swapIn()");
-	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-
-	fiber->swapIn();
-
-	event->setSstream("fiber test end");
-	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-
-	fiber->swapIn();
+	sche.stop();
 
 	event->setSstream("main end");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-}
-
-int main(int argc, char** argv) 
-{
-	vector<shared_ptr<Thread>> threads;
-
-	for (int i = 0; i < 3; ++i)
-	{
-		threads.push_back(shared_ptr<Thread>(new Thread(&test_fiber, "name_" + to_string(i))));
-	}
-
-	for (auto thread : threads)
-	{
-		thread->join();
-	}
+	
 
 	return 0;
 }

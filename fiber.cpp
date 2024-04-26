@@ -4,12 +4,14 @@
 #include "log.h"
 #include "singleton.h"
 #include "utility.h"
+#include "scheduler.h"
 
 namespace FiberSpace
 {
 	using namespace LogSpace;
 	using namespace SingletonSpace;
 	using namespace UtilitySpace;
+	using namespace SchedulerSpace;
 	using std::exception;
 
 	//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
@@ -36,7 +38,7 @@ namespace FiberSpace
 	}
 
 	//用于创建子协程的构造函数
-	Fiber::Fiber(function<void()> callback, size_t stacksize)
+	Fiber::Fiber(function<void()> callback, bool use_caller, size_t stacksize)
 		:m_id(++s_new_fiber_id), m_stacksize(stacksize), m_callback(callback)
 	{
 		//静态变量：协程数加一
@@ -56,8 +58,16 @@ namespace FiberSpace
 		m_context.uc_stack.ss_sp = m_stack;
 		m_context.uc_stack.ss_size = m_stacksize;
 
-		//设置语境,0表示不传递任何参数
-		makecontext(&m_context, &Fiber::MainFunction, 0);
+		if (!use_caller)
+		{
+			//设置语境,0表示不传递任何参数
+			makecontext(&m_context, &Fiber::MainFunction, 0);
+		}
+		else
+		{
+			//设置语境,0表示不传递任何参数
+			makecontext(&m_context, &Fiber::CallerMainFunction, 0);
+		}
 
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::Fiber id=" << m_id;
@@ -152,8 +162,8 @@ namespace FiberSpace
 		//将状态设置为执行状态
 		m_state = EXECUTE;
 
-		//保存主协程语境，切换到本协程语境，成功返回0，否则报错
-		if (swapcontext(&t_main_fiber->m_context, &m_context) != 0)
+		//保存调度器的主协程语境，切换到本协程语境，成功返回0，否则报错
+		if (swapcontext(&Scheduler::GetMainFiber()->m_context, &m_context) != 0)
 
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -164,7 +174,43 @@ namespace FiberSpace
 	//将本协程切换到后台
 	void Fiber::swapOut()
 	{
-		//将当前协程设置为主协程
+		//将当前协程设置为调度器的主协程
+		SetThis(Scheduler::GetMainFiber());
+
+		//保存本协程语境，切换到主协程语境，成功返回0，否则报错
+		if (swapcontext(&m_context, &Scheduler::GetMainFiber()->m_context) != 0)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event, "swapcontext");
+		}	
+	}
+
+	void Fiber::call()
+	{
+		//将当前协程切换为本协程
+		SetThis(this);
+
+		//协程状态不应该为执行状态，否则报错
+		if (m_state == EXECUTE)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event);
+		}
+
+		//将状态设置为执行状态
+		m_state = EXECUTE;
+
+		//保存调度器的主协程语境，切换到本协程语境，成功返回0，否则报错
+		if (swapcontext(&t_main_fiber->m_context, &m_context) != 0)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event, "swapcontext");
+		}
+	}
+
+	void Fiber::back()
+	{
+		//将当前协程设置为调度器的主协程
 		SetThis(t_main_fiber.get());
 
 		//保存本协程语境，切换到主协程语境，成功返回0，否则报错
@@ -174,8 +220,6 @@ namespace FiberSpace
 			Assert(event, "swapcontext");
 		}
 	}
-
-
 
 
 	//设置当前协程为fiber
@@ -273,7 +317,8 @@ namespace FiberSpace
 			current->m_state = EXCEPT;
 
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "Fiber Except: " << ex.what();
+			event->getSstream() << "Fiber Except: " << ex.what() << " fiber_id=" << current->getId()
+				<< "\nbacktrace:\n" << BacktraceToString();
 			//使用LoggerManager单例的默认logger输出日志
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 		}
@@ -299,7 +344,63 @@ namespace FiberSpace
 		if (true)
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event, "should never reach");
+			Assert(event, "should never reach!");
+		}
+	}
+
+	void Fiber::CallerMainFunction()
+	{
+		shared_ptr<Fiber> current = GetThis();
+		//当前协程应该为子协程，而不应当为空指针，否则报错
+		if (current == nullptr)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event);
+		}
+
+		try
+		{
+			//执行回调函数
+			current->m_callback();
+			//执行完回调函数后将其清空
+			current->m_callback = nullptr;
+			//将当前协程状态设置为终止状态
+			current->m_state = TERMINAL;
+		}
+		catch (exception& ex)
+		{
+			//将当前协程状态设置为异常状态
+			current->m_state = EXCEPT;
+
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			event->getSstream() << "Fiber Except: " << ex.what() << " fiber_id=" << current->getId()
+				<< "\nbacktrace:\n" << BacktraceToString();
+			//使用LoggerManager单例的默认logger输出日志
+			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		}
+		catch (...)
+		{
+			//将当前协程状态设置为异常状态
+			current->m_state = EXCEPT;
+
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			event->getSstream() << "Fiber Except";
+			//使用LoggerManager单例的默认logger输出日志
+			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		}
+
+		//在切换到后台之前将智能指针切换为裸指针，防止shared_ptr的计数错误导致析构函数不被调用
+		auto raw_ptr = current.get();
+		//清空shared_ptr
+		current.reset();
+		//使用裸指针将当前协程切换到后台
+		raw_ptr->back();
+
+		//按理来说永远不会到达此处，否则报错
+		if (true)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event, "should never reach!");
 		}
 	}
 
@@ -310,6 +411,6 @@ namespace FiberSpace
 
 	//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 	thread_local Fiber* Fiber::t_fiber = nullptr;
-	//每个线程专属的当主协程
+	//每个线程专属的主协程
 	thread_local shared_ptr <Fiber>  Fiber::t_main_fiber = nullptr;
 }

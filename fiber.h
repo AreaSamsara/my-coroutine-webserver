@@ -35,7 +35,7 @@ namespace FiberSpace
 		Fiber();
 	public:
 		//用于创建子协程的构造函数
-		Fiber(function<void()> callback, size_t stacksize = 1024 * 1024);
+		Fiber(function<void()> callback, bool use_caller = false, size_t stacksize = 1024 * 1024);
 		~Fiber();
 
 		//重置协程函数和状态
@@ -46,8 +46,16 @@ namespace FiberSpace
 		//切换到后台执行
 		void swapOut();
 
+		void call();
+		void back();
+
 		//获取协程id
 		uint64_t getId()const { return m_id; }
+
+		//获取协程状态
+		State getState()const { return m_state; }
+		//设置协程状态
+		void setState(State state) { m_state = state; }
 	public:
 		//设置当前协程
 		static void SetThis(Fiber* fiber);
@@ -66,6 +74,8 @@ namespace FiberSpace
 
 		//协程的主运行函数
 		static void MainFunction();
+
+		static void CallerMainFunction();
 	private:
 		//协程id
 		uint64_t m_id = 0;
@@ -87,7 +97,7 @@ namespace FiberSpace
 
 		//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 		static thread_local Fiber* t_fiber;
-		//每个线程专属的当主协程
+		//每个线程专属的主协程
 		static thread_local shared_ptr <Fiber> t_main_fiber;
 	};
 

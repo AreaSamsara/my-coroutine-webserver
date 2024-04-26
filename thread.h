@@ -14,8 +14,8 @@ namespace ThreadSpace
 
 	/*
 	* 线程类调用方法：
-	* 1.先用想执行的函数对象作为回调函数创建Thread对象，
-	* 2.再调用Thread对象的join()方法，即可开始线程的执行
+	* 1.先用想执行的函数对象作为回调函数创建Thread对象，即可开始线程的执行
+	* 2.调用Thread对象的join()方法，可以阻塞主线程，让主线程等待该线程执行完毕再继续
 	*/
 
 	//线程类
@@ -30,7 +30,7 @@ namespace ThreadSpace
 		pid_t getId()const { return m_id; }
 		const string& getName()const { return m_name; }
 
-		//阻塞正在运行的进程，将thread加入进程队列并开始执行
+		//阻塞正在运行的进程，将thread加入等待队列
 		void join();
 
 		//获取线程专属的Thread类指针，设置为静态方法以访问静态类型
