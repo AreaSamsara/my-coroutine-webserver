@@ -191,6 +191,75 @@ namespace SchedulerSpace
 		}
 	}
 
+
+	void Scheduler::schedule(const shared_ptr<Fiber> fiber, const int thread_id)
+	{
+		//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+		bool need_tickle = m_tasks.empty();
+		Task task(fiber, thread_id);
+		{
+			//先监视互斥锁，保护被schedule_nolock访问的成员
+			ScopedLock<Mutex> lock(m_mutex);
+			//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+			//need_tickle = schedule_nolock(fiber, thread_id);
+			
+			//如果该任务非空，加入任务队列
+			if (task.m_fiber)
+			{
+				m_tasks.push_back(task);
+			}
+		}
+
+		if (need_tickle)
+		{
+			//通知调度器有任务了
+			tickle();
+		}
+	}
+
+	//void Scheduler::schedule(const function<void()> callback, const int thread_id)
+	//{
+	//	//用回调函数作参数创建一个新的协程
+	//	shared_ptr<Fiber> fiber(new Fiber(callback));
+
+	//	//是否需要通知调度器有任务了
+	//	bool need_tickle = false;
+	//	{
+	//		//先监视互斥锁，保护被schedule_nolock访问的成员
+	//		ScopedLock<Mutex> lock(m_mutex);
+	//		//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+	//		need_tickle = schedule_nolock(fiber, thread_id);
+	//	}
+
+	//	if (need_tickle)
+	//	{
+	//		//通知调度器有任务了
+	//		tickle();
+	//	}
+	//}
+	void Scheduler::schedule(const function<void()> callback, const int thread_id)
+	{
+		//用回调函数作参数创建一个新的协程
+		shared_ptr<Fiber> fiber(new Fiber(callback));
+		schedule(fiber, thread_id);
+	}
+
+	//bool Scheduler::schedule_nolock(const shared_ptr<Fiber> fiber, const int thread_id)
+	//{
+	//	//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+	//	bool need_tickle = m_tasks.empty();
+	//	Task task(fiber, thread_id);
+
+	//	//如果该任务非空，加入任务队列
+	//	if (task.m_fiber)
+	//	{
+	//		m_tasks.push_back(task);
+	//	}
+
+	//	//返回是否需要通知调度器有任务了
+	//	return need_tickle;
+	//}
+
 	//通知调度器有任务了
 	void Scheduler::tickle()
 	{
@@ -209,7 +278,8 @@ namespace SchedulerSpace
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		//先将线程专属的当前调度器设置为本调度器（即使是调用者的m_caller_fiber也一样）
-		setThis();
+		//setThis();
+		t_scheduler = this;
 
 		//如果当前线程id不等于调用者线程id,说明不论是否使用了调用者线程，至少这个线程不是调用者线程
 		if (GetThread_id() != m_caller_thread_id)
@@ -226,8 +296,6 @@ namespace SchedulerSpace
 
 		//空闲协程
 		shared_ptr<Fiber> idle_fiber(new Fiber(bind(&Scheduler::idle, this)));
-		////由回调函数创建的协程
-		//shared_ptr<Fiber> callback_fiber;
 
 		//任务容器
 		Task task;
@@ -298,9 +366,6 @@ namespace SchedulerSpace
 			}
 
 			//如果有任务要做且任务包含的是协程且该协程不是终止状态或异常状态，则切换到该协程执行
-			/*if (task.m_fiber && 
-				(task.m_fiber->getState() != Fiber::TERMINAL
-				&& task.m_fiber->getState() != Fiber::EXCEPT))*/
 			if (task.m_fiber&&(task.m_fiber->getState() != Fiber::TERMINAL && task.m_fiber->getState() != Fiber::EXCEPT))
 			{
 				//切换到该协程执行
@@ -323,48 +388,6 @@ namespace SchedulerSpace
 				//本次任务容器的功能已完成，将其重置
 				task.reset();
 			}
-			////如果有任务要做且任务包含的是回调函数，为其创建一个协程，再切换到该协程执行
-			//else if (task.m_callback)
-			//{
-			//	//如果callback_fiber不为空，调用Fiber类的reset方法重设之
-			//	if (callback_fiber)
-			//	{
-			//		callback_fiber->reset(task.m_callback);
-			//	}
-			//	//如果callback_fiber为空，调用shared_ptr类的reset方法重设之
-			//	else
-			//	{
-			//		callback_fiber.reset(new Fiber(task.m_callback));
-			//	}
-
-			//	//本次任务容器的功能已完成，将其重置
-			//	task.reset();
-			//	
-			//
-			//	//切换到该协程执行
-			//	callback_fiber->swapIn();
-			//	//活跃的线程数量减一
-			//	--m_active_thread_count;
-
-			//	//如果此时该协程为准备状态，再将其放入任务队列
-			//	if (callback_fiber->getState() == Fiber::READY)
-			//	{
-			//		schedule(callback_fiber);
-			//		callback_fiber.reset();
-			//	}
-			//	//否则如果该协程是终止或异常状态，则将其清除
-			//	else if (callback_fiber->getState() == Fiber::EXCEPT
-			//		|| callback_fiber->getState() == Fiber::TERMINAL)
-			//	{
-			//		callback_fiber->reset(nullptr);
-			//	}
-			//	//如果该协程不是准备、终止或异常状态，则将其设为挂起状态
-			//	else
-			//	{
-			//		callback_fiber->setState(Fiber::HOLD);
-			//		callback_fiber.reset();
-			//	}
-			//}
 			//如果没有做任何任务
 			else
 			{
@@ -438,11 +461,11 @@ namespace SchedulerSpace
 		}
 	}
 
-	//设置当前调度器为本调度器（线程专属）
-	void Scheduler::setThis()
-	{
-		t_scheduler = this;
-	}
+	////设置当前调度器为本调度器（线程专属）
+	//void Scheduler::setThis()
+	//{
+	//	t_scheduler = this;
+	//}
 
 
 

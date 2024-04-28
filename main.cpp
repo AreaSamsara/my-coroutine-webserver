@@ -23,8 +23,8 @@ void test_fiber()
 	
 	if (--s_count >= 0)
 	{
-		Scheduler::t_scheduler->schedule(&test_fiber);
-		//Scheduler::t_scheduler->schedule(&test_fiber,GetThread_id());
+		//Scheduler::t_scheduler->schedule(&test_fiber);
+		Scheduler::t_scheduler->schedule(&test_fiber,GetThread_id());
 	}
 }
 
