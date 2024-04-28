@@ -14,8 +14,8 @@ namespace SchedulerSpace
 	class Scheduler
 	{
 	public:
-		//使用调用者线程时usecaller为true，否则为false
-		Scheduler(size_t thread_count = 1, const bool use_caller = true, const string& name = "");
+		//thread_count需要在构造函数内部再确定，故不加const；使用调用者线程时usecaller为true，否则为false
+		Scheduler(size_t , const bool use_caller = true, const string& name = "");
 		virtual ~Scheduler();
 
 		const string& getName()const { return m_name; }
@@ -25,8 +25,25 @@ namespace SchedulerSpace
 		//停止调度器
 		void stop();
 
-		template<class Fiber_or_Callback>
-		void schedule(const Fiber_or_Callback fiber_or_callback,const int thread_id = -1)
+		//template<class Fiber_or_Callback>
+		//void schedule(const Fiber_or_Callback fiber_or_callback,const int thread_id = -1)
+		//{
+		//	//是否需要通知调度器有任务了
+		//	bool need_tickle = false;
+		//	{
+		//		//先监视互斥锁，保护被schedule_nolock访问的成员
+		//		ScopedLock<Mutex> lock(m_mutex);
+		//		//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+		//		need_tickle = schedule_nolock(fiber_or_callback, thread_id);
+		//	}
+
+		//	if (need_tickle)
+		//	{
+		//		//通知调度器有任务了
+		//		tickle();
+		//	}
+		//}
+		void schedule(const shared_ptr<Fiber> fiber, const int thread_id = -1)
 		{
 			//是否需要通知调度器有任务了
 			bool need_tickle = false;
@@ -34,7 +51,28 @@ namespace SchedulerSpace
 				//先监视互斥锁，保护被schedule_nolock访问的成员
 				ScopedLock<Mutex> lock(m_mutex);
 				//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
-				need_tickle = schedule_nolock(fiber_or_callback, thread_id);
+				need_tickle = schedule_nolock(fiber, thread_id);
+			}
+
+			if (need_tickle)
+			{
+				//通知调度器有任务了
+				tickle();
+			}
+		}
+
+		void schedule(const function<void()> callback, const int thread_id = -1)
+		{
+			//用回调函数作参数创建一个新的协程
+			shared_ptr<Fiber> fiber(new Fiber(callback));
+
+			//是否需要通知调度器有任务了
+			bool need_tickle = false;
+			{
+				//先监视互斥锁，保护被schedule_nolock访问的成员
+				ScopedLock<Mutex> lock(m_mutex);
+				//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+				need_tickle = schedule_nolock(fiber, thread_id);
 			}
 
 			if (need_tickle)
@@ -77,58 +115,111 @@ namespace SchedulerSpace
 		//设置当前调度器为本调度器（线程专属）
 		void setThis();
 	private:
-		template<class Fiber_or_Callback>
-		bool schedule_nolock(const Fiber_or_Callback fiber_or_callback, const int thread_id = -1)
+		//template<class Fiber_or_Callback>
+		//bool schedule_nolock(const Fiber_or_Callback fiber_or_callback, const int thread_id = -1)
+		//{
+		//	//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
+		//	bool need_tickle = m_fibers.empty();
+		//	Task task(fiber_or_callback, thread_id);
+
+		//	//如果该任务非空，加入任务队列
+		//	if (task.m_fiber || task.m_callback)
+		//	{
+		//		m_fibers.push_back(task);
+		//	}
+
+		//	//返回是否需要通知调度器有任务了
+		//	return need_tickle;
+		//}
+		bool schedule_nolock(const shared_ptr<Fiber> fiber, const int thread_id = -1)
 		{
 			//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
-			bool need_tickle = m_fibers.empty();
-			Task task(fiber_or_callback, thread_id);
+			bool need_tickle = m_tasks.empty();
+			Task task(fiber, thread_id);
 
 			//如果该任务非空，加入任务队列
-			if (task.m_fiber || task.m_callback)
+			if (task.m_fiber)
 			{
-				m_fibers.push_back(task);
+				m_tasks.push_back(task);
 			}
 
 			//返回是否需要通知调度器有任务了
 			return need_tickle;
 		}
 	private:
+		//class Task
+		//{
+		//public:
+		//	//协程
+		//	shared_ptr<Fiber> m_fiber;
+		//	//回调函数
+		//	function<void()> m_callback;
+		//	//负责任务的线程的id（为-1时表示所有线程都有义务做这个任务）
+		//	int m_thread_in_charge_id;
+		//public:
+		//	Task(shared_ptr<Fiber> fiber,const int thread_id)
+		//		:m_fiber(fiber),m_thread_in_charge_id(thread_id){}
+
+		//	Task(shared_ptr<Fiber>* fiber,const int thread_id)
+		//		:m_thread_in_charge_id(thread_id)
+		//	{
+		//		m_fiber.swap(*fiber);
+		//	}
+
+		//	Task(function<void()> callback, const int thread_id)
+		//		:m_callback(callback), m_thread_in_charge_id(thread_id) {}
+
+		//	Task(function<void()>* callback, const int thread_id)
+		//		:m_thread_in_charge_id(thread_id)
+		//	{
+		//		m_callback.swap(*callback);
+		//	}
+
+		//	Task():m_thread_in_charge_id(-1){}
+
+		//	//重置任务
+		//	void reset()
+		//	{
+		//		m_fiber = nullptr;
+		//		m_callback = nullptr;
+		//		m_thread_in_charge_id = -1;
+		//	}
+		//};
 		class Task
 		{
 		public:
 			//协程
 			shared_ptr<Fiber> m_fiber;
-			//回调函数
-			function<void()> m_callback;
-			//负责任务的线程的id（为-1时表示所有线程都有义务做这个任务）
-			int m_thread_in_charge_id;
+			//负责任务的线程的id（为默认值-1时表示所有线程都有义务做这个任务）
+			int m_thread_in_charge_id = -1;
 		public:
-			Task(shared_ptr<Fiber> fiber,const int thread_id)
-				:m_fiber(fiber),m_thread_in_charge_id(thread_id){}
+			Task(shared_ptr<Fiber> fiber, const int thread_id)
+				:m_fiber(fiber), m_thread_in_charge_id(thread_id) {}
 
-			Task(shared_ptr<Fiber>* fiber,const int thread_id)
+			Task(shared_ptr<Fiber>* fiber, const int thread_id)
 				:m_thread_in_charge_id(thread_id)
 			{
 				m_fiber.swap(*fiber);
 			}
 
 			Task(function<void()> callback, const int thread_id)
-				:m_callback(callback), m_thread_in_charge_id(thread_id) {}
+				:m_thread_in_charge_id(thread_id)
+			{
+				m_fiber.reset(new  Fiber(callback));
+			}
 
 			Task(function<void()>* callback, const int thread_id)
 				:m_thread_in_charge_id(thread_id)
 			{
-				m_callback.swap(*callback);
+				m_fiber.reset(new  Fiber(*callback));
 			}
 
-			Task():m_thread_in_charge_id(-1){}
+			Task(){}
 
 			//重置任务
 			void reset()
 			{
 				m_fiber = nullptr;
-				m_callback = nullptr;
 				m_thread_in_charge_id = -1;
 			}
 		};
@@ -138,7 +229,7 @@ namespace SchedulerSpace
 		//线程池
 		vector<shared_ptr<Thread>> m_threads;
 		//待执行的协程队列
-		list<Task> m_fibers;	
+		list<Task> m_tasks;	
 		//调用者线程用于取代线程以执行Scheduler::run()的协程，仅使用调用者线程时有效
 		shared_ptr<Fiber> m_thread_substitude_caller_fiber;
 		//是否使用调用者线程

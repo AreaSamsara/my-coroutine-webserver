@@ -5,7 +5,7 @@ namespace SchedulerSpace
 {
 	using std::bind;
 
-	//使用调用者线程时usecaller为true，否则为false
+	//thread_count需要在构造函数内部再确定，故不加const；使用调用者线程时usecaller为true，否则为false
 	Scheduler::Scheduler(size_t thread_count, const bool use_caller, const string& name)
 		:m_use_caller(use_caller), m_name(name)
 	{
@@ -217,16 +217,17 @@ namespace SchedulerSpace
 			//为当前线程创建主协程，并将其设为线程的调度器的主协程
 			t_scheduler_fiber = Fiber::GetThis().get();
 		}
-		//否则这个线程时调用者线程，将调度器的主协程设置为调用者线程的Scheduler::run()协程，使其完成和线程池内线程的主协程相同的功能
+		//否则这个线程时调用者线程
 		else
 		{
-			t_scheduler_fiber = m_thread_substitude_caller_fiber.get();	//new
+			//将调度器的主协程设置为调用者线程的Scheduler::run()协程，使其完成和线程池内线程的主协程相同的功能
+			t_scheduler_fiber = m_thread_substitude_caller_fiber.get();
 		}
 
 		//空闲协程
 		shared_ptr<Fiber> idle_fiber(new Fiber(bind(&Scheduler::idle, this)));
-		//由回调函数创建的协程
-		shared_ptr<Fiber> callback_fiber;
+		////由回调函数创建的协程
+		//shared_ptr<Fiber> callback_fiber;
 
 		//任务容器
 		Task task;
@@ -247,8 +248,8 @@ namespace SchedulerSpace
 				ScopedLock<Mutex> lock(m_mutex);
 
 				//尝试取得任务
-				auto iterator = m_fibers.begin();
-				while(iterator != m_fibers.end())
+				auto iterator = m_tasks.begin();
+				while(iterator != m_tasks.end())
 				{
 					//该任务已设置负责的线程的id，且与当前线程id不同，则不做这个任务，而是通知其他线程来完成
 					//反之如果未设置线程id（-1），则所有线程都有义务做这个任务
@@ -261,14 +262,16 @@ namespace SchedulerSpace
 					}
 
 					//该任务应包含协程对象或回调函数，否则报错
-					if (!iterator->m_fiber && !iterator->m_callback)
+					//if (!iterator->m_fiber && !iterator->m_callback)
+					if (!iterator->m_fiber)
 					{
 						shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 						Assert(event);
 					}
 
 					//如果该任务包含的是协程对象，且该协程是执行状态，则不做这个任务
-					if (iterator->m_fiber && iterator->m_fiber->getState() == Fiber::EXECUTE)
+					//if (iterator->m_fiber && iterator->m_fiber->getState() == Fiber::EXECUTE)
+					if (iterator->m_fiber->getState() == Fiber::EXECUTE)
 					{
 						++iterator;
 						continue;
@@ -277,7 +280,7 @@ namespace SchedulerSpace
 					//否则该任务可以做，取出该任务
 					task = *iterator;
 					//将该任务从任务队列删除，并将迭代器移动一位
-					m_fibers.erase(iterator++);
+					m_tasks.erase(iterator++);
 					//在拿出任务以后应立即让活跃的线程数量加一
 					++m_active_thread_count;
 
@@ -295,9 +298,10 @@ namespace SchedulerSpace
 			}
 
 			//如果有任务要做且任务包含的是协程且该协程不是终止状态或异常状态，则切换到该协程执行
-			if (task.m_fiber && 
+			/*if (task.m_fiber && 
 				(task.m_fiber->getState() != Fiber::TERMINAL
-				&& task.m_fiber->getState() != Fiber::EXCEPT))
+				&& task.m_fiber->getState() != Fiber::EXCEPT))*/
+			if (task.m_fiber&&(task.m_fiber->getState() != Fiber::TERMINAL && task.m_fiber->getState() != Fiber::EXCEPT))
 			{
 				//切换到该协程执行
 				task.m_fiber->swapIn();
@@ -319,48 +323,48 @@ namespace SchedulerSpace
 				//本次任务容器的功能已完成，将其重置
 				task.reset();
 			}
-			//如果有任务要做且任务包含的是回调函数，为其创建一个协程，再切换到该协程执行
-			else if (task.m_callback)
-			{
-				//如果callback_fiber不为空，调用Fiber类的reset方法重设之
-				if (callback_fiber)
-				{
-					callback_fiber->reset(task.m_callback);
-				}
-				//如果callback_fiber为空，调用shared_ptr类的reset方法重设之
-				else
-				{
-					callback_fiber.reset(new Fiber(task.m_callback));
-				}
+			////如果有任务要做且任务包含的是回调函数，为其创建一个协程，再切换到该协程执行
+			//else if (task.m_callback)
+			//{
+			//	//如果callback_fiber不为空，调用Fiber类的reset方法重设之
+			//	if (callback_fiber)
+			//	{
+			//		callback_fiber->reset(task.m_callback);
+			//	}
+			//	//如果callback_fiber为空，调用shared_ptr类的reset方法重设之
+			//	else
+			//	{
+			//		callback_fiber.reset(new Fiber(task.m_callback));
+			//	}
 
-				//本次任务容器的功能已完成，将其重置
-				task.reset();
-				
-			
-				//切换到该协程执行
-				callback_fiber->swapIn();
-				//活跃的线程数量减一
-				--m_active_thread_count;
+			//	//本次任务容器的功能已完成，将其重置
+			//	task.reset();
+			//	
+			//
+			//	//切换到该协程执行
+			//	callback_fiber->swapIn();
+			//	//活跃的线程数量减一
+			//	--m_active_thread_count;
 
-				//如果此时该协程为准备状态，再将其放入任务队列
-				if (callback_fiber->getState() == Fiber::READY)
-				{
-					schedule(callback_fiber);
-					callback_fiber.reset();
-				}
-				//否则如果该协程是终止或异常状态，则将其清除
-				else if (callback_fiber->getState() == Fiber::EXCEPT
-					|| callback_fiber->getState() == Fiber::TERMINAL)
-				{
-					callback_fiber->reset(nullptr);
-				}
-				//如果该协程不是准备、终止或异常状态，则将其设为挂起状态
-				else
-				{
-					callback_fiber->setState(Fiber::HOLD);
-					callback_fiber.reset();
-				}
-			}
+			//	//如果此时该协程为准备状态，再将其放入任务队列
+			//	if (callback_fiber->getState() == Fiber::READY)
+			//	{
+			//		schedule(callback_fiber);
+			//		callback_fiber.reset();
+			//	}
+			//	//否则如果该协程是终止或异常状态，则将其清除
+			//	else if (callback_fiber->getState() == Fiber::EXCEPT
+			//		|| callback_fiber->getState() == Fiber::TERMINAL)
+			//	{
+			//		callback_fiber->reset(nullptr);
+			//	}
+			//	//如果该协程不是准备、终止或异常状态，则将其设为挂起状态
+			//	else
+			//	{
+			//		callback_fiber->setState(Fiber::HOLD);
+			//		callback_fiber.reset();
+			//	}
+			//}
 			//如果没有做任何任务
 			else
 			{
@@ -416,7 +420,7 @@ namespace SchedulerSpace
 	{
 		//先监视互斥锁，保护
 		ScopedLock<Mutex> lock(m_mutex);
-		return m_autoStop && m_stopping && m_fibers.empty() && m_active_thread_count == 0;
+		return m_autoStop && m_stopping && m_tasks.empty() && m_active_thread_count == 0;
 	}
 
 	//空闲协程的回调函数
