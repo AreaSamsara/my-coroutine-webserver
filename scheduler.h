@@ -25,11 +25,9 @@ namespace SchedulerSpace
 		//停止调度器
 		void stop();
 
+		//调度任务，将协程放入任务类，再将任务加入任务队列
 		void schedule(const shared_ptr<Fiber> fiber, const int thread_id = -1);
-		
 		void schedule(const function<void()> callback, const int thread_id = -1);
-	
-
 		template<class InputIterator>
 		void schedule(InputIterator begin, InputIterator end)
 		{
@@ -56,15 +54,12 @@ namespace SchedulerSpace
 		virtual void tickle();
 		//调度器分配给线程池内线程的回调函数
 		void run();
-		//返回是否可以停止
-		virtual bool stopping();
+		//返回是否竣工
+		virtual bool is_completed();
 		//空闲协程的回调函数
 		virtual void idle();
-		////设置当前调度器为本调度器（线程专属）
-		//void setThis();
-	/*private:
-		bool schedule_nolock(const shared_ptr<Fiber> fiber, const int thread_id = -1);*/
 	private:
+		//任务类
 		class Task
 		{
 		public:
@@ -127,10 +122,10 @@ namespace SchedulerSpace
 		size_t m_idle_thread_count=0;
 		//是否正处于停止状态
 		bool m_stopping = true;
-		//是否自动停止
-		bool m_autoStop = false;
-		//调用者线程的id，仅使用调用者线程时有效
-		int m_caller_thread_id = 0;
+		////是否自动停止
+		//bool m_autoStop = false;
+		//调用者线程的id，仅使用调用者线程时有效（无效时设为-1）
+		int m_caller_thread_id = -1;
 	public:
 		//当前调度器（线程专属）
 		static thread_local Scheduler* t_scheduler;

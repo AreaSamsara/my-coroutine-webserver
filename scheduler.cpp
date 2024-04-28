@@ -19,30 +19,14 @@ namespace SchedulerSpace
 		//如果使用调用者线程
 		if (m_use_caller)
 		{
-			//如果调用者的主协程不存在，创建之
-			//Fiber::GetThis();
-
 			//调用者线程也计入线程数，故线程池大小应该减一
 			--thread_count;
-
-			////线程当前调度器应该为空，否则报错
-			//if (GetThis() != nullptr)
-			//{
-			//	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			//	Assert(event);
-			//}
-
-			//将线程当前调度器设置为本调度器
-			//t_scheduler = this;
 
 			//为调用者线程创建主协程并将其设为调度器的主协程
 			t_scheduler_fiber = Fiber::GetThis().get();
 
 			//设置调用者线程的线程替代者协程(调用者线程有自己的任务，故应当创建协程来执行Scheduler::run()作为替代)
-			//m_thread_substitude_caller_fiber.reset(new Fiber(bind(&Scheduler::run, this),true));
 			m_thread_substitude_caller_fiber.reset(new Fiber(bind(&Scheduler::run, this)));
-			//将线程调度器主协程设置为调用者线程的m_caller_fiber(而不是调用者线程的主协程，m_caller_fiber同时用作调度器的主协程，便于子协程的切换)
-			//t_scheduler_fiber = m_caller_fiber.get();
 
 			//设置调用者线程的id
 			m_caller_thread_id = GetThread_id();
@@ -86,7 +70,7 @@ namespace SchedulerSpace
 		{
 			return;
 		}
-		//将停止状态关闭
+		//将停止状态关闭，并开始调度工作
 		m_stopping = false;
 
 		//线程池应为空，否则报错
@@ -115,44 +99,23 @@ namespace SchedulerSpace
 		//使用LoggerManager单例的默认logger输出日志
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
-		m_autoStop = true;
+		//m_autoStop = true;
 
-		if (m_use_caller && m_thread_count == 0
-			&& (m_thread_substitude_caller_fiber->getState() == Fiber::TERMINAL || m_thread_substitude_caller_fiber->getState() == Fiber::INITIALIZE))
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << this << "stopped";
-			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
-		
-			m_stopping = true;
-
-			if (stopping())
-			{
-				return;
-			}
-		}
-
-		////如果使用了调用者线程,当前调度器应为本调度器，否则报错
-		//if (m_use_caller)
+		//if (m_use_caller && m_thread_count == 0
+		//	&& (m_thread_substitude_caller_fiber->getState() == Fiber::TERMINAL || m_thread_substitude_caller_fiber->getState() == Fiber::INITIALIZE))
 		//{
-		//	if (GetThis() != this)
+		//	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		//	event->getSstream() << this << "stopped";
+		//	//使用LoggerManager单例的默认logger输出日志
+		//	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		//
+		//	m_stopping = true;
+
+		//	if (stopping())
 		//	{
-		//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		//		Assert(event);
+		//		return;
 		//	}
 		//}
-		////如果未使用调用者线程,当前调度器不应为本调度器，否则报错
-		//else
-		//{
-		//	if (GetThis() == this)
-		//	{
-		//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		//		Assert(event);
-		//	}
-		//}
-		
-		m_stopping = true;
 
 		//对于线程池的每个线程都tickle()一下
 		for (size_t i = 0; i < m_thread_count; ++i)
@@ -165,15 +128,14 @@ namespace SchedulerSpace
 			tickle();
 		}
 
-		//如果使用了调用者线程
-		if (m_use_caller)
+		//调度器的调度工作业已结束，将其设为停止状态，接下来只需等待所有线程完成任务即可
+		m_stopping = true;
+
+		//如果使用了调用者线程且没有竣工，将替代者协程加入工作
+		if (m_use_caller && !is_completed())
 		{
-			if (!stopping())
-			{
-				//进行调用者的Scheduler::run()协程，使其行使与线程池内的线程相同的功能
-				//m_caller_fiber->call();
-				m_thread_substitude_caller_fiber->swapIn();
-			}
+			//进行调用者的Scheduler::run()协程，使其行使与线程池内的线程相同的功能
+			m_thread_substitude_caller_fiber->swapIn();
 		}
 
 		//调用者的Scheduler::run()协程执行完毕以后，再让调用者线程等待线程池的其他线程
@@ -191,17 +153,15 @@ namespace SchedulerSpace
 		}
 	}
 
-
+	//调度任务，将协程放入任务类，再将任务加入任务队列
 	void Scheduler::schedule(const shared_ptr<Fiber> fiber, const int thread_id)
 	{
 		//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
 		bool need_tickle = m_tasks.empty();
 		Task task(fiber, thread_id);
 		{
-			//先监视互斥锁，保护被schedule_nolock访问的成员
+			//先监视互斥锁，保护m_tasks
 			ScopedLock<Mutex> lock(m_mutex);
-			//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
-			//need_tickle = schedule_nolock(fiber, thread_id);
 			
 			//如果该任务非空，加入任务队列
 			if (task.m_fiber)
@@ -217,48 +177,13 @@ namespace SchedulerSpace
 		}
 	}
 
-	//void Scheduler::schedule(const function<void()> callback, const int thread_id)
-	//{
-	//	//用回调函数作参数创建一个新的协程
-	//	shared_ptr<Fiber> fiber(new Fiber(callback));
-
-	//	//是否需要通知调度器有任务了
-	//	bool need_tickle = false;
-	//	{
-	//		//先监视互斥锁，保护被schedule_nolock访问的成员
-	//		ScopedLock<Mutex> lock(m_mutex);
-	//		//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
-	//		need_tickle = schedule_nolock(fiber, thread_id);
-	//	}
-
-	//	if (need_tickle)
-	//	{
-	//		//通知调度器有任务了
-	//		tickle();
-	//	}
-	//}
 	void Scheduler::schedule(const function<void()> callback, const int thread_id)
 	{
 		//用回调函数作参数创建一个新的协程
 		shared_ptr<Fiber> fiber(new Fiber(callback));
+		//用该协程作为参数调用另一个版本
 		schedule(fiber, thread_id);
 	}
-
-	//bool Scheduler::schedule_nolock(const shared_ptr<Fiber> fiber, const int thread_id)
-	//{
-	//	//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
-	//	bool need_tickle = m_tasks.empty();
-	//	Task task(fiber, thread_id);
-
-	//	//如果该任务非空，加入任务队列
-	//	if (task.m_fiber)
-	//	{
-	//		m_tasks.push_back(task);
-	//	}
-
-	//	//返回是否需要通知调度器有任务了
-	//	return need_tickle;
-	//}
 
 	//通知调度器有任务了
 	void Scheduler::tickle()
@@ -278,7 +203,6 @@ namespace SchedulerSpace
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		//先将线程专属的当前调度器设置为本调度器（即使是调用者的m_caller_fiber也一样）
-		//setThis();
 		t_scheduler = this;
 
 		//如果当前线程id不等于调用者线程id,说明不论是否使用了调用者线程，至少这个线程不是调用者线程
@@ -287,7 +211,7 @@ namespace SchedulerSpace
 			//为当前线程创建主协程，并将其设为线程的调度器的主协程
 			t_scheduler_fiber = Fiber::GetThis().get();
 		}
-		//否则这个线程时调用者线程
+		//否则这个线程为调用者线程
 		else
 		{
 			//将调度器的主协程设置为调用者线程的Scheduler::run()协程，使其完成和线程池内线程的主协程相同的功能
@@ -365,7 +289,7 @@ namespace SchedulerSpace
 				tickle();
 			}
 
-			//如果有任务要做且任务包含的是协程且该协程不是终止状态或异常状态，则切换到该协程执行
+			//如果有任务要做且该任务的协程不是终止状态或异常状态，则切换到该协程执行
 			if (task.m_fiber&&(task.m_fiber->getState() != Fiber::TERMINAL && task.m_fiber->getState() != Fiber::EXCEPT))
 			{
 				//切换到该协程执行
@@ -379,8 +303,7 @@ namespace SchedulerSpace
 					schedule(task.m_fiber);
 				}
 				//否则如果该协程不是终止或异常状态，则将其设为挂起状态
-				else if (task.m_fiber->getState() != Fiber::TERMINAL
-					&& task.m_fiber->getState() != Fiber::EXCEPT)
+				else if (task.m_fiber->getState() != Fiber::TERMINAL && task.m_fiber->getState() != Fiber::EXCEPT)
 				{
 					task.m_fiber->setState(Fiber::HOLD);
 				}
@@ -388,10 +311,10 @@ namespace SchedulerSpace
 				//本次任务容器的功能已完成，将其重置
 				task.reset();
 			}
-			//如果没有做任何任务
+			//如果没有任何任务要做
 			else
 			{
-				//如果取到了任务，说明单纯是这个任务既不包含协程也不包含回调函数，是个空任务（摸会鱼）
+				//如果取到了任务，说明单纯是这个任务不包含协程，是个空任务（那就摸会儿鱼）
 				if (is_active)
 				{
 					//活跃的线程数量减一
@@ -419,12 +342,23 @@ namespace SchedulerSpace
 					//否则执行空闲协程
 					else
 					{
-						//空闲的线程数量加一
-						++m_idle_thread_count;
+						//空闲的线程数量加一;
+						{
+							//先监视互斥锁，保护m_idle_thread_count
+							ScopedLock<Mutex> lock(m_mutex);
+							++m_idle_thread_count;
+						}
+
 						//切换到空闲协程执行
 						idle_fiber->swapIn();
+
 						//空闲的线程数量减一
-						--m_idle_thread_count;
+						{
+							//先监视互斥锁，保护m_idle_thread_count
+							ScopedLock<Mutex> lock(m_mutex);
+							--m_idle_thread_count;
+						}
+					
 
 						//否则如果该协程不是终止或异常状态，则将其设为挂起状态
 						if (idle_fiber->getState() != Fiber::TERMINAL
@@ -438,12 +372,14 @@ namespace SchedulerSpace
 		}
 	}
 
-	//返回是否可以停止
-	bool Scheduler::stopping()
+	//返回是否竣工
+	bool Scheduler::is_completed()
 	{
-		//先监视互斥锁，保护
+		//先监视互斥锁，保护类成员
 		ScopedLock<Mutex> lock(m_mutex);
-		return m_autoStop && m_stopping && m_tasks.empty() && m_active_thread_count == 0;
+		//竣工的前提是调度器已关闭、任务列表为空且活跃线程数为0
+		//return m_autoStop && m_stopping && m_tasks.empty() && m_active_thread_count == 0;
+		return m_stopping && m_tasks.empty() && m_active_thread_count == 0;
 	}
 
 	//空闲协程的回调函数
@@ -454,18 +390,12 @@ namespace SchedulerSpace
 		//使用LoggerManager单例的默认logger输出日志
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-		//在可以停止之前不终止空闲协程而是将其挂起
-		while (!stopping())
+		//在竣工之前不终止空闲协程而是将其挂起
+		while (!is_completed())
 		{
 			Fiber::YieldTOHold();
 		}
 	}
-
-	////设置当前调度器为本调度器（线程专属）
-	//void Scheduler::setThis()
-	//{
-	//	t_scheduler = this;
-	//}
 
 
 

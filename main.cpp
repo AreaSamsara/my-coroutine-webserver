@@ -23,8 +23,8 @@ void test_fiber()
 	
 	if (--s_count >= 0)
 	{
-		//Scheduler::t_scheduler->schedule(&test_fiber);
-		Scheduler::t_scheduler->schedule(&test_fiber,GetThread_id());
+		Scheduler::t_scheduler->schedule(&test_fiber);
+		//Scheduler::t_scheduler->schedule(&test_fiber,GetThread_id());
 	}
 }
 
@@ -34,8 +34,8 @@ int main(int argc, char** argv)
 	event->setSstream("main begin");
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-	//Scheduler sche(3,true,"test");
-	Scheduler sche(3, false, "test");
+	Scheduler sche(3,true,"test");
+	//Scheduler sche(3, false, "test");
 
 	sche.start();
 
