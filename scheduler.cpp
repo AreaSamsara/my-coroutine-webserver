@@ -38,15 +38,15 @@ namespace SchedulerSpace
 			//为调用者线程创建主协程并将其设为调度器的主协程
 			t_scheduler_fiber = Fiber::GetThis().get();
 
-			//设置调用者线程的Scheduler::run协程(调用者线程有自己的任务，故应当创建协程来执行Scheduler::run()作为替代)
-			m_caller_fiber.reset(new Fiber(bind(&Scheduler::run, this),true));
+			//设置调用者线程的线程替代者协程(调用者线程有自己的任务，故应当创建协程来执行Scheduler::run()作为替代)
+			//m_thread_substitude_caller_fiber.reset(new Fiber(bind(&Scheduler::run, this),true));
+			m_thread_substitude_caller_fiber.reset(new Fiber(bind(&Scheduler::run, this)));
 			//将线程调度器主协程设置为调用者线程的m_caller_fiber(而不是调用者线程的主协程，m_caller_fiber同时用作调度器的主协程，便于子协程的切换)
 			//t_scheduler_fiber = m_caller_fiber.get();
-			//t_scheduler_fiber = Fiber::t_main_fiber.get();	//new	
 
 			//设置调用者线程的id
 			m_caller_thread_id = GetThread_id();
-			//将调用者线程的id加入调度器id集合
+			//将调用者线程的id加入调度器线程id集合
 			m_thread_ids.push_back(m_caller_thread_id);
 		}
 		//如果不使用调用者线程
@@ -118,12 +118,12 @@ namespace SchedulerSpace
 		m_autoStop = true;
 
 		if (m_use_caller && m_thread_count == 0
-			&& (m_caller_fiber->getState() == Fiber::TERMINAL || m_caller_fiber->getState() == Fiber::INITIALIZE))
+			&& (m_thread_substitude_caller_fiber->getState() == Fiber::TERMINAL || m_thread_substitude_caller_fiber->getState() == Fiber::INITIALIZE))
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << this << "stopped";
 			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 		
 			m_stopping = true;
 
@@ -172,7 +172,7 @@ namespace SchedulerSpace
 			{
 				//进行调用者的Scheduler::run()协程，使其行使与线程池内的线程相同的功能
 				//m_caller_fiber->call();
-				m_caller_fiber->swapIn();
+				m_thread_substitude_caller_fiber->swapIn();
 			}
 		}
 
@@ -220,7 +220,7 @@ namespace SchedulerSpace
 		//否则这个线程时调用者线程，将调度器的主协程设置为调用者线程的Scheduler::run()协程，使其完成和线程池内线程的主协程相同的功能
 		else
 		{
-			t_scheduler_fiber = m_caller_fiber.get();	//new
+			t_scheduler_fiber = m_thread_substitude_caller_fiber.get();	//new
 		}
 
 		//空闲协程
@@ -369,7 +369,6 @@ namespace SchedulerSpace
 				{
 					//活跃的线程数量减一
 					--m_active_thread_count;
-					//continue;
 				}
 				//否则说明任务队列真的没有任务了，执行空闲协程
 				else
@@ -382,12 +381,10 @@ namespace SchedulerSpace
 						//使用LoggerManager单例的默认logger输出日志
 						Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 
-
-						//if (m_use_caller)
 						//如果这个线程是调用者线程，则在退出循环之前应将调度器主协程设为调用者线程的主协程，否则调用者线程的Scheduler::run()协程将无法正常返回
 						if(GetThread_id() == m_caller_thread_id)
 						{
-							t_scheduler_fiber = Fiber::t_main_fiber.get();		//new
+							t_scheduler_fiber = Fiber::t_main_fiber.get();
 						}
 
 						break;
@@ -442,6 +439,9 @@ namespace SchedulerSpace
 	{
 		t_scheduler = this;
 	}
+
+
+
 
 	//获取当前调度器（线程专属）
 	Scheduler* Scheduler::GetThis()

@@ -145,7 +145,7 @@ namespace SchedulerSpace
 		//待执行的协程队列
 		list<Task> m_fibers;	
 		//调用者线程用于取代线程以执行Scheduler::run()的协程，仅使用调用者线程时有效
-		shared_ptr<Fiber> m_caller_fiber;
+		shared_ptr<Fiber> m_thread_substitude_caller_fiber;
 		//是否使用调用者线程
 		bool m_use_caller = true;
 		//调度器名称

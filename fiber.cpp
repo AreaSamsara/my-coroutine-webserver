@@ -14,13 +14,15 @@ namespace FiberSpace
 	using namespace SchedulerSpace;
 	using std::exception;
 
+	//class Fiber
 	//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
 	Fiber::Fiber()
 	{
 		//主协程初始状态即为执行状态
 		m_state = EXECUTE;
 		//将当前协程设置为主协程
-		SetThis(this);
+		//SetThis(this);
+		t_fiber = this;
 
 		//获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
@@ -38,7 +40,7 @@ namespace FiberSpace
 	}
 
 	//用于创建子协程的构造函数
-	Fiber::Fiber(function<void()> callback, bool use_caller, size_t stacksize)
+	Fiber::Fiber(function<void()> callback,size_t stacksize)
 		:m_id(++s_new_fiber_id), m_stacksize(stacksize), m_callback(callback)
 	{
 		//静态变量：协程数加一
@@ -54,23 +56,13 @@ namespace FiberSpace
 			Assert(event, "getcontext");
 		}
 
-		m_context.uc_link = nullptr;
-		m_context.uc_stack.ss_sp = m_stack;
-		m_context.uc_stack.ss_size = m_stacksize;
+		//设置ucontext_t结构体的成员变量
+		m_context.uc_link = nullptr;		//uc_link设为nullptr，则在当前上下文结束后，系统将终止
+		m_context.uc_stack.ss_sp = m_stack;		//将指向栈底的指针指向m_stack（在Unix系统中，栈是从高地址向低地址增长的，所以这个指针实际上指向的是栈的顶部）
+		m_context.uc_stack.ss_size = m_stacksize;	//设置栈的大小
 
 		//设置语境,0表示不传递任何参数
 		makecontext(&m_context, &Fiber::MainFunction, 0);
-		//if (!use_caller)
-		//{
-		//	//设置语境,0表示不传递任何参数
-		//	makecontext(&m_context, &Fiber::MainFunction, 0);
-		//}
-		//else
-		//{
-		//	//设置语境,0表示不传递任何参数
-		//	//makecontext(&m_context, &Fiber::CallerMainFunction, 0);
-		//	makecontext(&m_context, &Fiber::MainFunction, 0);
-		//}
 
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::Fiber id=" << m_id;
@@ -92,9 +84,10 @@ namespace FiberSpace
 				Assert(event);
 			}
 			
+			//释放栈内存
 			MallocStackAllocator::Deallocate(m_stack, m_stacksize);
 		}
-		//否则要销毁的是主协程
+		//否则说明要销毁的是主协程
 		else
 		{
 			//主协程不应具有回调函数，也不应该不处于执行状态，否则报错
@@ -104,11 +97,11 @@ namespace FiberSpace
 				Assert(event);
 			}
 
-			Fiber* current = t_fiber;
 			//如果当前协程正是本协程，销毁之
-			if (current == this)
+			if(t_fiber == this)
 			{
-				SetThis(nullptr);
+				//SetThis(nullptr);
+				t_fiber = nullptr;
 			}
 		}
 
@@ -117,11 +110,10 @@ namespace FiberSpace
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 	}
 
-	//重置协程函数和状态
-	//INIT，TERM
+	//重置协程函数和状态，用于免去内存的再分配，在空闲的已分配内存上直接创建新协程
 	void Fiber::reset(function<void()> callback)
 	{
-		//要重置的协程栈不应为空（不应该为主协程），且必须处于终止、初始化或异常的状态中，否则报错
+		//要重置的协程栈不应为空（即该协程不应该为主协程），且必须处于终止、初始化或异常的状态中，否则报错
 		if (!m_stack || (m_state != TERMINAL && m_state != INITIALIZE && m_state != EXCEPT))
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -131,18 +123,19 @@ namespace FiberSpace
 		//重新设置回调函数
 		m_callback = callback;
 
-		//获取当前语境，成功则返回0，否则报错
+		//重新获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event, "getcontext");
 		}
 
-		m_context.uc_link = nullptr;
-		m_context.uc_stack.ss_sp = m_stack;
-		m_context.uc_stack.ss_size = m_stacksize;
+		//重新设置ucontext_t结构体的成员变量
+		m_context.uc_link = nullptr;		//uc_link设为nullptr，则在当前上下文结束后，系统将终止
+		m_context.uc_stack.ss_sp = m_stack;		//将指向栈底的指针指向m_stack（在Unix系统中，栈是从高地址向低地址增长的，所以这个指针实际上指向的是栈的顶部）
+		m_context.uc_stack.ss_size = m_stacksize;	//设置栈的大小
 
-		//设置语境,0表示不传递任何参数
+		//重新设置语境,0表示不传递任何参数
 		makecontext(&m_context, &Fiber::MainFunction, 0);
 
 		//重设状态为初始化状态
@@ -153,7 +146,8 @@ namespace FiberSpace
 	void Fiber::swapIn()
 	{
 		//将当前协程切换为本协程
-		SetThis(this);
+		//SetThis(this);
+		t_fiber = this;
 
 		//协程状态不应该为执行状态，否则报错
 		if (m_state == EXECUTE)
@@ -162,7 +156,7 @@ namespace FiberSpace
 			Assert(event);
 		}
 
-		//将状态设置为执行状态
+		//将协程状态设置为执行状态
 		m_state = EXECUTE;
 
 		//保存调度器的主协程语境，切换到本协程语境，成功返回0，否则报错
@@ -178,7 +172,8 @@ namespace FiberSpace
 	void Fiber::swapOut()
 	{
 		//将当前协程设置为调度器的主协程
-		SetThis(Scheduler::GetMainFiber());
+		//SetThis(Scheduler::GetMainFiber());
+		t_fiber = Scheduler::GetMainFiber();
 
 		//保存本协程语境，切换到主协程语境，成功返回0，否则报错
 		if (swapcontext(&m_context, &Scheduler::GetMainFiber()->m_context) != 0)
@@ -225,13 +220,13 @@ namespace FiberSpace
 	//}
 
 
-	//设置当前协程为fiber
-	void Fiber::SetThis(Fiber* fiber)
-	{
-		t_fiber = fiber;
-	}
+	////设置当前协程为fiber
+	//void Fiber::SetThis(Fiber* fiber)
+	//{
+	//	t_fiber = fiber;
+	//}
 
-	//获取当前协程
+	//获取当前协程，并仅在第一次调用时创建主协程
 	shared_ptr<Fiber> Fiber::GetThis()
 	{
 		//如果当前协程不存在，说明是第一次调用，则先创建主协程
@@ -240,7 +235,7 @@ namespace FiberSpace
 			//调用私有的默认构造函数创建主协程
 			shared_ptr<Fiber> main_fiber(new Fiber);
 
-			//主协程创建后，当前协程应当被设置为主协程，否则报错
+			//主协程创建后，当前协程应当在私有的默认构造函数内被设置为主协程，否则报错
 			if (t_fiber != main_fiber.get())
 			{
 				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -255,7 +250,7 @@ namespace FiberSpace
 		return t_fiber->shared_from_this();
 	}
 
-	//协程切换到后台并设置为Ready状态
+	//将协程切换到后台并设置为Ready状态
 	void Fiber::YieldTOReady()
 	{
 		//获取当前协程
@@ -266,7 +261,7 @@ namespace FiberSpace
 		current->swapOut();
 	}
 
-	//协程切换到后台并设置为Hold状态
+	//将协程切换到后台并设置为Hold状态
 	void Fiber::YieldTOHold()
 	{
 		//获取当前协程
@@ -277,11 +272,11 @@ namespace FiberSpace
 		current->swapOut();
 	}
 
-	//获取总协程数
-	uint64_t Fiber::GetFiber_count()
-	{
-		return s_fiber_count;
-	}
+	////获取总协程数
+	//uint64_t Fiber::GetFiber_count()
+	//{
+	//	return s_fiber_count;
+	//}
 
 	//获取当前协程id
 	uint64_t Fiber::GetFiber_id()
@@ -297,6 +292,7 @@ namespace FiberSpace
 	//协程的主运行函数
 	void Fiber::MainFunction()
 	{
+		//获取当前协程
 		shared_ptr<Fiber> current = GetThis();
 		//当前协程应该为子协程，而不应当为空指针，否则报错
 		if (current == nullptr)
@@ -311,7 +307,7 @@ namespace FiberSpace
 			current->m_callback();
 			//执行完回调函数后将其清空
 			current->m_callback = nullptr;
-			//将当前协程状态设置为终止状态
+			//执行完后将当前协程状态设置为终止状态
 			current->m_state = TERMINAL;
 		}
 		catch(exception& ex)

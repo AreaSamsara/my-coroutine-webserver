@@ -35,19 +35,18 @@ namespace FiberSpace
 		Fiber();
 	public:
 		//用于创建子协程的构造函数
-		Fiber(function<void()> callback, bool use_caller = false, size_t stacksize = 1024 * 1024);
+		Fiber(function<void()> callback, size_t stacksize = 1024 * 1024);
 		~Fiber();
 
-		//重置协程函数和状态
-		//INIT，TERM
+		//重置协程函数和状态，用于免去内存的再分配，在空闲的已分配内存上直接创建新协程
 		void reset(function<void()> callback);
-		//切换到当前协程执行
+		//切换到本协程执行
 		void swapIn();
-		//切换到后台执行
+		//将本协程切换到后台
 		void swapOut();
 
-		void call();
-		void back();
+		//void call();
+		//void back();
 
 		//获取协程id
 		uint64_t getId()const { return m_id; }
@@ -57,31 +56,30 @@ namespace FiberSpace
 		//设置协程状态
 		void setState(State state) { m_state = state; }
 	public:
-		//设置当前协程
-		static void SetThis(Fiber* fiber);
-		//获取当前协程
+		////设置当前协程
+		//static void SetThis(Fiber* fiber);
+		//获取当前协程，并仅在第一次调用时创建主协程
 		static shared_ptr<Fiber> GetThis();
 
-		//协程切换到后台并设置为Ready状态
+		//将协程切换到后台并设置为Ready状态
 		static void YieldTOReady();
-		//协程切换到后台并设置为Hold状态
+		//将协程切换到后台并设置为Hold状态
 		static void YieldTOHold();
 
-		//获取总协程数
-		static uint64_t GetFiber_count();
+		////获取总协程数
+		//static uint64_t GetFiber_count();
 		//获取当前协程id
 		static uint64_t GetFiber_id();
 
 		//协程的主运行函数
 		static void MainFunction();
-
-		static void CallerMainFunction();
+		//static void CallerMainFunction();
 	private:
 		//协程id
 		uint64_t m_id = 0;
 		//协程状态
 		State m_state = INITIALIZE;
-		//协程栈大小
+		//协程栈大小，默认为0（因为主协程的栈大小为0）
 		uint32_t m_stacksize = 0;
 		//协程栈
 		void* m_stack = nullptr;
@@ -101,18 +99,18 @@ namespace FiberSpace
 		static thread_local shared_ptr <Fiber> t_main_fiber;
 	};
 
-
+	//栈内存分配类
 	class MallocStackAllocator
 	{
 	public:
-		static void* Allocate(size_t size)
+		static void* Allocate(const size_t size)
 		{
 			return malloc(size);
 		}
 
-		static void Deallocate(void* vp, size_t size)
+		static void Deallocate(void* memory, const size_t size)
 		{
-			return free(vp);
+			return free(memory);
 		}
 	};
 }
