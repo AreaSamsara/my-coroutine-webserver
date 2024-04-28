@@ -45,9 +45,6 @@ namespace FiberSpace
 		//将本协程切换到后台
 		void swapOut();
 
-		//void call();
-		//void back();
-
 		//获取协程id
 		uint64_t getId()const { return m_id; }
 
@@ -56,8 +53,6 @@ namespace FiberSpace
 		//设置协程状态
 		void setState(State state) { m_state = state; }
 	public:
-		////设置当前协程
-		//static void SetThis(Fiber* fiber);
 		//获取当前协程，并仅在第一次调用时创建主协程
 		static shared_ptr<Fiber> GetThis();
 
@@ -66,14 +61,11 @@ namespace FiberSpace
 		//将协程切换到后台并设置为Hold状态
 		static void YieldTOHold();
 
-		////获取总协程数
-		//static uint64_t GetFiber_count();
 		//获取当前协程id
 		static uint64_t GetFiber_id();
 
 		//协程的主运行函数
 		static void MainFunction();
-		//static void CallerMainFunction();
 	private:
 		//协程id
 		uint64_t m_id = 0;

@@ -69,7 +69,7 @@ namespace SchedulerSpace
 			Assert(event);
 		}
 		//如果线程的当前调度器为本调度器，将其置空
-		if (GetThis() == this)
+		if (t_scheduler == this)
 		{
 			t_scheduler = nullptr;
 		}
@@ -441,18 +441,6 @@ namespace SchedulerSpace
 	}
 
 
-
-
-	//获取当前调度器（线程专属）
-	Scheduler* Scheduler::GetThis()
-	{
-		return t_scheduler;
-	}
-	//获取当前调度器的主协程（线程专属）
-	Fiber* Scheduler::GetMainFiber()
-	{
-		return t_scheduler_fiber;
-	}
 
 	//当前调度器（线程专属）
 	thread_local Scheduler* Scheduler::t_scheduler = nullptr;

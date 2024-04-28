@@ -65,11 +65,6 @@ namespace SchedulerSpace
 				tickle();
 			}
 		}
-	public:
-		//获取当前调度器（线程专属）
-		static Scheduler* GetThis();
-		//获取当前调度器的主协程（线程专属）
-		static Fiber* GetMainFiber();
 	protected:
 		//通知调度器有任务了
 		virtual void tickle();
