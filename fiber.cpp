@@ -66,7 +66,8 @@ namespace FiberSpace
 		else
 		{
 			//设置语境,0表示不传递任何参数
-			makecontext(&m_context, &Fiber::CallerMainFunction, 0);
+			//makecontext(&m_context, &Fiber::CallerMainFunction, 0);
+			makecontext(&m_context, &Fiber::MainFunction, 0);
 		}
 
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -111,7 +112,7 @@ namespace FiberSpace
 
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "Fiber::~Fiber id=" << m_id;
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 	}
 
 	//重置协程函数和状态

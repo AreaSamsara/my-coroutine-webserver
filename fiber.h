@@ -94,7 +94,7 @@ namespace FiberSpace
 		static atomic<uint64_t> s_new_fiber_id;
 		//协程总数（静态原子类型，保证读写的线程安全）
 		static atomic<uint64_t> s_fiber_count;
-
+	public:
 		//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 		static thread_local Fiber* t_fiber;
 		//每个线程专属的主协程

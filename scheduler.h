@@ -77,6 +77,7 @@ namespace SchedulerSpace
 		void run();
 		//返回是否可以停止
 		virtual bool stopping();
+		//空闲协程的回调函数
 		virtual void idle();
 		//设置当前调度器为本调度器（线程专属）
 		void setThis();
@@ -86,53 +87,54 @@ namespace SchedulerSpace
 		{
 			//如果原本任务队列为空，则需要在添加任务后通知调度器有任务了
 			bool need_tickle = m_fibers.empty();
-			Fiber_and_Thread fiber_and_thread(fiber_or_callback, thread_id);
+			Task task(fiber_or_callback, thread_id);
 
 			//如果该任务非空，加入任务队列
-			if (fiber_and_thread.m_fiber || fiber_and_thread.m_callback)
+			if (task.m_fiber || task.m_callback)
 			{
-				m_fibers.push_back(fiber_and_thread);
+				m_fibers.push_back(task);
 			}
 
 			//返回是否需要通知调度器有任务了
 			return need_tickle;
 		}
 	private:
-		class Fiber_and_Thread
+		class Task
 		{
 		public:
 			//协程
 			shared_ptr<Fiber> m_fiber;
 			//回调函数
 			function<void()> m_callback;
-			//线程id
-			int m_thread_id;
+			//负责任务的线程的id（为-1时表示所有线程都有义务做这个任务）
+			int m_thread_in_charge_id;
 		public:
-			Fiber_and_Thread(shared_ptr<Fiber> fiber,const int thread_id)
-				:m_fiber(fiber),m_thread_id(thread_id){}
+			Task(shared_ptr<Fiber> fiber,const int thread_id)
+				:m_fiber(fiber),m_thread_in_charge_id(thread_id){}
 
-			Fiber_and_Thread(shared_ptr<Fiber>* fiber,const int thread_id)
-				:m_thread_id(thread_id)
+			Task(shared_ptr<Fiber>* fiber,const int thread_id)
+				:m_thread_in_charge_id(thread_id)
 			{
 				m_fiber.swap(*fiber);
 			}
 
-			Fiber_and_Thread(function<void()> callback, const int thread_id)
-				:m_callback(callback), m_thread_id(thread_id) {}
+			Task(function<void()> callback, const int thread_id)
+				:m_callback(callback), m_thread_in_charge_id(thread_id) {}
 
-			Fiber_and_Thread(function<void()>* callback, const int thread_id)
-				:m_thread_id(thread_id)
+			Task(function<void()>* callback, const int thread_id)
+				:m_thread_in_charge_id(thread_id)
 			{
 				m_callback.swap(*callback);
 			}
 
-			Fiber_and_Thread():m_thread_id(-1){}
+			Task():m_thread_in_charge_id(-1){}
 
+			//重置任务
 			void reset()
 			{
 				m_fiber = nullptr;
 				m_callback = nullptr;
-				m_thread_id = -1;
+				m_thread_in_charge_id = -1;
 			}
 		};
 	private:
@@ -141,9 +143,11 @@ namespace SchedulerSpace
 		//线程池
 		vector<shared_ptr<Thread>> m_threads;
 		//待执行的协程队列
-		list<Fiber_and_Thread> m_fibers;	
-		//调度器的主协程，仅使用调用者线程时有效
-		shared_ptr<Fiber> m_main_fiber;
+		list<Task> m_fibers;	
+		//调用者线程用于取代线程以执行Scheduler::run()的协程，仅使用调用者线程时有效
+		shared_ptr<Fiber> m_caller_fiber;
+		//是否使用调用者线程
+		bool m_use_caller = true;
 		//调度器名称
 		string m_name;						
 	protected:
@@ -159,7 +163,12 @@ namespace SchedulerSpace
 		bool m_stopping = true;
 		//是否自动停止
 		bool m_autoStop = false;
-		//主线程（调用者线程）的id，仅使用调用者线程时有效
-		int m_main_thread_id = 0;
+		//调用者线程的id，仅使用调用者线程时有效
+		int m_caller_thread_id = 0;
+	public:
+		//当前调度器（线程专属）
+		static thread_local Scheduler* t_scheduler;
+		//当前调度器的主协程（线程专属）
+		static thread_local Fiber* t_scheduler_fiber;
 	};
 }
