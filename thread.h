@@ -22,7 +22,7 @@ namespace ThreadSpace
 	class Thread
 	{
 	public:
-		Thread(function<void()> callback, const string& name);
+		Thread(const function<void()>& callback, const string& name);
 		//析构Thread对象并将线程设置为分离状态
 		~Thread();
 

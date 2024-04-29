@@ -4,7 +4,7 @@
 namespace ThreadSpace
 {
 	//class Thread
-	Thread::Thread(function<void()> callback, const string& name) :m_callback(callback), m_name(name)
+	Thread::Thread(const function<void()>& callback, const string& name) :m_callback(callback), m_name(name)
 	{
 		//如果输入的名称为空字符串，改为"UNKNOW"
 		if (name.empty())

@@ -39,7 +39,7 @@ namespace FiberSpace
 	}
 
 	//用于创建子协程的构造函数
-	Fiber::Fiber(function<void()> callback,size_t stacksize)
+	Fiber::Fiber(const function<void()>& callback, const size_t stacksize)
 		:m_id(++s_new_fiber_id), m_stacksize(stacksize), m_callback(callback)
 	{
 		//静态变量：协程数加一
@@ -109,7 +109,7 @@ namespace FiberSpace
 	}
 
 	//重置协程函数和状态，用于免去内存的再分配，在空闲的已分配内存上直接创建新协程
-	void Fiber::reset(function<void()> callback)
+	void Fiber::reset(const function<void()>& callback)
 	{
 		//要重置的协程栈不应为空（即该协程不应该为主协程），且必须处于终止、初始化或异常的状态中，否则报错
 		if (!m_stack || (m_state != TERMINAL && m_state != INITIALIZE && m_state != EXCEPT))
@@ -208,7 +208,7 @@ namespace FiberSpace
 	}
 
 	//将协程切换到后台并设置为Ready状态
-	void Fiber::YieldTOReady()
+	void Fiber::YieldToReady()
 	{
 		//获取当前协程
 		shared_ptr<Fiber> current = GetThis();
@@ -219,7 +219,7 @@ namespace FiberSpace
 	}
 
 	//将协程切换到后台并设置为Hold状态
-	void Fiber::YieldTOHold()
+	void Fiber::YieldToHold()
 	{
 		//获取当前协程
 		shared_ptr<Fiber> current = GetThis();

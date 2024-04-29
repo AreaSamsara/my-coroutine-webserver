@@ -5,7 +5,7 @@ namespace MutexSpace
 	//class Semaphore
 
 	//创建Semaphore对象并初始化信号量,count为信号量初始值
-	Semaphore::Semaphore(uint32_t count)
+	Semaphore::Semaphore(const uint32_t count)
 	{
 		//初始化信号量，成功则返回0，否则报错
 		if (sem_init(&m_semaphore, 0, count) != 0)	//参数0表示在进程内部使用，count为信号量初始值

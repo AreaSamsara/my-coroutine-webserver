@@ -16,11 +16,11 @@ namespace MutexSpace
 	/*
 	* 类关系：
 	* ScopedLock,ReadScopedLock,WriteScopedLock为监视者系列，用于管理互斥锁系列
-	* 事先创建互斥锁对象，在需要锁定时再用其创建监视者对象，监视者对象生命周期结束时自动解锁
+	* 事先创建互斥锁对象，在需要锁定时再用其创建监视者对象操纵互斥锁，监视者对象生命周期结束时自动解锁
 	*/
 	/*
 	* 互斥锁系统调用方法：
-	* 1.从互斥锁系列和监视者系列中分别选择合适的类，定义互斥锁对象
+	* 1.从互斥锁系列和监视者系列中分别选择合适的类，事先创建互斥锁对象
 	* 2.再将互斥锁类作为监视者类的模板参数，用互斥锁对象创建监视者对象
 	* 3.监视者对象一经创建便执行锁定功能，直到生命周期结束时自动解锁
 	*/
@@ -342,7 +342,7 @@ namespace MutexSpace
 	{
 	public:
 		//创建Semaphore对象并初始化信号量,count为信号量初始值
-		Semaphore(uint32_t count = 0);
+		Semaphore(const uint32_t count = 0);
 		//析构Semaphore对象并销毁信号量
 		~Semaphore();
 

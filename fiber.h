@@ -11,7 +11,16 @@ namespace FiberSpace
 	using std::function;
 	using std::atomic;
 
-	class Fiber : public enable_shared_from_this<Fiber>
+	/*
+	* 协程类调用方法（一般由协程调度器直接调用）：
+	* 1.先在线程内首次调用Fiber::GetThis()静态方法以创建栈为空的主协程，作为操控子协程的媒介
+	* 2.再在线程内调用构造函数创建子协程，为其分配栈和回调函数，并使用swapIn()方法切换到该协程执行
+	* 3.协程的回调函数执行完毕以后会自动使用swapOut()方法切换回当前线程的主协程
+	* 4.*如果需要实现协程的灵活切换，可以在回调函数内部使用swapOut()、YieldToReady()、YieldToHold()等方法
+	*/
+
+	//协程类（公有继承自enable_shared_from_this类，以使用shared_from_this()方法）
+	class Fiber : public enable_shared_from_this<Fiber>		
 	{
 	public:
 		//表示协程状态的枚举类型
@@ -35,11 +44,11 @@ namespace FiberSpace
 		Fiber();
 	public:
 		//用于创建子协程的构造函数
-		Fiber(function<void()> callback, size_t stacksize = 1024 * 1024);
+		Fiber(const function<void()>& callback, const size_t stacksize = 1024 * 1024);
 		~Fiber();
 
 		//重置协程函数和状态，用于免去内存的再分配，在空闲的已分配内存上直接创建新协程
-		void reset(function<void()> callback);
+		void reset(const function<void()>& callback);
 		//切换到本协程执行
 		void swapIn();
 		//将本协程切换到后台
@@ -51,15 +60,15 @@ namespace FiberSpace
 		//获取协程状态
 		State getState()const { return m_state; }
 		//设置协程状态
-		void setState(State state) { m_state = state; }
+		void setState(const State state) { m_state = state; }
 	public:
 		//获取当前协程，并仅在第一次调用时创建主协程
 		static shared_ptr<Fiber> GetThis();
 
 		//将协程切换到后台并设置为Ready状态
-		static void YieldTOReady();
+		static void YieldToReady();
 		//将协程切换到后台并设置为Hold状态
-		static void YieldTOHold();
+		static void YieldToHold();
 
 		//获取当前协程id
 		static uint64_t GetFiber_id();
