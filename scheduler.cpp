@@ -33,12 +33,6 @@ namespace SchedulerSpace
 			//将调用者线程的id加入调度器线程id集合
 			m_thread_ids.push_back(m_caller_thread_id);
 		}
-		//如果不使用调用者线程
-		//else
-		//{
-		//	//将调用者线程的id设置为无效值（-1）
-		//	m_caller_thread_id = -1;
-		//}
 
 		//设置线程数（放在构造函数的末尾以保证准确性）
 		m_thread_count = thread_count;

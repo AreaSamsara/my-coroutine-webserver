@@ -67,6 +67,9 @@ namespace SchedulerSpace
 		virtual void tickle();
 		//返回是否竣工
 		virtual bool is_completed();
+
+		//获取空闲线程数量
+		virtual bool getIdle_thread_count()const { return m_idle_thread_count; }
 	private:
 		//任务类
 		class Task

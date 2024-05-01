@@ -138,7 +138,7 @@ namespace LogSpace
 		list<shared_ptr<LogAppender>> m_appenders;	//appender集合
 		shared_ptr<LogFormatter> m_formatter;		//日志格式器
 
-		SpinLock m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁（自旋锁）
 	public:
 		//默认日志格式模式
 		const static string Default_FormatPattern;
@@ -175,7 +175,7 @@ namespace LogSpace
 		LogLevel::Level m_level;	//日志级别
 		shared_ptr<LogFormatter> m_formatter;	//日志格式器
 
-		SpinLock m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁（自旋锁）
 	};
 
 	//输出到控制台的Appender（公有继承自LogAppender）
@@ -260,7 +260,7 @@ namespace LogSpace
 		map<string, shared_ptr<Logger>> m_loggers;	//使用logger_name为键进行查找的logger集合
 		shared_ptr<Logger> m_default_logger;	//默认logger
 
-		SpinLock m_mutex;		//互斥锁
+		SpinLock m_mutex;		//互斥锁（自旋锁）
 	};
 }
 
