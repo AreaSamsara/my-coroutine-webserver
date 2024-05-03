@@ -14,8 +14,6 @@ void test_fiber()
 	log_event->getSstream() << "test_fiber";
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 
-
-
 	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	fcntl(server_socket, F_SETFL, O_NONBLOCK);
 
@@ -25,10 +23,12 @@ void test_fiber()
 	server_addr.sin_port = htons(80);
 	inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr.s_addr);
 
-	if (!connect(server_socket, (sockaddr*)(&server_addr), sizeof(server_addr)))
+	//如果成功连接
+	if (connect(server_socket, (sockaddr*)(&server_addr), sizeof(server_addr))==0)
 	{
 
 	}
+	//如果connect()函数正在进行但还未完成
 	else if (errno == EINPROGRESS)
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -53,6 +53,7 @@ void test_fiber()
 			}
 		);
 	}
+	//否则说明出现了其他错误
 	else
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
@@ -60,14 +61,12 @@ void test_fiber()
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 	}
 
-	//iom.addEvent(server_socket, IOManager::READ, connect_notify);
-	//iom.addEvent(server_socket, IOManager::WRITE, connect_notify);
 }
 
 void test1()
 {
-	//IOManager iom(1,true,"test");
-	IOManager iom(2, false, "test");
+	IOManager iom(1,true,"test");
+	//IOManager iom(2, false, "test");
 	iom.schedule(&test_fiber);
 }
 
