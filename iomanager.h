@@ -70,7 +70,7 @@ namespace IOManagerSpace
 		//epoll文件描述符
 		int m_epoll_file_descriptor = 0;
 		//通信管道pipe文件描述符,第一个元素是pipe的读取端，第二个元素是pipe的写入端（半双工管道）
-		int m_tickle_file_descriptors[2];
+		int m_pipe_file_descriptors[2];
 
 		//当前等待执行的事件数量（原子类型，保证读写的线程安全）
 		atomic<size_t> m_pending_event_count = { 0 };

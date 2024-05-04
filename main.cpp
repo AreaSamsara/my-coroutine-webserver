@@ -15,6 +15,7 @@ void test_fiber()
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 
 	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+	//将server_socket设置为非阻塞状态
 	fcntl(server_socket, F_SETFL, O_NONBLOCK);
 
 	sockaddr_in server_addr;
@@ -48,8 +49,8 @@ void test_fiber()
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				log_event->getSstream() << "write callback";
 				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-				//close(server_socket);
 				IOManager::GetThis()->cancelEvent(server_socket, IOManager::READ);
+				close(server_socket);
 			}
 		);
 	}
@@ -65,8 +66,8 @@ void test_fiber()
 
 void test1()
 {
-	IOManager iom(1,true,"test");
-	//IOManager iom(2, false, "test");
+	//IOManager iom(1,true,"test");
+	IOManager iom(2, false, "test");
 	iom.schedule(&test_fiber);
 }
 

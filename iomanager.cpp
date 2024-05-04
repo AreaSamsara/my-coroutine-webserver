@@ -74,47 +74,51 @@ namespace IOManagerSpace
 
 		
 		//pipe()创建管道，成功返回0，失败返回-1；创建失败则报错
-		if (pipe(m_tickle_file_descriptors) != 0)
+		if (pipe(m_pipe_file_descriptors) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 
-		epoll_event event;
-		//清空event变量
-		memset(&event, 0, sizeof(epoll_event));
+		//设置关注通信管道的读取端的epoll事件，默认添加到epoll文件描述符中
+		epoll_event epollevent;
+		//清空epollevent变量
+		memset(&epollevent, 0, sizeof(epoll_event));
 		//将event设置为可读、边缘触发模式（只有在状态发生变化的时候才会激活通知，不重复通知）
-		event.events = EPOLLIN | EPOLLET;
+		epollevent.events = EPOLLIN | EPOLLET;
 		//关注通信管道的读取端
-		event.data.fd = m_tickle_file_descriptors[0];
+		epollevent.data.fd = m_pipe_file_descriptors[0];
 
 		//将通信管道的读取端设置为非阻塞模式，成功返回0，失败返回-1；失败则报错
-		if (fcntl(m_tickle_file_descriptors[0], F_SETFL, O_NONBLOCK) != 0)
+		if (fcntl(m_pipe_file_descriptors[0], F_SETFL, O_NONBLOCK) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 		
 		//将通信管道的读取端的event事件添加到epoll文件描述符中，成功返回0，失败返回-1；失败则报错
-		if (epoll_ctl(m_epoll_file_descriptor, EPOLL_CTL_ADD, m_tickle_file_descriptors[0], &event) != 0)
+		if (epoll_ctl(m_epoll_file_descriptor, EPOLL_CTL_ADD, m_pipe_file_descriptors[0], &epollevent) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 
+		//设置文件描述符语境容器大小
 		resizeFile_descriptor_contexts(32);
 
 		//IO管理者对象创建完毕后，默认启动
 		start();
 	}
+
 	IOManager::~IOManager()
 	{
 		//IO管理者对象开始析构时，默认停止调度器
 		stop();
+
 		//关闭文件描述符
 		close(m_epoll_file_descriptor);
-		close(m_tickle_file_descriptors[0]);
-		close(m_tickle_file_descriptors[1]);
+		close(m_pipe_file_descriptors[0]);
+		close(m_pipe_file_descriptors[1]);
 
 		//清空文件描述符语境容器
 		for (size_t i = 0; i < m_file_descriptor_contexts.size(); ++i)
@@ -130,27 +134,43 @@ namespace IOManagerSpace
 	int IOManager::addEvent(const int file_descriptor, const Event event, function<void()> callback)
 	{
 		//文件描述符语境
-		FileDescriptorContext* file_descriptor_context;
-		//先监视互斥锁，保护
-		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-
-		//如果文件描述符语境容器大小足够，则将文件描述符语境从中取出
-		if ((int)m_file_descriptor_contexts.size() > file_descriptor)
+		FileDescriptorContext* file_descriptor_context = nullptr;
+		
 		{
-			file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
-			readlock.unlock();
+			////先监视互斥锁，保护
+			//ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
+			////如果文件描述符语境容器大小足够，则将文件描述符语境从中取出
+			//if (m_file_descriptor_contexts.size() > file_descriptor)
+			//{
+			//	file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
+			//	//readlock.unlock();
+			//}
+			////否则先扩充容器再取出
+			//else
+			//{
+			//	//先解锁读取锁，再设置写入锁
+			//	readlock.unlock();
+			//	//先监视互斥锁，保护
+			//	WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
+			//	//每次将大小扩充到需求值的1.5倍
+			//	resizeFile_descriptor_contexts(file_descriptor * 1.5);
+			//	file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
+			//}
 		}
-		//否则先扩充容器再取出
-		else
+		//如果文件描述符语境容器大小不足，则先将容器扩充
+		if (m_file_descriptor_contexts.size() <= file_descriptor)
 		{
-			readlock.unlock();
 			//先监视互斥锁，保护
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 			//每次将大小扩充到需求值的1.5倍
 			resizeFile_descriptor_contexts(file_descriptor * 1.5);
+		}
+		{
+			//先监视互斥锁，保护
+			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
+			//将文件描述符语境从容器中取出
 			file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
 		}
-
 
 		//先监视互斥锁，保护
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
@@ -164,13 +184,12 @@ namespace IOManagerSpace
 			Assert(log_event,message_sstream.str());
 		}
 
-
-
 		//操作码：如果文件描述符语境已经注册的事件不为空，则执行修改事件；否则执行添加事件
 		int operation_code = file_descriptor_context->m_events ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
 
 		//设置epoll事件
 		epoll_event epollevent;
+		//将epollevent设置为边缘触发模式，并设置已注册的事件
 		epollevent.events = EPOLLET | file_descriptor_context->m_events | event;
 		epollevent.data.ptr = file_descriptor_context;
 
@@ -190,7 +209,7 @@ namespace IOManagerSpace
 		//当前等待执行的事件数量加一
 		++m_pending_event_count;
 
-		//添加event到已注册事件中
+		//添加event到已注册事件中（注册在控制epoll之后执行，以确保epoll控制已成功）
 		file_descriptor_context->m_events = (Event)(file_descriptor_context->m_events | event);
 
 
@@ -443,7 +462,7 @@ namespace IOManagerSpace
 		if (getIdle_thread_count() > 0)
 		{
 			//将"T"写入通信管道的写入端
-			int return_value = write(m_tickle_file_descriptors[1], "T", 1);
+			int return_value = write(m_pipe_file_descriptors[1], "T", 1);
 			//如果write()失败则报错
 			if (return_value != 1)
 			{
@@ -499,10 +518,10 @@ namespace IOManagerSpace
 				epoll_event& epollevent = epollevents[i];
 
 				//如果该epoll事件关注了通信管道的读取端，则只需读取（清空）上面的所有数据，结束本次循环
-				if (epollevent.data.fd == m_tickle_file_descriptors[0])
+				if (epollevent.data.fd == m_pipe_file_descriptors[0])
 				{
 					uint8_t dummy = 0;
-					while (read(m_tickle_file_descriptors[0], &dummy, 1) == 1);
+					while (read(m_pipe_file_descriptors[0], &dummy, 1) == 1);
 
 					continue;
 				}
