@@ -71,8 +71,28 @@ void test1()
 	iom.schedule(&test_fiber);
 }
 
+shared_ptr<Timer> s_timer;
+
+void test_timer()
+{
+	IOManager iom(2, "test");
+	s_timer = iom.addTimer(1000, []()
+		{
+			static int i = 0;
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			log_event->getSstream() << "hello timer i=" << i;
+			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+			if (++i == 3)
+			{
+				//s_timer->reset(2000,true);
+				//s_timer->cancel();
+			}
+		},true);
+}
+
 int main(int argc, char** argv)
 {
-	test1();
+	//test1();
+	test_timer();
 	return 0;
 }

@@ -38,24 +38,32 @@ namespace SchedulerSpace
 		void schedule(const shared_ptr<Fiber> fiber, const int thread_id = -1);
 		void schedule(const function<void()>& callback, const int thread_id = -1);
 		template<class InputIterator>
-		void schedule(InputIterator begin, InputIterator end)
+		void schedule(InputIterator begin, InputIterator end, const int thread_id = -1)
 		{
-			//是否需要通知调度器有任务了
-			bool need_tickle = false;
+			////是否需要通知调度器有任务了
+			//bool need_tickle = false;
+			//{
+			//	//先监视互斥锁，保护被schedule_nolock访问的成员
+			//	ScopedLock<Mutex> lock(m_mutex);
+			//	while (begin != end)
+			//	{
+			//		//只要schedule_nolock有一次返回true，则需要通知调度器有任务了
+			//		need_tickle = schedule(&*begin) || need_tickle;
+			//		++begin;
+			//	}
+			//}
+			//if (need_tickle)
+			//{
+			//	//通知调度器有任务了
+			//	tickle();
+			//}
+			//先监视互斥锁，保护被schedule_nolock访问的成员
+			//ScopedLock<Mutex> lock(m_mutex);
+			while (begin != end)
 			{
-				//先监视互斥锁，保护被schedule_nolock访问的成员
-				ScopedLock<Mutex> lock(m_mutex);
-				while (begin != end)
-				{
-					//只要schedule_nolock有一次返回true，则需要通知调度器有任务了
-					need_tickle = schedule_nolock(&*begin) || need_tickle;
-					++begin;
-				}
-			}
-			if (need_tickle)
-			{
-				//通知调度器有任务了
-				tickle();
+				//只要schedule_nolock有一次返回true，则需要通知调度器有任务了
+				schedule(*begin,thread_id);
+				++begin;
 			}
 		}
 	protected:

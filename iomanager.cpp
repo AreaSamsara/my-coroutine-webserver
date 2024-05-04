@@ -471,12 +471,27 @@ namespace IOManagerSpace
 			}
 		}
 	}
+	////返回是否竣工
+	//bool IOManager::is_completed()
+	//{
+	//	//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
+	//	return m_pending_event_count == 0 && Scheduler::is_completed();
+	//}
 	//返回是否竣工
 	bool IOManager::is_completed()
 	{
 		//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
-		return Scheduler::is_completed() && m_pending_event_count == 0;
+		uint64_t timeout = 0;
+		return is_completed(timeout);
 	}
+	//返回是否竣工
+	bool IOManager::is_completed(uint64_t & timeout)
+	{
+		timeout = getNextTimer();
+		return timeout == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
+	}
+
+
 	//空闲协程的回调函数
 	void IOManager::idle()
 	{
@@ -485,12 +500,17 @@ namespace IOManagerSpace
 
 		while (true)
 		{
+			uint64_t next_timeout = 0;
 			//如果已经竣工，则退出循环
-			if (is_completed())
+			if (is_completed(next_timeout))
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-				log_event->getSstream() << "name=" << getName() << " idle exit";
-				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+				//next_timeout = getNextTimer();
+				//if (next_timeout == ~0ull)
+				{
+					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+					log_event->getSstream() << "name=" << getName() << " idle exit";
+					Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+				}
 
 				break;
 			}
@@ -499,10 +519,20 @@ namespace IOManagerSpace
 			//持续调用epoll_wait()等待事件，直到有epoll事件就绪，或者发生非中断的错误
 			do
 			{
-				//设置超时时间（静态变量）为5000ms
-				static const int MAX_TIMEOUT = 5000;
+				//设置超时时间（静态变量）为3000ms
+				static const int MAX_TIMEOUT = 3000;
+
+				if (next_timeout != ~0ull)
+				{
+					next_timeout = (int)next_timeout > MAX_TIMEOUT ? MAX_TIMEOUT : next_timeout;
+				}
+				else
+				{
+					next_timeout = MAX_TIMEOUT;
+				}
+
 				//epoll_wait()返回就绪的文件描述符数量,如果发生错误则返回-1
-				return_value = epoll_wait(m_epoll_file_descriptor,epollevents, 64, MAX_TIMEOUT);
+				return_value = epoll_wait(m_epoll_file_descriptor,epollevents, 64, next_timeout);
 
 				//如果有epoll事件就绪或者发生非中断的错误，则退出循环
 				if (return_value >=0 || errno != EINTR)
@@ -510,6 +540,18 @@ namespace IOManagerSpace
 					break;
 				}
 			} while (true);
+
+			vector<function<void()>> callbacks;
+			listExpireCallback(callbacks);
+			if (!callbacks.empty())
+			{
+				schedule(callbacks.begin(), callbacks.end());
+				/*for (auto& callback : callbacks)
+				{
+					schedule(callback);
+				}*/
+				callbacks.clear();
+			}
 
 			//依次处理就绪的epoll事件
 			for (size_t i = 0; i < return_value; ++i)
@@ -600,6 +642,12 @@ namespace IOManagerSpace
 			//使用裸指针将当前协程切换到后台
 			raw_ptr->swapOut();
 		}
+	}
+
+	void IOManager::onTimerInsertedAtFront()
+	{
+		tickle();
+
 	}
 
 	//重置文件描述符语境容器大小

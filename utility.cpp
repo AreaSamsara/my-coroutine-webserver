@@ -1,5 +1,6 @@
 #include "utility.h"
 #include <sys/syscall.h>
+#include <sys/time.h>
 
 #include "singleton.h"
 #include "thread.h"
@@ -87,5 +88,19 @@ namespace UtilitySpace
 		event->getSstream() << "Assertion: " << "\n" << message << "\nbacktrace:\n" << BacktraceToString(100, 2, "    ");
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 		assert(false);
+	}
+
+	//Ê±¼äms
+	uint64_t GetCurrentMS()
+	{
+		struct timeval time_value;
+		gettimeofday(&time_value, NULL);
+		return time_value.tv_sec * 1000ul + time_value.tv_usec / 1000;
+	}
+	uint64_t GetCurrentUS()
+	{
+		struct timeval time_value;
+		gettimeofday(&time_value, NULL);
+		return time_value.tv_sec * 1000 * 1000 + time_value.tv_usec;
 	}
 }

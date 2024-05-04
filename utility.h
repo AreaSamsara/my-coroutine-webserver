@@ -34,4 +34,8 @@ namespace UtilitySpace
 	void Assert(shared_ptr<LogEvent> event);
 
 	void Assert(shared_ptr<LogEvent> event, const string& message);
+
+	//Ê±¼äms
+	uint64_t GetCurrentMS();
+	uint64_t GetCurrentUS();
 }

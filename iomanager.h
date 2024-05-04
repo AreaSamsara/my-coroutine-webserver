@@ -1,12 +1,14 @@
 #pragma once
 #include "scheduler.h"
+#include "timer.h"
 
 namespace IOManagerSpace
 {
 	using namespace SchedulerSpace;
+	using namespace TimerSpace;
 	using std::string;
 
-	class IOManager :public Scheduler
+	class IOManager :public Scheduler,public TimerManager
 	{
 	public:
 		//表示事件类型的枚举类型
@@ -61,8 +63,12 @@ namespace IOManagerSpace
 		void tickle()override;
 		//返回是否竣工
 		bool is_completed()override;
+		//返回是否竣工
+		bool is_completed(uint64_t & timeout);
 		//空闲协程的回调函数
 		void idle()override;
+
+		virtual void onTimerInsertedAtFront() override;
 
 		//重置文件描述符语境容器大小
 		void resizeFile_descriptor_contexts(const size_t size);
