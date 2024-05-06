@@ -195,7 +195,7 @@ namespace IOManagerSpace
 
 		//控制epoll，成功返回0，失败返回-1；创建失败则报错且addEvent()返回-1
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
-		if (return_value!=0)
+		if (return_value != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
@@ -532,9 +532,10 @@ namespace IOManagerSpace
 				}
 
 				//epoll_wait()返回就绪的文件描述符数量,如果发生错误则返回-1
+				//最多等待64个epoll事件，最久等待next_timeout，超时返回0
 				return_value = epoll_wait(m_epoll_file_descriptor,epollevents, 64, next_timeout);
 
-				//如果有epoll事件就绪或者发生非中断的错误，则退出循环
+				//如果有epoll事件就绪、epoll_wait()等待超时或发生非中断的错误，则退出循环
 				if (return_value >=0 || errno != EINTR)
 				{
 					break;
@@ -542,7 +543,9 @@ namespace IOManagerSpace
 			} while (true);
 
 			vector<function<void()>> callbacks;
+			//获取需要执行的定时器的回调函数列表
 			listExpireCallback(callbacks);
+			//调度这些回调函数
 			if (!callbacks.empty())
 			{
 				schedule(callbacks.begin(), callbacks.end());
@@ -647,7 +650,6 @@ namespace IOManagerSpace
 	void IOManager::onTimerInsertedAtFront()
 	{
 		tickle();
-
 	}
 
 	//重置文件描述符语境容器大小

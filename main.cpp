@@ -84,7 +84,7 @@ void test_timer()
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 			if (++i == 3)
 			{
-				//s_timer->reset(2000,true);
+				s_timer->reset(2000,true);
 				//s_timer->cancel();
 			}
 		},true);
