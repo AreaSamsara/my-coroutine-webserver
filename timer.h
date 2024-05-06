@@ -21,7 +21,7 @@ namespace TimerSpace
 		bool cancel();
 		//刷新设置定时器的执行时间
 		bool refresh();
-		//重置定时器时间
+		//重设定时器执行周期
 		bool reset(uint64_t ms, bool from_now);
 	private:
 		Timer(const uint64_t ms,const function<void()>& callback,const bool recurring,TimerManager* manager);
@@ -53,7 +53,7 @@ namespace TimerSpace
 		friend class Timer;
 	public:
 		TimerManager();
-		virtual ~TimerManager();
+		virtual ~TimerManager() {}
 
 		//添加定时器
 		shared_ptr<Timer> addTimer(const uint64_t ms, const function<void()>& callback, const bool recurring);
@@ -64,7 +64,7 @@ namespace TimerSpace
 		uint64_t getNextTimer();
 
 		//获取需要执行的定时器的回调函数列表
-		void listExpireCallback(vector<function<void()>>& callbacks);
+		void getExpired_callbacks(vector<function<void()>>& callbacks);
 		//返回是否有定时器
 		bool hasTimer();
 	protected:

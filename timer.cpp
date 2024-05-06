@@ -4,7 +4,6 @@ namespace TimerSpace
 {
 	using std::bind;
 
-
 	Timer::Timer(const uint64_t ms, const function<void()>& callback, const bool recurring, TimerManager* manager)
 		:m_ms(ms), m_callback(callback), m_recurring(recurring), m_manager(manager)
 	{
@@ -22,7 +21,9 @@ namespace TimerSpace
 		if (m_callback)
 		{
 			m_callback = nullptr;
+			//在定时器集合中查找当前定时器
 			auto iterator = m_manager->m_timers.find(shared_from_this());
+			//如果找到了则将其删除
 			m_manager->m_timers.erase(iterator);
 			return true;
 		}
@@ -59,9 +60,10 @@ namespace TimerSpace
 		return true;
 	}
 
-	//重置定时器时间
+	//重设定时器执行周期
 	bool Timer::reset(uint64_t ms, bool from_now)
 	{
+		//如果重设的值与原值相同且不是从当前时间开始计算
 		if (ms == m_ms && !from_now)
 		{
 			return true;
@@ -123,21 +125,25 @@ namespace TimerSpace
 		}
 		if (lhs->m_next > rhs->m_next)
 		{
-			return true;
+			return false;
 		}
 		//如果精确的执行时间相同，则直接按照默认的方法比较地址
 		return lhs.get() < rhs.get();
 	}
 
 
+
+
+
+
 	TimerManager::TimerManager()
 	{
 		m_previous_time = GetCurrentMS();
 	}
-	TimerManager::~TimerManager()
+	/*TimerManager::~TimerManager()
 	{
 
-	}
+	}*/
 
 	//添加定时器
 	shared_ptr<Timer> TimerManager::addTimer(const uint64_t ms, const function<void()>& callback, const bool recurring)
@@ -195,15 +201,16 @@ namespace TimerSpace
 	}
 
 	//获取需要执行的定时器的回调函数列表
-	void TimerManager::listExpireCallback(vector<function<void()>>& callbacks)
+	void TimerManager::getExpired_callbacks(vector<function<void()>>& callbacks)
 	{
+		//获取当前时间
 		uint64_t now_ms = GetCurrentMS();
-		vector<shared_ptr<Timer>> expired;
+		//vector<shared_ptr<Timer>> expired;
 
+		//如果不存在下一个定时器，直接返回
 		{
 			//先监视互斥锁，保护
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-			//如果不存在下一个定时器，直接返回
 			if (m_timers.empty())
 			{
 				return;
@@ -223,19 +230,25 @@ namespace TimerSpace
 
 		shared_ptr<Timer> now_timer(new Timer(now_ms));
 
-		//如果服务器时间被调后了，expired设为整个m_timers；否则将其中所有精确执行时间不大于now_ms的加入m_timers
-		auto iterator = rollover ? m_timers.end() : m_timers.lower_bound(now_timer);
+		//如果服务器时间被调后了，expired设为整个m_timers；否则将其中所有精确执行时间不大于now_ms的加入expired
+		/*auto iterator = rollover ? m_timers.end() : m_timers.lower_bound(now_timer);
 		while (iterator != m_timers.end() && (*iterator)->m_next == now_ms)
 		{
 			++iterator;
-		}
-		expired.insert(expired.begin(), m_timers.begin(), iterator);
+		}*/
+		auto iterator = rollover ? m_timers.end() : m_timers.upper_bound(now_timer);	//new
+
+		vector<shared_ptr<Timer>> expired(m_timers.begin(), iterator);		//new
+		//expired.insert(expired.begin(), m_timers.begin(), iterator);
+		//vector<shared_ptr<Timer>> expired;		//new
+		//expired.insert(expired.begin(), m_timers.begin(), iterator);
 
 		//删除已被expired取走的定时器
 		m_timers.erase(m_timers.begin(), iterator);
 
 		//将callbacks的大小设置为与expired一致
 		callbacks.reserve(expired.size());
+		
 		//将expired取到的所有定时器依次放入callbacks
 		for (auto& timer : expired)
 		{
@@ -257,7 +270,7 @@ namespace TimerSpace
 	//返回是否有定时器
 	bool TimerManager::hasTimer()
 	{
-		//先监视互斥锁，保护
+		//先监视互斥锁，保护m_timers
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
 		return !m_timers.empty();

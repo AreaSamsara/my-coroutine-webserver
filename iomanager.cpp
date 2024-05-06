@@ -544,7 +544,7 @@ namespace IOManagerSpace
 
 			vector<function<void()>> callbacks;
 			//获取需要执行的定时器的回调函数列表
-			listExpireCallback(callbacks);
+			getExpired_callbacks(callbacks);
 			//调度这些回调函数
 			if (!callbacks.empty())
 			{
