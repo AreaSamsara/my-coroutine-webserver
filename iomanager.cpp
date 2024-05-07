@@ -136,27 +136,6 @@ namespace IOManagerSpace
 		//文件描述符语境
 		FileDescriptorContext* file_descriptor_context = nullptr;
 		
-		{
-			////先监视互斥锁，保护
-			//ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-			////如果文件描述符语境容器大小足够，则将文件描述符语境从中取出
-			//if (m_file_descriptor_contexts.size() > file_descriptor)
-			//{
-			//	file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
-			//	//readlock.unlock();
-			//}
-			////否则先扩充容器再取出
-			//else
-			//{
-			//	//先解锁读取锁，再设置写入锁
-			//	readlock.unlock();
-			//	//先监视互斥锁，保护
-			//	WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-			//	//每次将大小扩充到需求值的1.5倍
-			//	resizeFile_descriptor_contexts(file_descriptor * 1.5);
-			//	file_descriptor_context = m_file_descriptor_contexts[file_descriptor];
-			//}
-		}
 		//如果文件描述符语境容器大小不足，则先将容器扩充
 		if (m_file_descriptor_contexts.size() <= file_descriptor)
 		{
@@ -274,11 +253,8 @@ namespace IOManagerSpace
 		{
 			return false;
 		}
-		
-		//Event new_events = (Event)(file_descriptor_context->m_events & ~event);
 
 		//操作码：如果文件描述符已经注册的事件不为空，则执行修改事件；否则执行删除事件
-		//int operation_code = new_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 		int operation_code = file_descriptor_context->m_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 
 		//设置epoll事件
@@ -304,7 +280,6 @@ namespace IOManagerSpace
 		--m_pending_event_count;
 
 		//从已注册事件中删除event
-		//file_descriptor_context->m_events = new_events;
 		file_descriptor_context->m_events = (Event)(file_descriptor_context->m_events & ~event);
 
 		//以引用的形式获取文件描述符语境中的事件语境
@@ -344,15 +319,11 @@ namespace IOManagerSpace
 			return false;
 		}
 
-		//Event new_events = (Event)(file_descriptor_context->m_events & ~event);
-
 		//操作码：如果文件描述符已经注册的事件不为空，则执行修改事件；否则执行删除事件
-		//int operation_code = new_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 		int operation_code = file_descriptor_context->m_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 
 		//设置epoll事件
 		epoll_event epollevent;
-		//epollevent.events = EPOLLET | new_events;
 		epollevent.events = EPOLLET | file_descriptor_context->m_events & ~event;
 		epollevent.data.ptr = file_descriptor_context;
 
@@ -474,45 +445,28 @@ namespace IOManagerSpace
 	//返回是否竣工
 	bool IOManager::is_completed()
 	{
-		//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
-		return getTimeUntilNextTimer() == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
+		//在满足Scheduler::is_completed()的前提下，还应当满足当前等待执行的事件数量为0、暂时没有下一个定时器才能竣工
+		return !hasTimer() && m_pending_event_count == 0 && Scheduler::is_completed();
 	}
-	////返回是否竣工
-	//bool IOManager::is_completed()
-	//{
-	//	//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
-	//	uint64_t timeout = 0;
-	//	return is_completed(timeout);
-	//}
-	////返回是否竣工
-	//bool IOManager::is_completed(uint64_t & timeout)
-	//{
-	//	timeout = getNextTimer();
-	//	return timeout == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
-	//}
 
 
 	//空闲协程的回调函数
 	void IOManager::idle()
 	{
+		//epoll事件数组
 		epoll_event* epollevents = new epoll_event[64]();
+		//用智能指针对epoll事件数组的动态内存进行管理
 		shared_ptr<epoll_event> shared_events(epollevents, [](epoll_event* ptr) {delete[] ptr; });
 
+		//轮询epoll事件和定时器
 		while (true)
 		{
-			//uint64_t next_timeout = getNextTimer();
-			//如果已经竣工，则退出循环
-			//if (is_completed(next_timeout))
+			//如果已经竣工，则退出idle协程的轮询循环，结束idle协程
 			if (is_completed())
 			{
-				//next_timeout = getNextTimer();
-				//if (next_timeout == ~0ull)
-				{
-					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-					log_event->getSstream() << "name=" << getName() << " idle exit";
-					Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-				}
-
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				log_event->getSstream() << "name=" << getName() << " idle exit";
+				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 				break;
 			}
 
@@ -536,26 +490,11 @@ namespace IOManagerSpace
 			}
 
 			//持续调用epoll_wait()等待事件，直到有epoll事件就绪，或者发生非中断的错误
-			//do
 			while(true)
 			{
-				//设置超时时间（静态变量）为3000ms
-				//static const int MAX_TIMEOUT = 3000;
-
-				//如果距离下一个定时器执行还需要的时间不是无穷大，则取其与超时时间的较小值
-				/*if (epoll_wait_time != ~0ull)
-				{
-					epoll_wait_time = (int)epoll_wait_time > MAX_TIMEOUT ? MAX_TIMEOUT : epoll_wait_time;
-				}
-				else
-				{
-					epoll_wait_time = MAX_TIMEOUT;
-				}*/
-				
-
 				//epoll_wait()返回就绪的文件描述符数量,如果发生错误则返回-1
 				//最多等待64个epoll事件，最久等待next_timeout，超时返回0
-				epollevent_count = epoll_wait(m_epoll_file_descriptor,epollevents, 64, epoll_wait_time);
+				epollevent_count = epoll_wait(m_epoll_file_descriptor, epollevents, 64, epoll_wait_time);
 
 				//如果有epoll事件就绪、epoll_wait()等待超时或发生非中断的错误，则退出循环
 				if (epollevent_count >=0 || errno != EINTR)
@@ -563,6 +502,7 @@ namespace IOManagerSpace
 					break;
 				}
 			}
+
 
 			//获取到期的（需要执行的）定时器的回调函数列表
 			vector<function<void()>> expired_callbacks;
@@ -595,9 +535,13 @@ namespace IOManagerSpace
 				ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
 				//如果epoll事件发生错误且输出缓冲区已经准备好，则将epoll事件设置为输入就绪且输出就绪
-				if (epollevent.events & (EPOLLERR | EPOLLOUT))
+				/*if (epollevent.events & (EPOLLERR | EPOLLOUT))
 				{
 					epollevent.events |= EPOLLIN | EPOLLOUT;
+				}*/
+				if (epollevent.events & (EPOLLERR | EPOLLHUP)) 
+				{
+					epollevent.events |= (EPOLLIN | EPOLLOUT) & file_descriptor_context->m_events;	//???
 				}
 
 				//实际要执行的事件
@@ -627,13 +571,13 @@ namespace IOManagerSpace
 
 
 				//控制epoll，成功返回0，失败返回-1；创建失败则报错并结束本次循环
-				int rt2 = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_context->m_file_descriptor, &epollevent);
-				if (rt2)
+				int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_context->m_file_descriptor, &epollevent);
+				if (return_value)
 				{
 					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 					log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code
 						<< "," << file_descriptor_context->m_file_descriptor << "," << epollevent.events << "):"
-						<< rt2 << " (" << errno << ") (" << strerror(errno) << ")";
+						<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 					Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 					continue;
 				}
@@ -654,6 +598,8 @@ namespace IOManagerSpace
 				}
 			}
 
+
+
 			//获取当前协程
 			shared_ptr<Fiber> current = Fiber::GetThis();
 			//在切换到后台之前将智能指针切换为裸指针，防止shared_ptr的计数错误导致析构函数不被调用
@@ -665,10 +611,10 @@ namespace IOManagerSpace
 		}
 	}
 
-	void IOManager::onTimerInsertedAtFront()
+	/*void IOManager::onTimerInsertedAtFront()
 	{
 		tickle();
-	}
+	}*/
 
 	//重置文件描述符语境容器大小
 	void IOManager::resizeFile_descriptor_contexts(const size_t size)

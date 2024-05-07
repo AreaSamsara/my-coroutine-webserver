@@ -40,25 +40,6 @@ namespace SchedulerSpace
 		template<class InputIterator>
 		void schedule(InputIterator begin, InputIterator end, const int thread_id = -1)
 		{
-			////是否需要通知调度器有任务了
-			//bool need_tickle = false;
-			//{
-			//	//先监视互斥锁，保护被schedule_nolock访问的成员
-			//	ScopedLock<Mutex> lock(m_mutex);
-			//	while (begin != end)
-			//	{
-			//		//只要schedule_nolock有一次返回true，则需要通知调度器有任务了
-			//		need_tickle = schedule(&*begin) || need_tickle;
-			//		++begin;
-			//	}
-			//}
-			//if (need_tickle)
-			//{
-			//	//通知调度器有任务了
-			//	tickle();
-			//}
-			//先监视互斥锁，保护被schedule_nolock访问的成员
-			//ScopedLock<Mutex> lock(m_mutex);
 			while (begin != end)
 			{
 				//只要schedule_nolock有一次返回true，则需要通知调度器有任务了

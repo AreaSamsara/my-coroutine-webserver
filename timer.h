@@ -23,9 +23,11 @@ namespace TimerSpace
 		bool refreshExecute_time();
 		//重设定时器执行周期
 		bool resetRun_cycle(uint64_t ms, bool from_now);
-	private:
-		Timer(const uint64_t ms,const function<void()>& callback,const bool recurring,TimerManager* manager);
-		Timer(const uint64_t next);
+	//private:
+	public:
+		Timer(const uint64_t run_cycle,const function<void()>& callback,const bool recurring,TimerManager* manager);
+		Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring, TimerManager* manager);
+		Timer(const uint64_t execute_time);
 	private:
 		//是否为循环定时器
 		bool m_recurring = false;
@@ -56,10 +58,12 @@ namespace TimerSpace
 		virtual ~TimerManager() {}
 
 		//添加定时器
-		shared_ptr<Timer> addTimer(const uint64_t ms, const function<void()>& callback, const bool recurring);
+		//shared_ptr<Timer> addTimer(const uint64_t ms, const function<void()>& callback, const bool recurring);
+		//void addTimer(shared_ptr<Timer> timer);	//new
+		bool addTimer(shared_ptr<Timer> timer);	//new
 
 		//添加条件定时器
-		shared_ptr<Timer> addConditionTimer(const uint64_t ms, const function<void()>& callback,weak_ptr<void> weak_condition ,const bool recurring);
+		//shared_ptr<Timer> addConditionTimer(const uint64_t ms, const function<void()>& callback,weak_ptr<void> weak_condition ,const bool recurring);
 		//获取距离下一个定时器执行还需要的时间
 		uint64_t getTimeUntilNextTimer();
 
@@ -69,9 +73,10 @@ namespace TimerSpace
 		bool hasTimer();
 	protected:
 		//当有新的定时器插入到定时器集合的开头，执行此函数
-		virtual void onTimerInsertedAtFront() = 0;
+		//virtual void onTimerInsertedAtFront() = 0;
 		//将定时器添加到管理器中
-		void addTimer(shared_ptr<Timer> timer, WriteScopedLock<Mutex_Read_Write>& writelock);
+		//void addTimer(shared_ptr<Timer> timer, WriteScopedLock<Mutex_Read_Write>& writelock);
+		//void addTimer(shared_ptr<Timer> timer);
 		
 	private:
 		//检测服务器的时间是否被调后了
@@ -82,7 +87,7 @@ namespace TimerSpace
 		//定时器集合
 		set<shared_ptr<Timer>, Timer::Comparator> m_timers;
 		//是否触发了onTimerInsertedAtFront()
-		bool m_tickled = false;
+		//bool m_tickled = false;
 		//上次执行的时间
 		uint64_t m_previous_time = 0;
 	};

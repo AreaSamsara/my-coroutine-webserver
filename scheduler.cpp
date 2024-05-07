@@ -70,8 +70,8 @@ namespace SchedulerSpace
 		//线程池在调度前应为空，否则报错
 		if (!m_threads.empty())
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(log_event);
 		}
 
 		//将线程池大小设为线程数
