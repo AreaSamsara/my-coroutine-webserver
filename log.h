@@ -122,11 +122,11 @@ namespace LogSpace
 		void deleteAppender(const shared_ptr<const LogAppender> appender);
 
 		//修改formatter
-		void setFormatter(const shared_ptr<LogFormatter> formatter);	//传递的是shared_ptr且使用了互斥锁，故不能声明const
+		void setFormatter(const shared_ptr<LogFormatter> formatter);	//传递的是shared_ptr且使用了互斥锁，故LogFormatter不能声明const
 		void setFormatter(const string& str);	
 
 		//读取或修改日志等级
-		LogLevel::Level getlevel();
+		LogLevel::Level getlevel();		//使用了互斥锁，故getlevel()不能声明const
 		void setLevel(const LogLevel::Level level);
 
 		//读取logger名称

@@ -94,19 +94,6 @@ namespace ThreadSpace
 	{
 		return t_thread;
 	}
-	/*const string& Thread::s_getName()
-	{
-		return t_thread_name;
-	}*/
-	/*void Thread::setName(const string& name)
-	{
-		if (t_thread)
-		{
-			t_thread->m_name = name;
-		}
-		t_thread_name = name;
-	}*/
 
 	thread_local Thread* Thread::t_thread = nullptr;	//线程专属的Thread类指针（线程专属变量的生命周期由线程自主管理，故使用裸指针）
-	//static thread_local string t_thread_name = "UNKNOW";
 }

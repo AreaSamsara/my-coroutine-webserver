@@ -35,8 +35,6 @@ namespace ThreadSpace
 
 		//获取线程专属的Thread类指针，设置为静态方法以访问静态类型
 		static Thread* getThis();
-		//static const string& s_getName();
-		//static void setName(const string& name);
 	private:
 		//删除复制构造函数
 		Thread(const Thread&) = delete;

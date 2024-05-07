@@ -8,7 +8,8 @@ namespace IOManagerSpace
 	using namespace TimerSpace;
 	using std::string;
 
-	class IOManager :public Scheduler,public TimerManager
+	//IO管理者，继承自调度器类
+	class IOManager :public Scheduler
 	{
 	public:
 		//表示事件类型的枚举类型
@@ -48,6 +49,8 @@ namespace IOManagerSpace
 		IOManager(size_t thread_count, const bool use_caller = true, const string& name = "main_scheduler");
 		virtual ~IOManager();
 
+		shared_ptr<TimerManager> getTimer_manager()const { return m_timer_manager; }
+
 		//添加事件，成功返回0，失败返回-1
 		int addEvent(const int file_description, const Event event, function<void()> callback = nullptr);
 		//删除事件
@@ -56,8 +59,9 @@ namespace IOManagerSpace
 		bool cancelEvent(const int file_description, const Event event);
 		//取消所有事件
 		bool cancelAllEvents(const int file_description);
-	public:
-		static IOManager* GetThis();
+
+		//添加定时器，在需要时通知调度器有任务
+		void addTimer(shared_ptr<Timer> timer);
 	protected:
 		//通知调度器有任务了
 		void tickle()override;
@@ -68,6 +72,9 @@ namespace IOManagerSpace
 
 		//重置文件描述符语境容器大小
 		void resizeFile_descriptor_contexts(const size_t size);
+	public:
+		//静态方法，获取当前IO管理者
+		static IOManager* GetThis();
 	private:
 		//epoll文件描述符
 		int m_epoll_file_descriptor = 0;
@@ -80,5 +87,7 @@ namespace IOManagerSpace
 		Mutex_Read_Write m_mutex;
 		//文件描述符的语境容器
 		vector<FileDescriptorContext*> m_file_descriptor_contexts;
+		//定时器管理者
+		shared_ptr<TimerManager> m_timer_manager;
 	};
 }

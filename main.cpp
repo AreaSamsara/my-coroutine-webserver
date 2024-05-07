@@ -79,42 +79,23 @@ void timer_callback(shared_ptr<Timer> timer)
 	log_event->getSstream() << "hello timer i=" << i;
 	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 
-	IOManager* iomanager= static_cast<IOManager*>(Scheduler::t_scheduler);
+	IOManager* iomanager= IOManager::GetThis();
 	if (++i == 3)
 	{
-		iomanager->resetRun_cycle(timer,2000, true);
-		//iomanager->cancel(timer);
+		//iomanager->getTimer_manager()->resetRun_cycle(timer,2000, true);
+		iomanager->getTimer_manager()->cancel(timer);
 	}
 }
 
-//shared_ptr<Timer> s_timer;
 
 void test_timer()
 {
 	shared_ptr<IOManager> iomanager(new IOManager(2, true));
-
-	//s_timer = iom.addTimer(1000, []()
-	//	{
-	//		static int i = 0;
-	//		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//		log_event->getSstream() << "hello timer i=" << i;
-	//		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	//		if (++i == 3)
-	//		{
-	//			s_timer->resetRun_cycle(2000,true);
-	//			//s_timer->cancel();
-	//		}
-	//	},true);
-	//s_timer = shared_ptr<Timer>(new Timer(1000, nullptr, true));
 	
 	shared_ptr<Timer> s_timer(new Timer(1000, nullptr, true));
 	s_timer->setCallback(bind(timer_callback, s_timer));
 
-	//iom.addTimer(s_timer);
-	if (iomanager->addTimer(s_timer))
-	{
-		//iom.tickle();	//´ý½â¾ö
-	}
+	iomanager->addTimer(s_timer);
 }
 
 int main(int argc, char** argv)

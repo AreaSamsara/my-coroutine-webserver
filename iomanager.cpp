@@ -4,6 +4,7 @@
 
 namespace IOManagerSpace
 {
+	//class FileDescriptorContext
 	//获取事件对应的语境
 	IOManager::FileDescriptorContext::EventContext& IOManager::FileDescriptorContext::getContext(const Event event)
 	{
@@ -60,6 +61,9 @@ namespace IOManagerSpace
 		event_context.m_scheduler = nullptr;
 	}
 
+
+
+	//class IOManager
 	IOManager::IOManager(size_t thread_count, const bool use_caller, const string& name)
 		:Scheduler(thread_count,use_caller,name)
 	{
@@ -105,6 +109,11 @@ namespace IOManagerSpace
 
 		//设置文件描述符语境容器大小
 		resizeFile_descriptor_contexts(32);
+
+
+		//初始化定时器管理者
+		//m_timer_manager = shared_ptr<TimerManager>(new TimerManager());
+		m_timer_manager.reset(new TimerManager());
 
 		//IO管理者对象创建完毕后，默认启动
 		start();
@@ -421,10 +430,16 @@ namespace IOManagerSpace
 		return true;
 	}
 
-	IOManager* IOManager::GetThis()
+	//添加定时器，在需要时通知调度器有任务
+	void IOManager::addTimer(shared_ptr<Timer> timer)
 	{
-		return dynamic_cast<IOManager*>(Scheduler::t_scheduler);
+		//如果新加入的定时器位于定时器集合的开头，说明需要通知调度器有任务了
+		if (m_timer_manager->addTimer(timer))
+		{
+			tickle();
+		}
 	}
+
 
 	//通知调度器有任务了
 	void IOManager::tickle()
@@ -446,7 +461,7 @@ namespace IOManagerSpace
 	bool IOManager::is_completed()
 	{
 		//在满足Scheduler::is_completed()的前提下，还应当满足当前等待执行的事件数量为0、暂时没有下一个定时器才能竣工
-		return !hasTimer() && m_pending_event_count == 0 && Scheduler::is_completed();
+		return !m_timer_manager->hasTimer() && m_pending_event_count == 0 && Scheduler::is_completed();
 	}
 
 
@@ -477,7 +492,7 @@ namespace IOManagerSpace
 			static const int MAX_TIMEOUT = 3000;
 
 			//epoll_wait的等待时间
-			uint64_t epoll_wait_time = getTimeUntilNextTimer();
+			uint64_t epoll_wait_time = m_timer_manager->getTimeUntilNextTimer();
 			//如果距离下一个定时器执行还需要的时间不是无穷大，则epoll_wait的等待时间取其与超时时间的较小值
 			if (epoll_wait_time != ~0ull)
 			{
@@ -506,7 +521,7 @@ namespace IOManagerSpace
 
 			//获取到期的（需要执行的）定时器的回调函数列表
 			vector<function<void()>> expired_callbacks;
-			getExpired_callbacks(expired_callbacks);
+			m_timer_manager->getExpired_callbacks(expired_callbacks);
 			//调度这些回调函数
 			if (!expired_callbacks.empty())
 			{
@@ -624,5 +639,13 @@ namespace IOManagerSpace
 				m_file_descriptor_contexts[i]->m_file_descriptor = i;
 			}
 		}
+	}
+
+
+
+	//静态方法，获取当前IO管理者
+	IOManager* IOManager::GetThis()
+	{
+		return dynamic_cast<IOManager*>(Scheduler::t_scheduler);
 	}
 }
