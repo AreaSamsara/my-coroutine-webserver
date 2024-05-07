@@ -6,27 +6,27 @@ namespace IOManagerSpace
 {
 	//class FileDescriptorContext
 	//获取事件对应的语境
-	IOManager::FileDescriptorContext::EventContext& IOManager::FileDescriptorContext::getContext(const EventType event)
+	//IOManager::FileDescriptorContext::EventContext& IOManager::FileDescriptorContext::getContext(const EventType event)
+	function<void()>& IOManager::FileDescriptorContext::getCallback(const EventType event)
 	{
 		switch(event)
 		{
 		case READ:
-			return m_read;
+			return m_read_callback;
 		case WRITE:
-			return m_write;
+			return m_write_callback;
 		default:
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(log_event,"getContext");
+			Assert(log_event,"getCallback");
 		}
 	}
 
-	//重置语境
-	void IOManager::FileDescriptorContext::resetContext(EventContext& event_context)
-	{
-		//event_context.m_scheduler = nullptr;
-		event_context.m_fiber.reset();
-		event_context.m_callback = nullptr;
-	}
+	////重置语境
+	//void IOManager::FileDescriptorContext::resetContext(EventContext& event_context)
+	//{
+	//	//event_context.m_fiber.reset();
+	//	event_context.m_callback = nullptr;
+	//}
 
 	//触发事件
 	void IOManager::FileDescriptorContext::triggerEvent(EventType event)
@@ -42,25 +42,22 @@ namespace IOManagerSpace
 		m_events = (EventType)(m_events & ~event);
 
 		//以引用的形式获取文件描述符语境中的事件语境
-		EventContext& event_context = getContext(event);
+		auto& callback = getCallback(event);
 
 		//如果事件语境有回调函数，用其调用调度方法
-		if (event_context.m_callback)
+		/*if (event_context.m_callback)
 		{
-			//event_context.m_scheduler->schedule(&event_context.m_callback);
-			//event_context.m_scheduler->schedule(event_context.m_callback);
 			GetThis()->schedule(event_context.m_callback);
+		}*/
+		if (callback)
+		{
+			GetThis()->schedule(callback);
 		}
 		//否则用事件语境的协程来调用调度方法
 		else
 		{
-			//event_context.m_scheduler->schedule(&event_context.m_fiber);
-			//event_context.m_scheduler->schedule(event_context.m_fiber);
-			GetThis()->schedule(event_context.m_fiber);
+			//GetThis()->schedule(event_context.m_fiber);
 		}
-
-		//重置事件语境的调度器
-		//event_context.m_scheduler = nullptr;
 	}
 
 
@@ -204,33 +201,34 @@ namespace IOManagerSpace
 
 
 		//以引用的形式获取文件描述符语境中的事件语境
-		FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
+		//FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
+		auto& empty_callback = file_descriptor_context->getCallback(event);
 
 		//event_context应为空，否则报错
-		//if (event_context.m_callback || event_context.m_fiber || event_context.m_scheduler)
-		if (event_context.m_callback || event_context.m_fiber)
+		//if (event_context.m_callback || event_context.m_fiber)
+		//if (event_context.m_callback)
+		if (empty_callback)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 
-		//设置事件语境的调度器为当前调度器
-		//event_context.m_scheduler = Scheduler::GetThis();
 		//如果传入了回调函数，用其设置事件语境的回调函数
 		if (callback)
 		{
-			event_context.m_callback.swap(callback);
+			//event_context.m_callback.swap(callback);
+			callback.swap(callback);
 		}
 		//否则将事件语境的协程设置为当前协程
 		else
 		{
-			event_context.m_fiber = Fiber::GetThis();
+			//event_context.m_fiber = Fiber::GetThis();
 			//事件语境的协程应当处于执行状态，否则报错
-			if (event_context.m_fiber->getState() != Fiber::EXECUTE)
+			/*if (event_context.m_fiber->getState() != Fiber::EXECUTE)
 			{
 				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				Assert(event);
-			}
+			}*/
 		}
 		
 		//addEvent()函数正常执行，返回0
@@ -295,9 +293,11 @@ namespace IOManagerSpace
 		file_descriptor_context->m_events = (EventType)(file_descriptor_context->m_events & ~event);
 
 		//以引用的形式获取文件描述符语境中的事件语境
-		FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
+		//FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
+		auto& callback = file_descriptor_context->getCallback(event);
 		//重置该语境
-		file_descriptor_context->resetContext(event_context);
+		//file_descriptor_context->resetContext(event_context);	//待解决
+		callback = nullptr;
 
 		//deleteEvent()函数正常执行，返回true
 		return true;
