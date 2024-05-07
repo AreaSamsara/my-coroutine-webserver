@@ -99,7 +99,12 @@ namespace SchedulerSpace
 		virtual bool is_completed();
 
 		//获取空闲线程数量
-		virtual bool getIdle_thread_count()const { return m_idle_thread_count; }		
+		virtual bool getIdle_thread_count()const { return m_idle_thread_count; }
+	public:
+		//静态方法，获取当前调度器
+		static Scheduler* GetThis() { return t_scheduler; }
+		//静态方法，修改当前调度器
+		static void SetThis(Scheduler* scheduler) { t_scheduler = scheduler; }
 	protected:
 		//调度器的线程id数组
 		vector<int> m_thread_ids;

@@ -13,7 +13,7 @@ namespace IOManagerSpace
 	{
 	public:
 		//表示事件类型的枚举类型
-		enum Event
+		enum EventType
 		{
 			NONE = 0x0,
 			READ = 0x1,	//EPOLLIN
@@ -28,20 +28,20 @@ namespace IOManagerSpace
 			class EventContext
 			{
 			public:
-				Scheduler* m_scheduler;		//事件执行的scheduler
+				//Scheduler* m_scheduler;		//事件执行的scheduler
 				shared_ptr<Fiber> m_fiber;	//事件协程
 				function<void()> m_callback;	//事件的回调函数
 			};
 			//获取事件对应的语境
-			EventContext& getContext(const Event event);
+			EventContext& getContext(const EventType event);
 			//重置语境
 			void resetContext(EventContext& event_context);
 			//触发事件
-			void triggerEvent(Event event);
+			void triggerEvent(EventType event);
 
 			EventContext m_read;	//读取事件
 			EventContext m_write;	//写入事件
-			Event m_events = NONE;	//已经注册的事件
+			EventType m_events = NONE;	//已经注册的事件
 			Mutex m_mutex;			//互斥锁
 			int m_file_descriptor;	//事件关联的文件描述符
 		};
@@ -52,11 +52,11 @@ namespace IOManagerSpace
 		shared_ptr<TimerManager> getTimer_manager()const { return m_timer_manager; }
 
 		//添加事件，成功返回0，失败返回-1
-		int addEvent(const int file_description, const Event event, function<void()> callback = nullptr);
+		int addEvent(const int file_description, const EventType event, function<void()> callback = nullptr);
 		//删除事件
-		bool deleteEvent(const int file_description, const Event event);
+		bool deleteEvent(const int file_description, const EventType event);
 		//取消事件
-		bool cancelEvent(const int file_description, const Event event);
+		bool cancelEvent(const int file_description, const EventType event);
 		//取消所有事件
 		bool cancelAllEvents(const int file_description);
 
@@ -74,7 +74,7 @@ namespace IOManagerSpace
 		void resizeFile_descriptor_contexts(const size_t size);
 	public:
 		//静态方法，获取当前IO管理者
-		static IOManager* GetThis();
+		static IOManager* GetThis() { return dynamic_cast<IOManager*>(Scheduler::GetThis()); }
 	private:
 		//epoll文件描述符
 		int m_epoll_file_descriptor = 0;

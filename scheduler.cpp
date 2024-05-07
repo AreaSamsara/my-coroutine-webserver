@@ -47,9 +47,9 @@ namespace SchedulerSpace
 			Assert(event);
 		}
 		//如果线程的当前调度器为本调度器，将其置空
-		if (t_scheduler == this)
+		if (GetThis() == this)
 		{
-			t_scheduler = nullptr;
+			SetThis(nullptr);
 		}
 	}
 
@@ -170,7 +170,7 @@ namespace SchedulerSpace
 		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		//先将线程专属的当前调度器设置为本调度器（即使是调用者线程的线程替代者协程也一样）
-		t_scheduler = this;
+		SetThis(this);
 
 		//如果当前线程id不等于调用者线程id,说明不论是否使用了调用者线程，至少这个线程不是调用者线程
 		if (GetThread_id() != m_caller_thread_id)
@@ -367,6 +367,8 @@ namespace SchedulerSpace
 		//竣工的前提是调度器已关闭、任务列表为空且活跃线程数为0
 		return m_stopping && m_tasks.empty() && m_active_thread_count == 0;
 	}
+
+
 
 
 	//当前调度器（线程专属）

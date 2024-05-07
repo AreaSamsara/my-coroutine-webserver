@@ -6,7 +6,7 @@ namespace IOManagerSpace
 {
 	//class FileDescriptorContext
 	//获取事件对应的语境
-	IOManager::FileDescriptorContext::EventContext& IOManager::FileDescriptorContext::getContext(const Event event)
+	IOManager::FileDescriptorContext::EventContext& IOManager::FileDescriptorContext::getContext(const EventType event)
 	{
 		switch(event)
 		{
@@ -23,13 +23,13 @@ namespace IOManagerSpace
 	//重置语境
 	void IOManager::FileDescriptorContext::resetContext(EventContext& event_context)
 	{
-		event_context.m_scheduler = nullptr;
+		//event_context.m_scheduler = nullptr;
 		event_context.m_fiber.reset();
 		event_context.m_callback = nullptr;
 	}
 
 	//触发事件
-	void IOManager::FileDescriptorContext::triggerEvent(Event event)
+	void IOManager::FileDescriptorContext::triggerEvent(EventType event)
 	{
 		//要触发的事件应为已注册事件，否则报错
 		if (!(m_events & event))
@@ -39,7 +39,7 @@ namespace IOManagerSpace
 		}
 
 		//从已注册事件中删除event
-		m_events = (Event)(m_events & ~event);
+		m_events = (EventType)(m_events & ~event);
 
 		//以引用的形式获取文件描述符语境中的事件语境
 		EventContext& event_context = getContext(event);
@@ -48,17 +48,19 @@ namespace IOManagerSpace
 		if (event_context.m_callback)
 		{
 			//event_context.m_scheduler->schedule(&event_context.m_callback);
-			event_context.m_scheduler->schedule(event_context.m_callback);
+			//event_context.m_scheduler->schedule(event_context.m_callback);
+			GetThis()->schedule(event_context.m_callback);
 		}
 		//否则用事件语境的协程来调用调度方法
 		else
 		{
 			//event_context.m_scheduler->schedule(&event_context.m_fiber);
-			event_context.m_scheduler->schedule(event_context.m_fiber);
+			//event_context.m_scheduler->schedule(event_context.m_fiber);
+			GetThis()->schedule(event_context.m_fiber);
 		}
 
 		//重置事件语境的调度器
-		event_context.m_scheduler = nullptr;
+		//event_context.m_scheduler = nullptr;
 	}
 
 
@@ -140,7 +142,7 @@ namespace IOManagerSpace
 	}
 
 	//添加事件，成功返回0，失败返回-1
-	int IOManager::addEvent(const int file_descriptor, const Event event, function<void()> callback)
+	int IOManager::addEvent(const int file_descriptor, const EventType event, function<void()> callback)
 	{
 		//文件描述符语境
 		FileDescriptorContext* file_descriptor_context = nullptr;
@@ -198,21 +200,22 @@ namespace IOManagerSpace
 		++m_pending_event_count;
 
 		//添加event到已注册事件中（注册在控制epoll之后执行，以确保epoll控制已成功）
-		file_descriptor_context->m_events = (Event)(file_descriptor_context->m_events | event);
+		file_descriptor_context->m_events = (EventType)(file_descriptor_context->m_events | event);
 
 
 		//以引用的形式获取文件描述符语境中的事件语境
 		FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
 
 		//event_context应为空，否则报错
-		if (event_context.m_callback || event_context.m_fiber || event_context.m_scheduler)
+		//if (event_context.m_callback || event_context.m_fiber || event_context.m_scheduler)
+		if (event_context.m_callback || event_context.m_fiber)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 
 		//设置事件语境的调度器为当前调度器
-		event_context.m_scheduler = Scheduler::t_scheduler;
+		//event_context.m_scheduler = Scheduler::GetThis();
 		//如果传入了回调函数，用其设置事件语境的回调函数
 		if (callback)
 		{
@@ -236,7 +239,7 @@ namespace IOManagerSpace
 
 
 	//删除事件
-	bool IOManager::deleteEvent(const int file_descriptor, const Event event)
+	bool IOManager::deleteEvent(const int file_descriptor, const EventType event)
 	{
 		//文件描述符语境
 		FileDescriptorContext* file_descriptor_context = nullptr;
@@ -289,7 +292,7 @@ namespace IOManagerSpace
 		--m_pending_event_count;
 
 		//从已注册事件中删除event
-		file_descriptor_context->m_events = (Event)(file_descriptor_context->m_events & ~event);
+		file_descriptor_context->m_events = (EventType)(file_descriptor_context->m_events & ~event);
 
 		//以引用的形式获取文件描述符语境中的事件语境
 		FileDescriptorContext::EventContext& event_context = file_descriptor_context->getContext(event);
@@ -301,7 +304,7 @@ namespace IOManagerSpace
 	}
 
 	//取消事件
-	bool IOManager::cancelEvent(const int file_descriptor, const Event event)
+	bool IOManager::cancelEvent(const int file_descriptor, const EventType event)
 	{
 		//文件描述符语境
 		FileDescriptorContext* file_descriptor_context = nullptr;
@@ -529,6 +532,7 @@ namespace IOManagerSpace
 				expired_callbacks.clear();
 			}
 
+
 			//依次处理就绪的epoll事件
 			for (size_t i = 0; i < epollevent_count; ++i)
 			{
@@ -639,13 +643,5 @@ namespace IOManagerSpace
 				m_file_descriptor_contexts[i]->m_file_descriptor = i;
 			}
 		}
-	}
-
-
-
-	//静态方法，获取当前IO管理者
-	IOManager* IOManager::GetThis()
-	{
-		return dynamic_cast<IOManager*>(Scheduler::t_scheduler);
 	}
 }
