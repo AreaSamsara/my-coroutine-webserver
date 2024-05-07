@@ -471,25 +471,25 @@ namespace IOManagerSpace
 			}
 		}
 	}
-	////返回是否竣工
-	//bool IOManager::is_completed()
-	//{
-	//	//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
-	//	return m_pending_event_count == 0 && Scheduler::is_completed();
-	//}
 	//返回是否竣工
 	bool IOManager::is_completed()
 	{
 		//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
-		uint64_t timeout = 0;
-		return is_completed(timeout);
+		return getTimeUntilNextTimer() == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
 	}
-	//返回是否竣工
-	bool IOManager::is_completed(uint64_t & timeout)
-	{
-		timeout = getNextTimer();
-		return timeout == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
-	}
+	////返回是否竣工
+	//bool IOManager::is_completed()
+	//{
+	//	//在满足Scheduler::is_completed()的前提下，当前等待执行的事件数量也应为0才能竣工
+	//	uint64_t timeout = 0;
+	//	return is_completed(timeout);
+	//}
+	////返回是否竣工
+	//bool IOManager::is_completed(uint64_t & timeout)
+	//{
+	//	timeout = getNextTimer();
+	//	return timeout == ~0ull && m_pending_event_count == 0 && Scheduler::is_completed();
+	//}
 
 
 	//空闲协程的回调函数
@@ -500,9 +500,10 @@ namespace IOManagerSpace
 
 		while (true)
 		{
-			uint64_t next_timeout = 0;
+			//uint64_t next_timeout = getNextTimer();
 			//如果已经竣工，则退出循环
-			if (is_completed(next_timeout))
+			//if (is_completed(next_timeout))
+			if (is_completed())
 			{
 				//next_timeout = getNextTimer();
 				//if (next_timeout == ~0ull)
@@ -515,49 +516,66 @@ namespace IOManagerSpace
 				break;
 			}
 
-			int return_value = 0;
+			//就绪的epollevent数量
+			int epollevent_count = 0;
+			
+			//设置超时时间（静态变量）为3000ms
+			static const int MAX_TIMEOUT = 3000;
+
+			//epoll_wait的等待时间
+			uint64_t epoll_wait_time = getTimeUntilNextTimer();
+			//如果距离下一个定时器执行还需要的时间不是无穷大，则epoll_wait的等待时间取其与超时时间的较小值
+			if (epoll_wait_time != ~0ull)
+			{
+				epoll_wait_time = epoll_wait_time < MAX_TIMEOUT ? epoll_wait_time : MAX_TIMEOUT;
+			}
+			//否则将epoll_wait等待时间设置为超时时间
+			else
+			{
+				epoll_wait_time = MAX_TIMEOUT;
+			}
+
 			//持续调用epoll_wait()等待事件，直到有epoll事件就绪，或者发生非中断的错误
-			do
+			//do
+			while(true)
 			{
 				//设置超时时间（静态变量）为3000ms
-				static const int MAX_TIMEOUT = 3000;
+				//static const int MAX_TIMEOUT = 3000;
 
-				if (next_timeout != ~0ull)
+				//如果距离下一个定时器执行还需要的时间不是无穷大，则取其与超时时间的较小值
+				/*if (epoll_wait_time != ~0ull)
 				{
-					next_timeout = (int)next_timeout > MAX_TIMEOUT ? MAX_TIMEOUT : next_timeout;
+					epoll_wait_time = (int)epoll_wait_time > MAX_TIMEOUT ? MAX_TIMEOUT : epoll_wait_time;
 				}
 				else
 				{
-					next_timeout = MAX_TIMEOUT;
-				}
+					epoll_wait_time = MAX_TIMEOUT;
+				}*/
+				
 
 				//epoll_wait()返回就绪的文件描述符数量,如果发生错误则返回-1
 				//最多等待64个epoll事件，最久等待next_timeout，超时返回0
-				return_value = epoll_wait(m_epoll_file_descriptor,epollevents, 64, next_timeout);
+				epollevent_count = epoll_wait(m_epoll_file_descriptor,epollevents, 64, epoll_wait_time);
 
 				//如果有epoll事件就绪、epoll_wait()等待超时或发生非中断的错误，则退出循环
-				if (return_value >=0 || errno != EINTR)
+				if (epollevent_count >=0 || errno != EINTR)
 				{
 					break;
 				}
-			} while (true);
+			}
 
-			vector<function<void()>> callbacks;
-			//获取需要执行的定时器的回调函数列表
-			getExpired_callbacks(callbacks);
+			//获取到期的（需要执行的）定时器的回调函数列表
+			vector<function<void()>> expired_callbacks;
+			getExpired_callbacks(expired_callbacks);
 			//调度这些回调函数
-			if (!callbacks.empty())
+			if (!expired_callbacks.empty())
 			{
-				schedule(callbacks.begin(), callbacks.end());
-				/*for (auto& callback : callbacks)
-				{
-					schedule(callback);
-				}*/
-				callbacks.clear();
+				schedule(expired_callbacks.begin(), expired_callbacks.end());
+				expired_callbacks.clear();
 			}
 
 			//依次处理就绪的epoll事件
-			for (size_t i = 0; i < return_value; ++i)
+			for (size_t i = 0; i < epollevent_count; ++i)
 			{
 				//以引用的形式获取epoll事件
 				epoll_event& epollevent = epollevents[i];

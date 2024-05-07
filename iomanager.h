@@ -64,7 +64,7 @@ namespace IOManagerSpace
 		//返回是否竣工
 		bool is_completed()override;
 		//返回是否竣工
-		bool is_completed(uint64_t & timeout);
+		//bool is_completed(uint64_t & timeout);
 		//空闲协程的回调函数
 		void idle()override;
 

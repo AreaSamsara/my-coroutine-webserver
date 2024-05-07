@@ -75,7 +75,7 @@ shared_ptr<Timer> s_timer;
 
 void test_timer()
 {
-	IOManager iom(2, "test");
+	IOManager iom(2,true);
 	s_timer = iom.addTimer(1000, []()
 		{
 			static int i = 0;
@@ -84,7 +84,7 @@ void test_timer()
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 			if (++i == 3)
 			{
-				s_timer->reset(2000,true);
+				s_timer->resetRun_cycle(2000,true);
 				//s_timer->cancel();
 			}
 		},true);

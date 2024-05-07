@@ -19,10 +19,10 @@ namespace TimerSpace
 	public:
 		//取消定时器
 		bool cancel();
-		//刷新设置定时器的执行时间
-		bool refresh();
+		//刷新定时器的绝对执行时间
+		bool refreshExecute_time();
 		//重设定时器执行周期
-		bool reset(uint64_t ms, bool from_now);
+		bool resetRun_cycle(uint64_t ms, bool from_now);
 	private:
 		Timer(const uint64_t ms,const function<void()>& callback,const bool recurring,TimerManager* manager);
 		Timer(const uint64_t next);
@@ -30,9 +30,9 @@ namespace TimerSpace
 		//是否为循环定时器
 		bool m_recurring = false;
 		//执行周期
-		uint64_t m_ms = 0;
-		//精确的执行时间，初始化为当前时间+执行周期
-		uint64_t m_next = 0;
+		uint64_t m_run_cycle = 0;
+		//绝对执行时间，初始化为当前时间+执行周期
+		uint64_t m_execute_time = 0;
 		//回调函数
 		function<void()> m_callback;
 		//定时器管理者
@@ -60,10 +60,10 @@ namespace TimerSpace
 
 		//添加条件定时器
 		shared_ptr<Timer> addConditionTimer(const uint64_t ms, const function<void()>& callback,weak_ptr<void> weak_condition ,const bool recurring);
-		//获取下一个定时器的执行时间
-		uint64_t getNextTimer();
+		//获取距离下一个定时器执行还需要的时间
+		uint64_t getTimeUntilNextTimer();
 
-		//获取需要执行的定时器的回调函数列表
+		//获取到期的（需要执行的）定时器的回调函数列表
 		void getExpired_callbacks(vector<function<void()>>& callbacks);
 		//返回是否有定时器
 		bool hasTimer();
