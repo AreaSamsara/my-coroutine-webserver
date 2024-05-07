@@ -66,8 +66,6 @@ namespace IOManagerSpace
 		//空闲协程的回调函数
 		void idle()override;
 
-		//virtual void onTimerInsertedAtFront() override;
-
 		//重置文件描述符语境容器大小
 		void resizeFile_descriptor_contexts(const size_t size);
 	private:

@@ -611,11 +611,6 @@ namespace IOManagerSpace
 		}
 	}
 
-	/*void IOManager::onTimerInsertedAtFront()
-	{
-		tickle();
-	}*/
-
 	//重置文件描述符语境容器大小
 	void IOManager::resizeFile_descriptor_contexts(const size_t size)
 	{
