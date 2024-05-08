@@ -49,7 +49,8 @@ void test_fiber()
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				log_event->getSstream() << "write callback";
 				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-				IOManager::GetThis()->cancelEvent(server_socket, IOManager::READ);
+
+				IOManager::GetThis()->settleEvent(server_socket, IOManager::READ);
 				close(server_socket);
 			}
 		);
@@ -82,7 +83,7 @@ void timer_callback(shared_ptr<Timer> timer)
 	IOManager* iomanager= IOManager::GetThis();
 	if (++i == 3)
 	{
-		//iomanager->getTimer_manager()->resetRun_cycle(timer,2000, true);
+		//iomanager->getTimer_manager()->resetRun_cycle(timer, 2000, true);
 		iomanager->getTimer_manager()->cancel(timer);
 	}
 }
