@@ -27,11 +27,6 @@ namespace SchedulerSpace
 		class Task
 		{
 		public:
-			//协程
-			shared_ptr<Fiber> m_fiber;
-			//负责任务的线程的id（为默认值-1时表示所有线程都有义务做这个任务）
-			int m_thread_in_charge_id = -1;
-		public:
 			Task(shared_ptr<Fiber> fiber, const int thread_id)
 				:m_fiber(fiber), m_thread_in_charge_id(thread_id) {}
 
@@ -61,6 +56,11 @@ namespace SchedulerSpace
 				m_fiber = nullptr;
 				m_thread_in_charge_id = -1;
 			}
+		public:
+			//协程
+			shared_ptr<Fiber> m_fiber;
+			//负责任务的线程的id（为默认值-1时表示所有线程都有义务做这个任务）
+			int m_thread_in_charge_id = -1;
 		};
 	public:
 		//thread_count需要在构造函数内部再确定，故不加const；使用调用者线程时usecaller为true，否则为false
@@ -88,6 +88,11 @@ namespace SchedulerSpace
 				++begin;
 			}
 		}
+	public:
+		//静态方法，获取当前调度器
+		static Scheduler* GetThis() { return t_scheduler; }
+		//静态方法，修改当前调度器
+		static void SetThis(Scheduler* scheduler) { t_scheduler = scheduler; }
 	protected:
 		//调度器分配给线程池内线程的回调函数
 		void run();
@@ -101,10 +106,10 @@ namespace SchedulerSpace
 		//获取空闲线程数量
 		virtual bool getIdle_thread_count()const { return m_idle_thread_count; }
 	public:
-		//静态方法，获取当前调度器
-		static Scheduler* GetThis() { return t_scheduler; }
-		//静态方法，修改当前调度器
-		static void SetThis(Scheduler* scheduler) { t_scheduler = scheduler; }
+		//当前调度器（线程专属）
+		static thread_local Scheduler* t_scheduler;
+		//当前调度器的主协程（线程专属）
+		static thread_local Fiber* t_scheduler_fiber;
 	protected:
 		//调度器的线程id数组
 		vector<int> m_thread_ids;
@@ -131,10 +136,5 @@ namespace SchedulerSpace
 		bool m_use_caller = true;
 		//调度器名称
 		string m_name;
-	public:
-		//当前调度器（线程专属）
-		static thread_local Scheduler* t_scheduler;
-		//当前调度器的主协程（线程专属）
-		static thread_local Fiber* t_scheduler_fiber;
 	};
 }

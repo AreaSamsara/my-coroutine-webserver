@@ -5,6 +5,7 @@ namespace SchedulerSpace
 {
 	using std::bind;
 
+	//class Scheduler:public
 	//thread_count需要在构造函数内部再确定，故不加const；使用调用者线程时usecaller为true，否则为false
 	Scheduler::Scheduler(size_t thread_count, const bool use_caller, const string& name)
 		:m_use_caller(use_caller), m_name(name)
@@ -161,6 +162,9 @@ namespace SchedulerSpace
 		schedule(fiber, thread_id);
 	}
 
+
+
+	//class Scheduler:protected
 	//调度器分配给线程池内线程的回调函数
 	void Scheduler::run()
 	{
@@ -370,7 +374,7 @@ namespace SchedulerSpace
 
 
 
-
+	//class Scheduler:public static variable
 	//当前调度器（线程专属）
 	thread_local Scheduler* Scheduler::t_scheduler = nullptr;
 	//当前调度器的主协程（线程专属）

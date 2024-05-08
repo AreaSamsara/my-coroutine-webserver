@@ -2,8 +2,7 @@
 
 namespace MutexSpace
 {
-	//class Semaphore
-
+	//class Semaphore:public
 	//创建Semaphore对象并初始化信号量,count为信号量初始值
 	Semaphore::Semaphore(const uint32_t count)
 	{

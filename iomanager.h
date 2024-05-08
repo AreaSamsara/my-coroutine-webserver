@@ -8,6 +8,23 @@ namespace IOManagerSpace
 	using namespace TimerSpace;
 	using std::string;
 
+	/*
+	* 类关系：
+	* FileDescriptorEvent类是被IOManager类包含的私有类，由文件描述符、事件标志和回调函数组成，基本上只有
+	* FileDescriptorEvent类内部只有读取或修改私有成员的方法和触发事件的方法，大部分复杂方法都位于IOManager类内部
+	* IOManager类内部有装有多个文件描述符事件的容器，以及多个操纵文件描述符事件的方法
+	* IOManager类通过FileDescriptorEvent类容器与epoll系统进行交互，而通过TimerManager类处理定时器
+	*/
+	/*
+	* IO管理者类调用方法：
+	* 1.先调用构造函数创建IOManager对象，可以将其看作一种特殊的Scheduler对象
+	* 2.构造函数内部会自动创建epoll和定时器管理者，二者分别对epoll事件和定时器事件进行管理
+	* 3.构造函数内部默认调用start()方法启动任务调度器
+	* 4.(1)和Scheduler对象一样，可以调用schedule()方法将需要完成的任务（协程或者回调函数）加入任务队列，以此种方式调度的任务会交由epoll处理
+	*   (2)还可以通过addTimer()方法添加设定好任务（回调函数）的定时器，以此种方式调度的任务会交由定时器管理者处理
+	* 5.析构函数默认调用stop()方法停止调度器，在等待epoll任务队列的所有任务以及所有的定时器都处理完毕以后，IO管理者停止。
+	*/
+
 	//IO管理者，公有继承自调度器类
 	class IOManager :public Scheduler
 	{
@@ -53,6 +70,9 @@ namespace IOManagerSpace
 
 		//添加定时器，并在需要时通知调度器有任务
 		void addTimer(const shared_ptr<Timer> timer);
+	public:
+		//静态方法，获取当前IO管理者
+		static IOManager* GetThis() { return dynamic_cast<IOManager*>(Scheduler::GetThis()); }
 	protected:
 		//通知调度器有任务了
 		void tickle()override;
@@ -63,9 +83,6 @@ namespace IOManagerSpace
 
 		//重设文件描述符事件容器大小
 		void resizeFile_descriptor_events(const size_t size);
-	public:
-		//静态方法，获取当前IO管理者
-		static IOManager* GetThis() { return dynamic_cast<IOManager*>(Scheduler::GetThis()); }
 	private:
 		//epoll文件描述符
 		int m_epoll_file_descriptor = 0;

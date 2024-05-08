@@ -4,8 +4,7 @@
 
 namespace LogSpace
 {
-	//class LogLevel
-	
+	//class LogLevel:static public
 	//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
 	const string LogLevel::toString(const Level level)
 	{
@@ -32,7 +31,9 @@ namespace LogSpace
 		}
 	}
 
-	//class LogEvent
+
+
+	//class LogEvent:public
 	LogEvent::LogEvent(const string& filename, const int32_t line, const pid_t thread_id,
 		const string& thread_name, const uint32_t fiber_id, const uint32_t elapse,
 		const uint64_t time)
@@ -52,7 +53,7 @@ namespace LogSpace
 
 
 
-	//class Logger:
+	//class Logger:public
 	Logger::Logger(const string& name) :m_name(name), m_level(LogLevel::DEBUG)
 	{
 		//构造Logger对象时自动设置formatter为默认日志模式
@@ -141,6 +142,8 @@ namespace LogSpace
 		m_level = level;
 	}
 
+
+	//class Logger:static public variable
 	//默认日志格式模式
 	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%X%T[%p]%T[%c]%T%f:%l%T%m%n";
 	//默认日志名称
@@ -150,7 +153,7 @@ namespace LogSpace
 
 
 
-	//class LogAppender
+	//class LogAppender:public
 	LogAppender::LogAppender(const LogLevel::Level level, const string& logger_name) :m_level(level),m_logger_name(logger_name){}
 	//读取或修改LogLevel
 	LogLevel::Level LogAppender::getLevel()
@@ -182,8 +185,10 @@ namespace LogSpace
 	}
 
 
-	//class StdoutLogAppender:
+
+	//class StdoutLogAppender:public
 	StdoutLogAppender::StdoutLogAppender(const LogLevel::Level level, const string& logger_name) :LogAppender(level, logger_name) {}
+	//日志输出函数，由 Logger::log调用（重写LogAppender的相应方法）
 	void StdoutLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
 		//只有日志等级大于或等于Appender类的日志等级才输出
@@ -196,9 +201,10 @@ namespace LogSpace
 	}
 
 
-	//class FileLogAppender:
+	//class FileLogAppender:public
 	FileLogAppender::FileLogAppender(const LogLevel::Level level, const string& logger_name,const string& filename)
 		:LogAppender(level,logger_name), m_filename(filename) {}
+	//日志输出函数，由 Logger::log调用（重写LogAppender的相应方法）
 	void FileLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
 		//先重启文件，并判断文件是否成功打开
@@ -211,6 +217,7 @@ namespace LogSpace
 			m_filestream << m_formatter->format(logger_name, level, event);
 		}
 	}
+	//重新打开文件，文件打开成功返回true
 	bool FileLogAppender::reopen()
 	{
 		//如果文件已打开，先将其关闭
@@ -226,7 +233,7 @@ namespace LogSpace
 
 
 
-	//class LogFormatter:
+	//class LogFormatter:public
 	LogFormatter::LogFormatter(const string& pattern) :m_pattern(pattern)
 	{
 		//构造LogFormatter对象后立即按照日志模式（pattern）初始化日志格式
@@ -245,6 +252,8 @@ namespace LogSpace
 		return str;
 	}
 
+
+	//class LogFormatter:private
 	//按照日志模式（pattern）初始化日志格式
 	void LogFormatter::initialize()
 	{
@@ -467,7 +476,7 @@ namespace LogSpace
 
 
 
-	//class LogManager:
+	//class LogManager:public
 	LoggerManager::LoggerManager()
 	{
 		//初始化默认logger

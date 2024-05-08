@@ -32,7 +32,7 @@ namespace ThreadSpace
 
 		//阻塞正在运行的进程，将thread加入等待队列
 		void join();
-
+	public:
 		//获取线程专属的Thread类指针，设置为静态方法以访问静态类型
 		static Thread* getThis();
 	private:
@@ -42,9 +42,11 @@ namespace ThreadSpace
 		Thread(const Thread&&) = delete;
 		//删除赋值运算符
 		Thread& operator=(const Thread&) = delete;
-
+	private:
 		//传递给pthread_create的主运行函数
 		static void* run(void* arg);
+	public:
+		static thread_local Thread* t_thread;	//线程专属的Thread类指针（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 	private:
 		pthread_t m_thread = 0;		//线程（默认设为0表示尚未创建）
 		string m_name;				//线程名称
@@ -52,8 +54,5 @@ namespace ThreadSpace
 		function<void()> m_callback;	//线程回调函数
 		
 		Semaphore m_semaphore;		//信号量
-
-	public:
-		static thread_local Thread* t_thread;	//线程专属的Thread类指针（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 	};
 }

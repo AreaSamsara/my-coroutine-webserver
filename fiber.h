@@ -39,9 +39,6 @@ namespace FiberSpace
 			//异常状态
 			EXCEPT
 		};
-	private:
-		//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
-		Fiber();
 	public:
 		//用于创建子协程的构造函数
 		Fiber(const function<void()>& callback, const size_t stacksize = 1024 * 1024);
@@ -76,6 +73,14 @@ namespace FiberSpace
 		//协程的主运行函数
 		static void MainFunction();
 	private:
+		//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
+		Fiber();
+	public:
+		//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
+		static thread_local Fiber* t_fiber;
+		//每个线程专属的主协程
+		static thread_local shared_ptr <Fiber> t_main_fiber;
+	private:
 		//协程id
 		uint64_t m_id = 0;
 		//协程状态
@@ -93,25 +98,20 @@ namespace FiberSpace
 		static atomic<uint64_t> s_new_fiber_id;
 		//协程总数（静态原子类型，保证读写的线程安全）
 		static atomic<uint64_t> s_fiber_count;
-	public:
-		//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
-		static thread_local Fiber* t_fiber;
-		//每个线程专属的主协程
-		static thread_local shared_ptr <Fiber> t_main_fiber;
 	};
 
-	//栈内存分配类
-	class MallocStackAllocator
-	{
-	public:
-		static void* Allocate(const size_t size)
-		{
-			return malloc(size);
-		}
+	////栈内存分配类
+	//class MallocStackAllocator
+	//{
+	//public:
+	//	static void* Allocate(const size_t size)
+	//	{
+	//		return malloc(size);
+	//	}
 
-		static void Deallocate(void* memory, const size_t size)
-		{
-			return free(memory);
-		}
-	};
+	//	static void Deallocate(void* memory, const size_t size)
+	//	{
+	//		return free(memory);
+	//	}
+	//};
 }

@@ -6,11 +6,21 @@
 namespace TimerSpace
 {
 	using namespace ThreadSpace;
-	using std::enable_shared_from_this;
 	using std::weak_ptr;
 	using std::set;
 
-	//class TimerManager;
+	/*
+	* 类关系：
+	* Timer类内部只有读取或修改私有成员的方法，大部分复杂方法都位于TimerManager类内部
+	* TimerManager类内部有装有多个定时器的定时器集合，以及多个操纵定时器的方法
+	*/
+	/*
+	* 定时器系统调用方法：
+	* 1.先创建独立的Timer对象并为其设置回调函数，
+	* 2.再创建TimerManager对象用于管理Timer对象，
+	* 3.调用addTimer方法可以将Timer对象加入TimerManager对象的定时器集合中
+	*/
+
 
 	//定时器
 	class Timer
@@ -63,7 +73,7 @@ namespace TimerSpace
 		//添加定时器
 		bool addTimer(const shared_ptr<Timer> timer);
 		//取消定时器
-		bool cancel(const shared_ptr<Timer> timer);
+		bool cancelTimer(const shared_ptr<Timer> timer);
 		//刷新定时器的绝对执行时间
 		bool refreshExecute_time(const shared_ptr<Timer> timer);
 		//重设定时器执行周期

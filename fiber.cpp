@@ -14,30 +14,7 @@ namespace FiberSpace
 	using namespace SchedulerSpace;
 	using std::exception;
 
-	//class Fiber
-	//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
-	Fiber::Fiber()
-	{
-		//主协程初始状态即为执行状态
-		m_state = EXECUTE;
-		//将当前协程设置为主协程
-		t_fiber = this;
-
-		//获取当前语境，成功则返回0，否则报错
-		if (getcontext(&m_context) != 0)
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event, "getcontext");
-		}
-
-		//静态变量：协程数加一
-		++s_fiber_count;
-
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		event->getSstream() << "Fiber::Fiber";
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
-	}
-
+	//class Fiber:public
 	//用于创建子协程的构造函数
 	Fiber::Fiber(const function<void()>& callback, const size_t stacksize)
 		:m_id(++s_new_fiber_id), m_stacksize(stacksize), m_callback(callback)
@@ -46,7 +23,8 @@ namespace FiberSpace
 		++s_fiber_count;
 
 		//为协程栈分配内存
-		m_stack = MallocStackAllocator::Allocate(m_stacksize);
+		//m_stack = MallocStackAllocator::Allocate(m_stacksize);
+		m_stack = malloc(m_stacksize);
 
 		//获取当前语境，成功则返回0，否则报错
 		if (getcontext(&m_context) != 0)
@@ -84,7 +62,8 @@ namespace FiberSpace
 			}
 			
 			//释放栈内存
-			MallocStackAllocator::Deallocate(m_stack, m_stacksize);
+			//MallocStackAllocator::Deallocate(m_stack, m_stacksize);
+			free(m_stack);
 		}
 		//否则说明要销毁的是主协程
 		else
@@ -182,7 +161,7 @@ namespace FiberSpace
 
 
 
-
+	//class Fiber:public static
 	//获取当前协程，并仅在第一次调用时创建主协程
 	shared_ptr<Fiber> Fiber::GetThis()
 	{
@@ -298,15 +277,43 @@ namespace FiberSpace
 		}
 	}
 
-	
 
-	//下一个新协程的id（静态原子类型，保证读写的线程安全）
-	atomic<uint64_t> Fiber::s_new_fiber_id{ 0 };
-	//协程总数（静态原子类型，保证读写的线程安全）
-	atomic<uint64_t>  Fiber::s_fiber_count{ 0 };
+	//class Fiber:private
+	//默认构造函数，私有方法，仅在初次创建主协程时被静态的GetThis()方法调用
+	Fiber::Fiber()
+	{
+		//主协程初始状态即为执行状态
+		m_state = EXECUTE;
+		//将当前协程设置为主协程
+		t_fiber = this;
 
+		//获取当前语境，成功则返回0，否则报错
+		if (getcontext(&m_context) != 0)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(event, "getcontext");
+		}
+
+		//静态变量：协程数加一
+		++s_fiber_count;
+
+		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		event->getSstream() << "Fiber::Fiber";
+		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+	}
+
+
+
+	//class Fiber:public static variable
 	//每个线程专属的当前协程（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 	thread_local Fiber* Fiber::t_fiber = nullptr;
 	//每个线程专属的主协程
 	thread_local shared_ptr <Fiber>  Fiber::t_main_fiber = nullptr;
+
+
+	//class Fiber:private static variable
+	//下一个新协程的id（静态原子类型，保证读写的线程安全）
+	atomic<uint64_t> Fiber::s_new_fiber_id{ 0 };
+	//协程总数（静态原子类型，保证读写的线程安全）
+	atomic<uint64_t>  Fiber::s_fiber_count{ 0 };
 }

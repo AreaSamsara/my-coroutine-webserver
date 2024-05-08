@@ -66,6 +66,7 @@ namespace LogSpace
 			ERROR = 4,
 			FATAL = 5
 		};
+	public:
 		//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
 		static const string toString(const Level level);
 	};
@@ -93,8 +94,6 @@ namespace LogSpace
 		uint64_t getTime()const { return m_time; }
 		const string getContent()const { return m_sstream.str(); }
 		stringstream& getSstream() { return m_sstream; }
-	private:
-		
 	private:
 		const string m_filename;			//文件名（自带路径）
 		int32_t m_line = 0;					//行号
@@ -131,14 +130,6 @@ namespace LogSpace
 
 		//读取logger名称
 		const string& getName()const { return m_name; }
-
-	private:
-		string m_name;		//logger名称
-		LogLevel::Level m_level;	//满足该日志级别才输出日志
-		list<shared_ptr<LogAppender>> m_appenders;	//appender集合
-		shared_ptr<LogFormatter> m_formatter;		//日志格式器
-
-		SpinLock m_mutex;		//互斥锁（自旋锁）
 	public:
 		//默认日志格式模式
 		const static string Default_FormatPattern;
@@ -146,6 +137,13 @@ namespace LogSpace
 		const static string Default_LoggerName;
 		//默认日志时间模式
 		const static string Default_DataTimePattern;
+	private:
+		string m_name;		//logger名称
+		LogLevel::Level m_level;	//满足该日志级别才输出日志
+		list<shared_ptr<LogAppender>> m_appenders;	//appender集合
+		shared_ptr<LogFormatter> m_formatter;		//日志格式器
+
+		SpinLock m_mutex;		//互斥锁（自旋锁）
 	};
 
 
@@ -167,9 +165,6 @@ namespace LogSpace
 		shared_ptr<LogFormatter> getFormatter();	//使用互斥锁，故不加const
 		//修改formatter
 		void setFormatter(const shared_ptr<LogFormatter> formatter);	//传递的是shared_ptr，故不能声明const
-
-		//获取可操作的互斥锁
-		//MutexType getMutex() { return m_mutex; }
 	protected:
 		string m_logger_name;		//日志名称
 		LogLevel::Level m_level;	//日志级别
@@ -199,7 +194,6 @@ namespace LogSpace
 
 		//重新打开文件，文件打开成功返回true
 		bool reopen();
-
 	private:
 		string m_filename;		//日志地址文件名
 		ofstream m_filestream;	//日志地址文件流
@@ -231,9 +225,7 @@ namespace LogSpace
 
 		//formatter主函数，由Appender调用
 		string format(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event);
-
 	private:
-
 		//按照日志模式（pattern）初始化日志格式
 		void initialize();
 

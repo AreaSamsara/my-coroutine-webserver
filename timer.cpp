@@ -5,20 +5,20 @@ namespace TimerSpace
 	using std::bind;
 
 
-	//class Timer
+	//class Timer:public
 	Timer::Timer(const uint64_t run_cycle, const function<void()>& callback, const bool recurring)
 		:m_run_cycle(run_cycle), m_callback(callback), m_recurring(recurring)
 	{
 		//精确的执行时间，初始化为当前时间+执行周期
 		m_execute_time = GetCurrentMS() + m_run_cycle;
 	}
-
 	//构造条件定时器
 	Timer::Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring)
 		:Timer(run_cycle, bind(&condition_callback, weak_condition, callback), recurring) {}
-
 	Timer::Timer(const uint64_t execute_time) :m_execute_time(execute_time) {}
 
+
+	//class Timer:private static
 	//条件回调函数，用于辅助构造条件定时器
 	void Timer::condition_callback(weak_ptr<void> weak_condition, const function<void()>& callback)
 	{
@@ -34,39 +34,10 @@ namespace TimerSpace
 
 
 
-	//class TimerManager
-	TimerManager::TimerManager()
-	{
-		//初始化上次执行时间为当前时间
-		m_previous_time = GetCurrentMS();
-	}
-
+	//class TimerManager:private class
 	//定时器排序类，按定时器的绝对执行时间从早到晚排序
 	bool TimerManager::Comparator::operator()(const shared_ptr<Timer>& left_timer, const shared_ptr<Timer>& right_timer)const
 	{
-		//if (!left_timer && !right_timer)
-		//{
-		//	return false;
-		//}
-		//if (!left_timer)
-		//{
-		//	return true;
-		//}
-		//if (!right_timer)
-		//{
-		//	return false;
-		//}
-		//if (left_timer->getExecute_time() < right_timer->getExecute_time())
-		//{
-		//	return true;
-		//}
-		//if (left_timer->getExecute_time() > right_timer->getExecute_time())
-		//{
-		//	return false;
-		//}
-		////如果精确的执行时间相同，则直接按照默认的方法比较地址
-		//return left_timer.get() < right_timer.get();
-
 		//如果右边的定时器为空，则返回false（因为此时即便左边的定时器也为空，仍返回false）
 		if (!right_timer)
 		{
@@ -89,6 +60,14 @@ namespace TimerSpace
 		}
 	}
 
+
+	//class TimerManager:public
+	TimerManager::TimerManager()
+	{
+		//初始化上次执行时间为当前时间
+		m_previous_time = GetCurrentMS();
+	}
+
 	//将定时器添加到管理器中
 	bool TimerManager::addTimer(const shared_ptr<Timer> timer)
 	{
@@ -103,7 +82,7 @@ namespace TimerSpace
 	}
 
 	//取消定时器
-	bool TimerManager::cancel(const shared_ptr<Timer> timer)
+	bool TimerManager::cancelTimer(const shared_ptr<Timer> timer)
 	{
 		////先监视互斥锁，保护
 		//WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
@@ -221,7 +200,6 @@ namespace TimerSpace
 		return true;
 	}
 
-
 	//返回是否有定时器
 	bool TimerManager::hasTimer()
 	{
@@ -266,62 +244,6 @@ namespace TimerSpace
 		//获取当前时间
 		uint64_t now = GetCurrentMS();
 
-		////如果不存在下一个定时器，直接返回
-		//{
-		//	//先监视互斥锁，保护m_timers
-		//	ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-		//	if (m_timers.empty())
-		//	{
-		//		return;
-		//	}
-		//}
-
-		////先监视互斥锁，保护
-		//WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-
-		////检查服务器的时间是否被调后了
-		//bool rollover = detectClockRollover(now);
-		////如果时间没有被调后且定时器集合的第一个定时器都尚不需要执行，则直接返回
-		//if (!rollover && ((*m_timers.begin())->getExecute_time() > now))
-		//{
-		//	return;
-		//}
-
-		////临时定时器，绝对执行时间被设为当前时间，用于辅助定时器集合的排序
-		//shared_ptr<Timer> now_timer(new Timer(now));
-
-		////如果服务器时间被调后了，将expired_timers设为整个m_timers；否则将其中所有精确执行时间不大于now_ms的加入expired_timers
-		//auto iterator = rollover ? m_timers.end() : m_timers.upper_bound(now_timer);
-
-		////已到期的定时器集合
-		//vector<shared_ptr<Timer>> expired_timers(m_timers.begin(), iterator);
-
-		////删除已被expired_timers取走的定时器
-		//m_timers.erase(m_timers.begin(), iterator);
-
-
-
-		////将callbacks的大小设置为与expired_timers一致
-		//expired_callbacks.reserve(expired_timers.size());
-		//
-		////将expired_timers取到的所有定时器依次放入callbacks
-		//for (auto& expired_timer : expired_timers)
-		//{
-		//	expired_callbacks.push_back(expired_timer->getCallback());
-		//	//如果该定时器为循环定时器，在执行前应设置下一个周期的定时器
-		//	if (expired_timer->isRecurring())
-		//	{
-		//		expired_timer->setExecute_time(now + expired_timer->getRun_cycle());
-		//		m_timers.insert(expired_timer);
-		//	}
-		//	//否则置空其回调函数
-		//	else
-		//	{
-		//		expired_timer->getCallback() = nullptr;
-		//	}
-		//}
-
-
 		//如果不存在下一个定时器，直接返回
 		{
 			//先监视互斥锁，保护m_timers
@@ -335,10 +257,10 @@ namespace TimerSpace
 		//检查服务器的时间是否被调后了
 		bool rollover = detectClockRollover(now);
 
+		//如果时间没有被调后且定时器集合的第一个定时器都尚不需要执行，则直接返回
 		{
 			//先监视互斥锁，保护m_timers
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-			//如果时间没有被调后且定时器集合的第一个定时器都尚不需要执行，则直接返回
 			if (!rollover && ((*m_timers.begin())->getExecute_time() > now))
 			{
 				return;
@@ -362,8 +284,6 @@ namespace TimerSpace
 			m_timers.erase(m_timers.begin(), iterator);
 		}
 
-
-
 		//将expired_callbacks的大小设置为与expired_timers一致
 		expired_callbacks.reserve(expired_timers.size());
 
@@ -375,8 +295,7 @@ namespace TimerSpace
 			if (expired_timer->isRecurring())
 			{
 				expired_timer->setExecute_time(now + expired_timer->getRun_cycle());
-				//m_timers.insert(expired_timer);
-				addTimer(expired_timer);	//new
+				addTimer(expired_timer);
 			}
 			//否则置空其回调函数
 			else
@@ -387,6 +306,7 @@ namespace TimerSpace
 	}
 
 
+	//class TimerManager:private
 	//检测服务器的时间是否被调后了
 	bool TimerManager::detectClockRollover(const uint64_t now)
 	{

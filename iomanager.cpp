@@ -4,8 +4,7 @@
 
 namespace IOManagerSpace
 {
-	//class FileDescriptorEvent
-
+	//class FileDescriptorEvent:public
 	//根据事件类型获取对应的回调函数
 	function<void()>& IOManager::FileDescriptorEvent::getCallback(const EventType event_type)
 	{
@@ -46,7 +45,7 @@ namespace IOManagerSpace
 
 
 
-	//class IOManager
+	//class IOManager:public
 	IOManager::IOManager(size_t thread_count, const bool use_caller, const string& name)
 		:Scheduler(thread_count,use_caller,name)
 	{
@@ -193,7 +192,6 @@ namespace IOManagerSpace
 		//addEvent()函数正常执行，返回0
 		return true;
 	}
-
 
 	//删除文件描述符上的对应事件
 	bool IOManager::deleteEvent(const int file_descriptor, const EventType event_type)
@@ -406,6 +404,8 @@ namespace IOManagerSpace
 	}
 
 
+
+	//class IOManager:protected
 	//通知调度器有任务了
 	void IOManager::tickle()
 	{
@@ -428,8 +428,6 @@ namespace IOManagerSpace
 		//在满足Scheduler::is_completed()的前提下，还应当满足当前等待执行的事件数量为0、暂时没有下一个定时器才能竣工
 		return !m_timer_manager->hasTimer() && m_pending_event_count == 0 && Scheduler::is_completed();
 	}
-
-
 	//空闲协程的回调函数
 	void IOManager::idle()
 	{

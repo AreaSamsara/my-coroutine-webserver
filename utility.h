@@ -20,22 +20,24 @@ namespace UtilitySpace
 
 	//获取当前线程id
 	pid_t GetThread_id();
-
 	//获取当前线程名称
 	string GetThread_name();
 
 	//获取当前协程id
 	uint32_t GetFiber_id();
 
+	//时间ms
+	uint64_t GetCurrentMS();
+	//时间us
+	uint64_t GetCurrentUS();
+
 	void Backtrace(vector<string>& bt, const int size, const int skip = 1);
 
 	string BacktraceToString(const int size = 64, const int skip = 2, const string& prefix = "");
 
+	//回溯栈并发送栈消息，再中断程序
 	void Assert(shared_ptr<LogEvent> event);
 
+	//回溯栈并发送栈消息和message字符串，再中断程序
 	void Assert(shared_ptr<LogEvent> event, const string& message);
-
-	//时间ms
-	uint64_t GetCurrentMS();
-	uint64_t GetCurrentUS();
 }

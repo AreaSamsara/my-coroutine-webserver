@@ -3,7 +3,7 @@
 
 namespace ThreadSpace
 {
-	//class Thread
+	//class Thread:public
 	Thread::Thread(const function<void()>& callback, const string& name) :m_callback(callback), m_name(name)
 	{
 		//如果输入的名称为空字符串，改为"UNKNOW"
@@ -63,6 +63,16 @@ namespace ThreadSpace
 		}
 	}
 
+
+	//class Thread:public static
+	//获取线程专属的Thread类指针，设置为静态方法以访问静态类型
+	Thread* Thread::getThis()
+	{
+		return t_thread;
+	}
+
+
+	//class Thread:private static
 	//传递给pthread_create的主运行函数
 	void* Thread::run(void* arg)
 	{
@@ -77,7 +87,7 @@ namespace ThreadSpace
 		thread->m_id = UtilitySpace::GetThread_id();
 		//设置线程名称（被限制在15个字符以内）
 		pthread_setname_np(pthread_self(), thread->m_name.substr(0, 15).c_str());
-		
+
 		//将thread的回调函数复制到局部变量再运行，确保thread的自由
 		function<void()> callback;
 		callback.swap(thread->m_callback);
@@ -89,11 +99,7 @@ namespace ThreadSpace
 		return 0;
 	}
 
-	//获取线程专属的Thread类指针，设置为静态方法以访问静态类型
-	Thread* Thread::getThis()
-	{
-		return t_thread;
-	}
 
+	//class Thread:public static variable
 	thread_local Thread* Thread::t_thread = nullptr;	//线程专属的Thread类指针（线程专属变量的生命周期由线程自主管理，故使用裸指针）
 }

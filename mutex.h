@@ -40,8 +40,6 @@ namespace MutexSpace
 	class CASLock;				//原子锁
 
 	class Semaphore;			//信号量类
-
-	//typedef SpinLock Mutex;
 	
 
 	//监视者系列
@@ -92,7 +90,7 @@ namespace MutexSpace
 
 	//被监视的读取锁
 	template<class T>
-	struct ReadScopedLock
+	class ReadScopedLock
 	{
 	public:
 		//创建ReadScopedLock对象并将读取锁锁定
@@ -136,7 +134,7 @@ namespace MutexSpace
 
 	//被监视的写入锁
 	template<class T>
-	struct WriteScopedLock
+	class WriteScopedLock
 	{
 	public:
 		//创建WriteScopedLock对象并将写入锁锁定
