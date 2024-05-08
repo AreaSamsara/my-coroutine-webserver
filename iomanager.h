@@ -26,7 +26,7 @@ namespace IOManagerSpace
 		public:
 			//根据事件类型获取对应的回调函数
 			function<void()>& getCallback(const EventType event_type);
-			//触发事件
+			//将事件从已注册事件中删除，并触发之
 			void triggerEvent(const EventType event_type);
 		public:
 			int m_file_descriptor;				//事件关联的文件描述符
@@ -43,16 +43,16 @@ namespace IOManagerSpace
 		shared_ptr<TimerManager> getTimer_manager()const { return m_timer_manager; }
 
 		//添加事件到文件描述符上，成功返回0，失败返回-1
-		int addEvent(const int file_description, const EventType event, function<void()> callback);
+		bool addEvent(const int file_description, const EventType event, function<void()> callback);		//内部要用callback调用swap函数，故不能加const&
 		//删除文件描述符上的对应事件
 		bool deleteEvent(const int file_description, const EventType event);
 		//结算（触发并删除）文件描述符上的对应事件
 		bool settleEvent(const int file_description, const EventType event);
 		//结算（触发并删除）文件描述符上的所有事件
-		bool cancelAllEvents(const int file_description);
+		bool settleAllEvents(const int file_description);
 
 		//添加定时器，并在需要时通知调度器有任务
-		void addTimer(shared_ptr<Timer> timer);
+		void addTimer(const shared_ptr<Timer> timer);
 	protected:
 		//通知调度器有任务了
 		void tickle()override;
@@ -61,7 +61,7 @@ namespace IOManagerSpace
 		//空闲协程的回调函数
 		void idle()override;
 
-		//重置文件描述符事件容器大小
+		//重设文件描述符事件容器大小
 		void resizeFile_descriptor_events(const size_t size);
 	public:
 		//静态方法，获取当前IO管理者
@@ -78,7 +78,6 @@ namespace IOManagerSpace
 		Mutex_Read_Write m_mutex;
 
 		//文件描述符事件容器
-		//vector<FileDescriptorEvent*> m_file_descriptor_events;
 		vector<shared_ptr<FileDescriptorEvent>> m_file_descriptor_events;
 
 		//定时器管理者

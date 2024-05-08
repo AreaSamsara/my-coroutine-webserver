@@ -21,7 +21,7 @@ namespace IOManagerSpace
 		}
 	}
 
-	//触发事件
+	//将事件从已注册事件中删除，并触发之
 	void IOManager::FileDescriptorEvent::triggerEvent(const EventType event_type)
 	{
 		//要触发的事件应为已注册事件，否则报错
@@ -38,10 +38,6 @@ namespace IOManagerSpace
 		auto& callback = getCallback(event_type);
 
 		//如果事件语境有回调函数，用其调用调度方法
-		/*if (event_context.m_callback)
-		{
-			GetThis()->schedule(event_context.m_callback);
-		}*/
 		if (callback)
 		{
 			GetThis()->schedule(callback);
@@ -94,7 +90,7 @@ namespace IOManagerSpace
 			Assert(log_event);
 		}
 
-		//设置文件描述符事件容器大小
+		//设置文件描述符事件容器初始大小
 		resizeFile_descriptor_events(32);
 
 
@@ -114,62 +110,55 @@ namespace IOManagerSpace
 		close(m_epoll_file_descriptor);
 		close(m_pipe_file_descriptors[0]);
 		close(m_pipe_file_descriptors[1]);
-
-		////清空文件描述符事件容器
-		//for (size_t i = 0; i < m_file_descriptor_events.size(); ++i)
-		//{
-		//	if (m_file_descriptor_events[i])
-		//	{
-		//		delete m_file_descriptor_events[i];
-		//	}
-		//}
 	}
 
 	//添加事件到文件描述符上，成功返回0，失败返回-1
-	int IOManager::addEvent(const int file_descriptor, const EventType event_type, function<void()> callback)
+	bool IOManager::addEvent(const int file_descriptor, const EventType event_type, function<void()> callback)
 	{
-		//文件描述符语境
-		//FileDescriptorEvent* file_descriptor_context = nullptr;
-		shared_ptr<FileDescriptorEvent> file_descriptor_context;
-		
-		//如果文件描述符语境容器大小不足，则先将容器扩充
+		//如果文件描述符事件容器大小不足，则先将容器扩充
 		if (m_file_descriptor_events.size() <= file_descriptor)
 		{
-			//先监视互斥锁，保护
+			//先监视互斥锁，保护m_file_descriptor_events
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 			//每次将大小扩充到需求值的1.5倍
 			resizeFile_descriptor_events(file_descriptor * 1.5);
 		}
+
+		//文件描述符事件
+		shared_ptr<FileDescriptorEvent> file_descriptor_event;
+		//将文件描述符对应的事件从容器中取出
 		{
-			//先监视互斥锁，保护
+			//先监视互斥锁，保护m_file_descriptor_events
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-			//将文件描述符语境从容器中取出
-			file_descriptor_context = m_file_descriptor_events[file_descriptor];
+
+			file_descriptor_event = m_file_descriptor_events[file_descriptor];
 		}
 
 		//先监视互斥锁，保护
-		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
+		ScopedLock<Mutex> lock(file_descriptor_event->m_mutex);
 		//要加入的事件不应是已被文件描述符注册的事件，否则报错
-		if (file_descriptor_context->m_registered_event_types & event_type)
+		if (file_descriptor_event->m_registered_event_types & event_type)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			stringstream message_sstream;
 			message_sstream << "addEvent error,file_descriptor=" << file_descriptor <<
-				" event=" << event_type << " file_descriptor_context.event=" << file_descriptor_context->m_registered_event_types;
+				" event_type=" << event_type << " file_descriptor_event.m_registered_event_types=" << file_descriptor_event->m_registered_event_types;
 			Assert(log_event,message_sstream.str());
 		}
 
-		//操作码：如果文件描述符语境已经注册的事件不为空，则执行修改事件；否则执行添加事件
-		int operation_code = file_descriptor_context->m_registered_event_types ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
+
+
+		//操作码：如果文件描述符事件已经注册的事件不为空，则执行修改事件；否则执行添加事件
+		int operation_code = file_descriptor_event->m_registered_event_types ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
 
 		//设置epoll事件
 		epoll_event epollevent;
-		//将epollevent设置为边缘触发模式，并设置已注册的事件
-		epollevent.events = EPOLLET | file_descriptor_context->m_registered_event_types | event_type;
-		//epollevent.data.ptr = file_descriptor_context;
-		epollevent.data.ptr = file_descriptor_context.get();
+		//将epollevent设置为边缘触发模式，并添加已注册的事件
+		epollevent.events = EPOLLET | file_descriptor_event->m_registered_event_types | event_type;
+		//将文件描述符事件的裸指针存放在epollevent的data_ptr中
+		epollevent.data.ptr = file_descriptor_event.get();
 
-		//控制epoll，成功返回0，失败返回-1；创建失败则报错且addEvent()返回-1
+		//控制epoll，成功返回0，失败返回-1；控制失败则报错且addEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value != 0)
 		{
@@ -177,7 +166,7 @@ namespace IOManagerSpace
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
-			return -1;
+			return false;
 		}
 
 
@@ -186,24 +175,23 @@ namespace IOManagerSpace
 		++m_pending_event_count;
 
 		//添加event到已注册事件中（注册在控制epoll之后执行，以确保epoll控制已成功）
-		file_descriptor_context->m_registered_event_types = (EventType)(file_descriptor_context->m_registered_event_types | event_type);
+		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types | event_type);
 
+		//以引用的形式获取文件描述符事件中的回调函数
+		auto& file_descriptor_event_callback = file_descriptor_event->getCallback(event_type);
 
-		//以引用的形式获取文件描述符语境中的事件语境
-		auto& empty_callback = file_descriptor_context->getCallback(event_type);
-
-		//event_context应为空，否则报错
-		if (empty_callback)
+		//文件描述符事件的回调函数应为空，否则报错
+		if (file_descriptor_event_callback)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(log_event);
 		}
 
-		//将文件描述符语境的回调函数设置为传入的回调函数
-		empty_callback.swap(callback);
+		//将文件描述符事件的回调函数设置为传入的回调函数
+		file_descriptor_event_callback.swap(callback);
 
 		//addEvent()函数正常执行，返回0
-		return 0;
+		return true;
 	}
 
 
@@ -211,10 +199,9 @@ namespace IOManagerSpace
 	bool IOManager::deleteEvent(const int file_descriptor, const EventType event_type)
 	{
 		//文件描述符事件
-		//FileDescriptorEvent* file_descriptor_event = nullptr;
 		shared_ptr<FileDescriptorEvent> file_descriptor_event;
 		{
-			//先监视互斥锁，保护
+			//先监视互斥锁，保护m_file_descriptor_events
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
 			//如果file_descriptor超出了文件描述符事件容器的大小，则说明没有与该文件描述符匹配的事件，返回false
@@ -223,7 +210,7 @@ namespace IOManagerSpace
 				return false;
 			}
 
-			//否则将文件描述符语境从中取出
+			//否则将文件描述符事件从中取出
 			file_descriptor_event = m_file_descriptor_events[file_descriptor];
 		}
 
@@ -241,12 +228,12 @@ namespace IOManagerSpace
 
 		//设置epoll事件
 		epoll_event epollevent;
-		//epollevent.events = EPOLLET | new_events;
+		//将epollevent设置为边缘触发模式，并添加已注册的事件
 		epollevent.events = EPOLLET | file_descriptor_event->m_registered_event_types & ~event_type;
-		//epollevent.data.ptr = file_descriptor_event;
+		//将文件描述符事件的裸指针存放在epollevent的data_ptr中
 		epollevent.data.ptr = file_descriptor_event.get();
 
-		//控制epoll，成功返回0，失败返回-1；创建失败则报错且deleteEvent()返回false
+		//控制epoll，成功返回0，失败返回-1；控制失败则报错且deleteEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -265,9 +252,9 @@ namespace IOManagerSpace
 		//从已注册事件中删除event
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types & ~event_type);
 
-		//以引用的形式获取文件描述符语境中的事件语境
+		//以引用的形式获取文件描述符事件中的回调函数
 		auto& callback = file_descriptor_event->getCallback(event_type);
-		//重置该语境
+		//将该回调函数置空
 		callback = nullptr;
 
 		//deleteEvent()函数正常执行，返回true
@@ -277,20 +264,19 @@ namespace IOManagerSpace
 	//结算（触发并删除）文件描述符上的对应事件
 	bool IOManager::settleEvent(const int file_descriptor, const EventType event_type)
 	{
-		//文件描述符语境
-		//FileDescriptorEvent* file_descriptor_context = nullptr;
+		//文件描述符事件
 		shared_ptr<FileDescriptorEvent> file_descriptor_context;
 		{
 			//先监视互斥锁，保护
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
-			//如果file_descriptor超出了文件描述符语境容器的大小，则说明没有与该文件描述符匹配的事件，返回false
+			//如果file_descriptor超出了文件描述符事件容器的大小，则说明没有与该文件描述符匹配的事件，返回false
 			if ((int)m_file_descriptor_events.size() <= file_descriptor)
 			{
 				return false;
 			}
 
-			//否则将文件描述符语境从中取出
+			//否则将文件描述符事件从中取出
 			file_descriptor_context = m_file_descriptor_events[file_descriptor];
 		}
 
@@ -308,11 +294,12 @@ namespace IOManagerSpace
 
 		//设置epoll事件
 		epoll_event epollevent;
+		//将epollevent设置为边缘触发模式，并添加已注册的事件
 		epollevent.events = EPOLLET | file_descriptor_context->m_registered_event_types & ~event_type;
-		//epollevent.data.ptr = file_descriptor_context;
+		//将文件描述符事件的裸指针存放在epollevent的data_ptr中
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		//控制epoll，成功返回0，失败返回-1；创建失败则报错且deleteEvent()返回false
+		//控制epoll，成功返回0，失败返回-1；控制失败则报错且deleteEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -323,7 +310,7 @@ namespace IOManagerSpace
 			return false;
 		}
 
-
+		//将事件从已注册事件中删除，并触发之
 		file_descriptor_context->triggerEvent(event_type);
 
 		//当前等待执行的事件数量减一
@@ -334,29 +321,28 @@ namespace IOManagerSpace
 	}
 
 	//结算（触发并删除）文件描述符上的所有事件
-	bool IOManager::cancelAllEvents(const int file_descriptor)
+	bool IOManager::settleAllEvents(const int file_descriptor)
 	{
-		//文件描述符语境
-		//FileDescriptorEvent* file_descriptor_context = nullptr;
+		//文件描述符事件
 		shared_ptr<FileDescriptorEvent> file_descriptor_context;
 		{
 			//先监视互斥锁，保护
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
-			//如果file_descriptor超出了文件描述符语境容器的大小，则说明没有与该文件描述符匹配的事件，返回false
+			//如果file_descriptor超出了文件描述符事件容器的大小，则说明没有与该文件描述符匹配的事件，返回false
 			if ((int)m_file_descriptor_events.size() <= file_descriptor)
 			{
 				return false;
 			}
 
-			//否则将文件描述符语境从中取出
+			//否则将文件描述符事件从中取出
 			file_descriptor_context = m_file_descriptor_events[file_descriptor];
 		}
 
 		//先监视互斥锁，保护
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
-		//要删除全部事件的文件描述符语境的已注册事件不应为空，否则返回false
+		//要删除全部事件的文件描述符事件的已注册事件不应为空，否则返回false
 		if (!file_descriptor_context->m_registered_event_types)
 		{
 			return false;
@@ -367,11 +353,12 @@ namespace IOManagerSpace
 
 		//设置epoll事件
 		epoll_event epollevent;
-		epollevent.events = 0;	//设置为空
-		//epollevent.data.ptr = file_descriptor_context;
+		//将epollevent设置为空
+		epollevent.events = NONE;
+		//将文件描述符事件的裸指针存放在epollevent的data_ptr中
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		//控制epoll，成功返回0，失败返回-1；创建失败则报错且cancelAllEvent()返回false
+		//控制epoll，成功返回0，失败返回-1；控制失败则报错且cancelAllEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -382,14 +369,14 @@ namespace IOManagerSpace
 			return false;
 		}
 
-		//根据已注册READ事件，触发之
+		//根据已注册READ事件，将其从已注册事件中删除，并触发之
 		if (file_descriptor_context->m_registered_event_types & READ)
 		{
 			file_descriptor_context->triggerEvent(READ);
 			//当前等待执行的事件数量减一
 			--m_pending_event_count;
 		}
-		//根据已注册WRITE事件，触发之
+		//根据已注册WRITE事件，将其从已注册事件中删除，并触发之
 		if (file_descriptor_context->m_registered_event_types & WRITE)
 		{
 			file_descriptor_context->triggerEvent(WRITE);
@@ -400,8 +387,8 @@ namespace IOManagerSpace
 		//触发结束后已注册事件应为空，否则报错
 		if (file_descriptor_context->m_registered_event_types != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			Assert(log_event);
 		}
 
 		//cancelAllEvent()函数正常执行，返回true
@@ -409,7 +396,7 @@ namespace IOManagerSpace
 	}
 
 	//添加定时器，并在需要时通知调度器有任务
-	void IOManager::addTimer(shared_ptr<Timer> timer)
+	void IOManager::addTimer(const shared_ptr<Timer> timer)
 	{
 		//如果新加入的定时器位于定时器集合的开头，说明需要通知调度器有任务了
 		if (m_timer_manager->addTimer(timer))
@@ -464,7 +451,7 @@ namespace IOManagerSpace
 			}
 
 			//就绪的epollevent数量
-			int epollevent_count = 0;
+			//int epollevent_count = 0;
 			
 			//设置超时时间（静态变量）为3000ms
 			static const int MAX_TIMEOUT = 3000;
@@ -482,6 +469,9 @@ namespace IOManagerSpace
 				epoll_wait_time = MAX_TIMEOUT;
 			}
 
+
+			//就绪的epollevent数量
+			int epollevent_count = 0;
 			//持续调用epoll_wait()等待事件，直到有epoll事件就绪，或者发生非中断的错误
 			while(true)
 			{
@@ -605,21 +595,15 @@ namespace IOManagerSpace
 		}
 	}
 
-	//重置文件描述符事件容器大小
+	//重设文件描述符事件容器大小
 	void IOManager::resizeFile_descriptor_events(const size_t size)
 	{
+		//重设容器大小
 		m_file_descriptor_events.resize(size);
 
-		/*for (size_t i = 0; i < m_file_descriptor_events.size(); ++i)
-		{
-			if (!m_file_descriptor_events[i])
-			{
-				m_file_descriptor_events[i] = new FileDescriptorEvent;
-				m_file_descriptor_events[i]->m_file_descriptor = i;
-			}
-		}*/
 		for (size_t i = 0; i < m_file_descriptor_events.size(); ++i)
 		{
+			//如果该位置元素为空，为其分配内存并将文件描述符设置为元素下标
 			if (!m_file_descriptor_events[i])
 			{
 				m_file_descriptor_events[i].reset(new FileDescriptorEvent());

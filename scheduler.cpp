@@ -353,10 +353,10 @@ namespace SchedulerSpace
 	//通知调度器有任务了
 	void Scheduler::tickle()
 	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		event->getSstream() << "tickle";
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		log_event->getSstream() << "tickle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
+		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 	}
 
 	//返回是否竣工

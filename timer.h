@@ -10,7 +10,7 @@ namespace TimerSpace
 	using std::weak_ptr;
 	using std::set;
 
-	class TimerManager;
+	//class TimerManager;
 
 	//定时器
 	class Timer
@@ -31,7 +31,8 @@ namespace TimerSpace
 		void setExecute_time(const uint64_t execute_time) { m_execute_time = execute_time; }
 		void setCallback(const function<void()>& callback) { m_callback = callback; }
 	private:
-		static void OnTimer(weak_ptr<void> weak_condition, const function<void()>& callback);
+		//静态私有方法：条件回调函数，用于辅助构造条件定时器（为先于构造函数调用，故设置为静态方法）
+		static void condition_callback(weak_ptr<void> weak_condition, const function<void()>& callback);
 	private:
 		//是否为循环定时器
 		bool m_recurring = false;
@@ -60,13 +61,13 @@ namespace TimerSpace
 		virtual ~TimerManager() {}
 
 		//添加定时器
-		bool addTimer(shared_ptr<Timer> timer);
+		bool addTimer(const shared_ptr<Timer> timer);
 		//取消定时器
-		bool cancel(shared_ptr<Timer> timer);
+		bool cancel(const shared_ptr<Timer> timer);
 		//刷新定时器的绝对执行时间
-		bool refreshExecute_time(shared_ptr<Timer> timer);
+		bool refreshExecute_time(const shared_ptr<Timer> timer);
 		//重设定时器执行周期
-		bool resetRun_cycle(shared_ptr<Timer> timer, const uint64_t run_cycle, const bool from_now);
+		bool resetRun_cycle(const shared_ptr<Timer> timer, const uint64_t run_cycle, const bool from_now);
 
 		//返回是否有定时器
 		bool hasTimer();

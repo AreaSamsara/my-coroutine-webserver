@@ -83,8 +83,8 @@ void timer_callback(shared_ptr<Timer> timer)
 	IOManager* iomanager= IOManager::GetThis();
 	if (++i == 3)
 	{
-		//iomanager->getTimer_manager()->resetRun_cycle(timer, 2000, true);
-		iomanager->getTimer_manager()->cancel(timer);
+		iomanager->getTimer_manager()->resetRun_cycle(timer, 2000, true);
+		//iomanager->getTimer_manager()->cancel(timer);
 	}
 }
 
