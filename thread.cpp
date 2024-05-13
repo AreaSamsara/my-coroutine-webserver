@@ -21,7 +21,7 @@ namespace ThreadSpace
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(),GetThread_name(), GetFiber_id(), 0, time(0)));
 			event->getSstream() << "pthread_create thread fail, return_value=" << return_value << " name=" << name;
 			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 
 			throw logic_error("pthread_create error");
 		}
@@ -55,7 +55,7 @@ namespace ThreadSpace
 				log_event->getSstream() << "pthread_join thread fail, return_value=" << return_value << " name=" << m_name;
 				throw logic_error("pthread_join error");
 				//使用LoggerManager单例的默认logger输出日志
-				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			}
 
 			//线程已执行完毕，重置m_thread为0
@@ -81,7 +81,6 @@ namespace ThreadSpace
 
 		//设置静态变量t_thread
 		t_thread = thread;
-		//t_thread_name = thread->m_name;
 
 		//获取线程id
 		thread->m_id = UtilitySpace::GetThread_id();

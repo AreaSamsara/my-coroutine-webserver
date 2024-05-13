@@ -22,7 +22,8 @@ namespace SchedulerSpace
 	//协程调度器类
 	class Scheduler
 	{
-	private:
+	//private:
+	protected:
 		//任务类
 		class Task
 		{
@@ -64,7 +65,7 @@ namespace SchedulerSpace
 		};
 	public:
 		//thread_count需要在构造函数内部再确定，故不加const；使用调用者线程时usecaller为true，否则为false
-		Scheduler(size_t thread_count, const bool use_caller = true, const string& name = "main_scheduler");
+		Scheduler(size_t thread_count = 1, const bool use_caller = true, const string& name = "main_scheduler");
 		virtual ~Scheduler();
 
 		//获取调度器名称
@@ -101,7 +102,7 @@ namespace SchedulerSpace
 		//通知调度器有任务了
 		virtual void tickle();
 		//返回是否竣工
-		virtual bool is_completed();
+		virtual bool isCompleted();
 
 		//获取空闲线程数量
 		virtual bool getIdle_thread_count()const { return m_idle_thread_count; }
@@ -120,7 +121,7 @@ namespace SchedulerSpace
 		//空闲线程数量
 		size_t m_idle_thread_count=0;
 		//是否正处于停止状态
-		bool m_stopping = true;
+		bool m_is_stopped = true;
 		//调用者线程的id，仅使用调用者线程时有效（无效时设为-1，默认无效）
 		int m_caller_thread_id = -1;
 	private:

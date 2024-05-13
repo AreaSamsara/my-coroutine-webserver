@@ -99,19 +99,4 @@ namespace FiberSpace
 		//协程总数（静态原子类型，保证读写的线程安全）
 		static atomic<uint64_t> s_fiber_count;
 	};
-
-	////栈内存分配类
-	//class MallocStackAllocator
-	//{
-	//public:
-	//	static void* Allocate(const size_t size)
-	//	{
-	//		return malloc(size);
-	//	}
-
-	//	static void Deallocate(void* memory, const size_t size)
-	//	{
-	//		return free(memory);
-	//	}
-	//};
 }

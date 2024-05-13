@@ -20,6 +20,7 @@ namespace IOManagerSpace
 		}
 	}
 
+
 	//将事件从已注册事件中删除，并触发之
 	void IOManager::FileDescriptorEvent::triggerEvent(const EventType event_type)
 	{
@@ -36,10 +37,16 @@ namespace IOManagerSpace
 		//以引用的形式获取文件描述符语境中的事件语境
 		auto& callback = getCallback(event_type);
 
-		//如果事件语境有回调函数，用其调用调度方法
-		if (callback)
+		////如果事件语境有回调函数，用其调用调度方法
+		//if (callback)
+		//{
+		//	GetThis()->schedule(callback);
+		//}
+
+		auto& task = getTask(event_type);
+		if (task.m_fiber)
 		{
-			GetThis()->schedule(callback);
+			GetThis()->schedule(task.m_fiber);
 		}
 	}
 
@@ -111,7 +118,7 @@ namespace IOManagerSpace
 		close(m_pipe_file_descriptors[1]);
 	}
 
-	//添加事件到文件描述符上，成功返回0，失败返回-1
+	//添加事件到文件描述符上
 	bool IOManager::addEvent(const int file_descriptor, const EventType event_type, function<void()> callback)
 	{
 		//如果文件描述符事件容器大小不足，则先将容器扩充
@@ -164,7 +171,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
 		}
 
@@ -176,18 +183,37 @@ namespace IOManagerSpace
 		//添加event到已注册事件中（注册在控制epoll之后执行，以确保epoll控制已成功）
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types | event_type);
 
-		//以引用的形式获取文件描述符事件中的回调函数
-		auto& file_descriptor_event_callback = file_descriptor_event->getCallback(event_type);
+		////以引用的形式获取文件描述符事件中的回调函数
+		//auto& file_descriptor_event_callback = file_descriptor_event->getCallback(event_type);
 
-		//文件描述符事件的回调函数应为空，否则报错
-		if (file_descriptor_event_callback)
+		////文件描述符事件的回调函数应为空，否则报错
+		//if (file_descriptor_event_callback)
+		//{
+		//	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		//	Assert(log_event);
+		//}
+
+		////将文件描述符事件的回调函数设置为传入的回调函数
+		//file_descriptor_event_callback.swap(callback);
+
+		auto& file_descriptor_task = file_descriptor_event->getTask(event_type);
+
+		//如果传入的回调函数不为空，则将其设作文件描述符事件对应的回调函数
+		if (callback)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(log_event);
+			shared_ptr<Fiber> fiber(new Fiber(callback));
+			file_descriptor_task.m_fiber = fiber;
 		}
-
-		//将文件描述符事件的回调函数设置为传入的回调函数
-		file_descriptor_event_callback.swap(callback);
+		//如果传入的回调函数为空，则将当前协程设作文件描述符事件的任务
+		else
+		{
+			file_descriptor_task.m_fiber = Fiber::GetThis();
+			if (file_descriptor_task.m_fiber->getState() != Fiber::EXECUTE)
+			{
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				Assert(log_event);
+			}
+		}
 
 		//addEvent()函数正常执行，返回0
 		return true;
@@ -238,7 +264,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
 		}
 
@@ -250,10 +276,14 @@ namespace IOManagerSpace
 		//从已注册事件中删除event
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types & ~event_type);
 
-		//以引用的形式获取文件描述符事件中的回调函数
-		auto& callback = file_descriptor_event->getCallback(event_type);
-		//将该回调函数置空
-		callback = nullptr;
+		////以引用的形式获取文件描述符事件中的回调函数
+		//auto& callback = file_descriptor_event->getCallback(event_type);
+		////将该回调函数置空
+		//callback = nullptr;
+
+		auto& file_descriptor_task = file_descriptor_event->getTask(event_type);	//new
+		file_descriptor_task.reset();	//new
+
 
 		//deleteEvent()函数正常执行，返回true
 		return true;
@@ -304,7 +334,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
 		}
 
@@ -363,7 +393,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
 		}
 
@@ -423,10 +453,10 @@ namespace IOManagerSpace
 		}
 	}
 	//返回是否竣工
-	bool IOManager::is_completed()
+	bool IOManager::isCompleted()
 	{
 		//在满足Scheduler::is_completed()的前提下，还应当满足当前等待执行的事件数量为0、暂时没有下一个定时器才能竣工
-		return !m_timer_manager->hasTimer() && m_pending_event_count == 0 && Scheduler::is_completed();
+		return !m_timer_manager->hasTimer() && m_pending_event_count == 0 && Scheduler::isCompleted();
 	}
 	//空闲协程的回调函数
 	void IOManager::idle()
@@ -440,11 +470,11 @@ namespace IOManagerSpace
 		while (true)
 		{
 			//如果已经竣工，则退出idle协程的轮询循环，结束idle协程
-			if (is_completed())
+			if (isCompleted())
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 				log_event->getSstream() << "name=" << getName() << " idle exit";
-				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 				break;
 			}
 
@@ -560,7 +590,7 @@ namespace IOManagerSpace
 					log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code
 						<< "," << file_descriptor_context->m_file_descriptor << "," << epollevent.events << "):"
 						<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-					Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 					continue;
 				}
 

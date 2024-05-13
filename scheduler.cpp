@@ -1,8 +1,10 @@
 #include "scheduler.h"
 #include "log.h"
+#include "hook.h"
 
 namespace SchedulerSpace
 {
+	using namespace HookSpace;
 	using std::bind;
 
 	//class Scheduler:public
@@ -42,7 +44,7 @@ namespace SchedulerSpace
 	Scheduler::~Scheduler()
 	{
 		//既然要析构调度器，那调度器应该处于停止状态，否则报错
-		if (!m_stopping)
+		if (!m_is_stopped)
 		{
 			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 			Assert(event);
@@ -61,12 +63,12 @@ namespace SchedulerSpace
 		ScopedLock<Mutex> lock(m_mutex);
 
 		//如果不是正处于停止状态，则不应该继续执行start函数
-		if (!m_stopping)
+		if (!m_is_stopped)
 		{
 			return;
 		}
 		//将停止状态关闭，并开始调度工作
-		m_stopping = false;
+		m_is_stopped = false;
 
 		//线程池在调度前应为空，否则报错
 		if (!m_threads.empty())
@@ -92,7 +94,7 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "stop";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		//对于线程池的每个线程都tickle()一下
 		for (size_t i = 0; i < m_thread_count; ++i)
@@ -106,10 +108,10 @@ namespace SchedulerSpace
 		}
 
 		//调度器的调度工作业已结束，将其设为停止状态，接下来只需等待所有线程完成任务即可
-		m_stopping = true;
+		m_is_stopped = true;
 
 		//如果使用了调用者线程且没有竣工，将替代者协程加入工作
-		if (m_use_caller && !is_completed())
+		if (m_use_caller && !isCompleted())
 		{
 			//进行调用者的Scheduler::run()协程，使其行使与线程池内的线程相同的功能
 			m_thread_substitude_caller_fiber->swapIn();
@@ -171,7 +173,10 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "run";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+
+		
+		set_hook_enable(true);	//new
 
 		//先将线程专属的当前调度器设置为本调度器（即使是调用者线程的线程替代者协程也一样）
 		SetThis(this);
@@ -297,7 +302,7 @@ namespace SchedulerSpace
 						shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 						event->getSstream() << "idle_fiber terminated";
 						//使用LoggerManager单例的默认logger输出日志
-						Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+						Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 						//如果这个线程是调用者线程，则在退出循环之前应将调度器主协程设为调用者线程的主协程，否则调用者线程的Scheduler::run()协程将无法正常返回
 						if (GetThread_id() == m_caller_thread_id)
@@ -345,10 +350,10 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		event->getSstream() << "idle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		//在竣工之前不终止空闲协程而是将其挂起
-		while (!is_completed())
+		while (!isCompleted())
 		{
 			Fiber::YieldToHold();
 		}
@@ -360,16 +365,16 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << "tickle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 	}
 
 	//返回是否竣工
-	bool Scheduler::is_completed()
+	bool Scheduler::isCompleted()
 	{
 		//先监视互斥锁，保护类成员
 		ScopedLock<Mutex> lock(m_mutex);
 		//竣工的前提是调度器已关闭、任务列表为空且活跃线程数为0
-		return m_stopping && m_tasks.empty() && m_active_thread_count == 0;
+		return m_is_stopped && m_tasks.empty() && m_active_thread_count == 0;
 	}
 
 

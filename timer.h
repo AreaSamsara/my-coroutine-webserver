@@ -26,12 +26,12 @@ namespace TimerSpace
 	class Timer
 	{
 	public:
-		Timer(const uint64_t run_cycle, const function<void()>& callback, const bool recurring);
-		Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring);
+		Timer(const uint64_t run_cycle, const function<void()>& callback, const bool recurring = false);
+		Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring = false);
 		Timer(const uint64_t execute_time);
 
 		//获取私有成员
-		bool isRecurring()const { return m_recurring; }
+		bool isRecurring()const { return m_is_recurring; }
 		uint64_t getRun_cycle()const { return m_run_cycle; }
 		function<void()> getCallback()const { return m_callback; }
 		uint64_t getExecute_time()const { return m_execute_time; }
@@ -45,7 +45,7 @@ namespace TimerSpace
 		static void condition_callback(weak_ptr<void> weak_condition, const function<void()>& callback);
 	private:
 		//是否为循环定时器
-		bool m_recurring = false;
+		bool m_is_recurring = false;
 		//执行周期
 		uint64_t m_run_cycle = 0;
 		//绝对执行时间，初始化为当前时间+执行周期

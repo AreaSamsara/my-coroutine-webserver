@@ -43,23 +43,38 @@ namespace IOManagerSpace
 		public:
 			//根据事件类型获取对应的回调函数
 			function<void()>& getCallback(const EventType event_type);
+			Task& getTask(const EventType event_type)
+			{
+				switch (event_type)
+				{
+				case READ:
+					return m_read_task;
+				case WRITE:
+					return m_write_task;
+				default:
+					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+					Assert(log_event, "getTask");
+				}
+			}
 			//将事件从已注册事件中删除，并触发之
 			void triggerEvent(const EventType event_type);
 		public:
 			int m_file_descriptor;				//事件关联的文件描述符
 			function<void()> m_read_callback;	//读取事件
 			function<void()> m_write_callback;	//写入事件
+			Task m_read_task;
+			Task m_write_task;
 			EventType m_registered_event_types = NONE;		//已经注册的事件类型，初始化为NONE
 			Mutex m_mutex;						//互斥锁
 		};
 	public:
-		IOManager(size_t thread_count, const bool use_caller = true, const string& name = "main_scheduler");
+		IOManager(size_t thread_count = 1, const bool use_caller = true, const string& name = "main_scheduler");
 		virtual ~IOManager();
 
 		//获取定时器管理者
 		shared_ptr<TimerManager> getTimer_manager()const { return m_timer_manager; }
 
-		//添加事件到文件描述符上，成功返回0，失败返回-1
+		//添加事件到文件描述符上
 		bool addEvent(const int file_description, const EventType event, function<void()> callback);		//内部要用callback调用swap函数，故不能加const&
 		//删除文件描述符上的对应事件
 		bool deleteEvent(const int file_description, const EventType event);
@@ -77,7 +92,7 @@ namespace IOManagerSpace
 		//通知调度器有任务了
 		void tickle()override;
 		//返回是否竣工
-		bool is_completed()override;
+		bool isCompleted()override;
 		//空闲协程的回调函数
 		void idle()override;
 

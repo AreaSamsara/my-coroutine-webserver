@@ -7,7 +7,7 @@ namespace TimerSpace
 
 	//class Timer:public
 	Timer::Timer(const uint64_t run_cycle, const function<void()>& callback, const bool recurring)
-		:m_run_cycle(run_cycle), m_callback(callback), m_recurring(recurring)
+		:m_run_cycle(run_cycle), m_callback(callback), m_is_recurring(recurring)
 	{
 		//精确的执行时间，初始化为当前时间+执行周期
 		m_execute_time = GetCurrentMS() + m_run_cycle;
@@ -84,8 +84,6 @@ namespace TimerSpace
 	//取消定时器
 	bool TimerManager::cancelTimer(const shared_ptr<Timer> timer)
 	{
-		////先监视互斥锁，保护
-		//WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		auto callback = timer->getCallback();
 		//如果定时器内部的回调函数不为空，取消之并返回true
 		if (callback)
