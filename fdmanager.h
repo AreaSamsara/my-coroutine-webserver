@@ -13,7 +13,7 @@ namespace FdManagerSpace
 	{
 	public:
 		FileDescriptorEntity(const int file_descriptor);
-		~FileDescriptorEntity();
+		~FileDescriptorEntity() {}
 
 		//获取私有成员
 		bool isInitialized()const { return m_is_initialized; }
@@ -21,15 +21,18 @@ namespace FdManagerSpace
 		bool isSystemNonblock()const { return m_is_systemNonblock; }
 		bool isUserNonblock()const { return m_is_userNonblock; }
 		bool isClose()const { return m_is_close; }
-		uint64_t getTimeout(const int type)const;
 
 		//修改私有成员
 		void setSystemNonblock(const bool value) { m_is_systemNonblock = value; }
 		void setUserNonblock(const bool value) { m_is_userNonblock = value; }
-		void setTimeout(const int type, const uint64_t timeout);
 
+		//根据类型获取对应的超时时间
+		uint64_t getTimeout(const int type)const;
+		//根据类型设置对应的超时时间
+		void setTimeout(const int type, const uint64_t timeout);
+	private:
+		//初始化
 		bool initialize();
-		//bool close();
 	private:
 		//将bool值按只占1位的位字段打包，节省内存（位字段不可在定义的同时初始化）
 		//是否已初始化
@@ -56,11 +59,14 @@ namespace FdManagerSpace
 	public:
 		FileDescriptorManager();
 
+		//获取文件描述符对应的实体，并在该实体不存在且auto_create为true时创建之
 		shared_ptr<FileDescriptorEntity> getFile_descriptor(const int file_descriptor, const bool auto_create = false);
+		//删除文件描述符对应的实体
 		void deleteFile_descriptor(const int file_descriptor);
 	private:
 		//互斥锁（读/写锁）
 		Mutex_Read_Write m_mutex;
+		//文件描述符实体容器
 		vector<shared_ptr<FileDescriptorEntity>> m_file_descriptor_entities;
 	};
 }

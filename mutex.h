@@ -4,8 +4,12 @@
 #include <stdexcept>
 #include <atomic>
 
+#include "noncopyable.h"
+
 namespace MutexSpace
 {
+	using namespace NoncopyableSpace;
+
 	using std::logic_error;
 	using std::atomic_flag;
 	using std::atomic_flag_test_and_set_explicit;
@@ -182,8 +186,8 @@ namespace MutexSpace
 
 	//互斥锁系列
 
-	//通用互斥锁
-	class Mutex
+	//通用互斥锁，禁止复制
+	class Mutex	: private Noncopyable
 	{
 	public:
 		//创建Mutex_Read_Write对象并初始化读/写锁
@@ -212,8 +216,8 @@ namespace MutexSpace
 	private:
 		pthread_mutex_t m_mutex;	//互斥锁
 	};
-	//空互斥锁，用于调试
-	class NullMutex
+	//空互斥锁，禁止复制，用于调试
+	class NullMutex :private Noncopyable
 	{
 	public:
 		//什么都不做
@@ -226,8 +230,8 @@ namespace MutexSpace
 	};
 
 
-	//读/写互斥锁
-	class Mutex_Read_Write
+	//读/写互斥锁，禁止复制
+	class Mutex_Read_Write :private Noncopyable
 	{
 	public:
 		//创建Mutex_Read_Write对象并初始化读/写锁
@@ -263,8 +267,8 @@ namespace MutexSpace
 	private:
 		pthread_rwlock_t m_lock;	//读/写互斥锁
 	};
-	//空读/写互斥锁，用于调试
-	class NullMutex_Read_Write
+	//空读/写互斥锁，禁止复制,用于调试
+	class NullMutex_Read_Write :private Noncopyable
 	{
 	public:
 		//什么都不做
@@ -279,8 +283,8 @@ namespace MutexSpace
 	};
 
 
-	//自旋锁
-	class SpinLock
+	//自旋锁，禁止复制
+	class SpinLock :private Noncopyable
 	{
 	public:
 		SpinLock()
@@ -305,8 +309,8 @@ namespace MutexSpace
 		pthread_spinlock_t m_mutex;
 	};
 
-	//原子锁
-	class CASLock
+	//原子锁，禁止复制
+	class CASLock :private Noncopyable
 	{
 	public:
 		CASLock()
@@ -335,8 +339,8 @@ namespace MutexSpace
 	};
 
 
-	//信号量类
-	class Semaphore
+	//信号量类，禁止复制
+	class Semaphore : private Noncopyable
 	{
 	public:
 		//创建Semaphore对象并初始化信号量,count为信号量初始值
@@ -348,13 +352,13 @@ namespace MutexSpace
 		void wait();
 		//将信号量加一
 		void notify();
-	private:
-		//删除复制构造函数
-		Semaphore(const Semaphore&) = delete;
-		//删除移动构造函数
-		Semaphore(const Semaphore&&) = delete;
-		//删除赋值运算符
-		Semaphore& operator=(const Semaphore&) = delete;
+	//private:
+	//	//删除复制构造函数
+	//	Semaphore(const Semaphore&) = delete;
+	//	//删除移动构造函数
+	//	Semaphore(const Semaphore&&) = delete;
+	//	//删除赋值运算符
+	//	Semaphore& operator=(const Semaphore&) = delete;
 	private:
 		sem_t m_semaphore;		//信号量
 	};

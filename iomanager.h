@@ -42,7 +42,7 @@ namespace IOManagerSpace
 		{
 		public:
 			//根据事件类型获取对应的回调函数
-			function<void()>& getCallback(const EventType event_type);
+			//function<void()>& getCallback(const EventType event_type);
 			Task& getTask(const EventType event_type)
 			{
 				switch (event_type)
@@ -60,10 +60,10 @@ namespace IOManagerSpace
 			void triggerEvent(const EventType event_type);
 		public:
 			int m_file_descriptor;				//事件关联的文件描述符
-			function<void()> m_read_callback;	//读取事件
-			function<void()> m_write_callback;	//写入事件
-			Task m_read_task;
-			Task m_write_task;
+			//function<void()> m_read_callback;	//读取事件
+			//function<void()> m_write_callback;	//写入事件
+			Task m_read_task;					//读取任务
+			Task m_write_task;					//写入任务
 			EventType m_registered_event_types = NONE;		//已经注册的事件类型，初始化为NONE
 			Mutex m_mutex;						//互斥锁
 		};

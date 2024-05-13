@@ -4,12 +4,14 @@
 #include "singleton.h"
 #include "utility.h"
 #include "log.h"
+#include "noncopyable.h"
 
 namespace ThreadSpace
 {
 	using namespace SingletonSpace;
 	using namespace LogSpace;
 	using namespace UtilitySpace;
+	using namespace NoncopyableSpace;
 	using std::function;
 
 	/*
@@ -18,8 +20,8 @@ namespace ThreadSpace
 	* 2.调用Thread对象的join()方法，可以阻塞主线程，让主线程等待该线程执行完毕再继续
 	*/
 
-	//线程类
-	class Thread
+	//线程类，禁止复制
+	class Thread :private Noncopyable
 	{
 	public:
 		Thread(const function<void()>& callback, const string& name);

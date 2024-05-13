@@ -6,19 +6,19 @@ namespace IOManagerSpace
 {
 	//class FileDescriptorEvent:public
 	//根据事件类型获取对应的回调函数
-	function<void()>& IOManager::FileDescriptorEvent::getCallback(const EventType event_type)
-	{
-		switch(event_type)
-		{
-		case READ:
-			return m_read_callback;
-		case WRITE:
-			return m_write_callback;
-		default:
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(log_event,"getCallback");
-		}
-	}
+	//function<void()>& IOManager::FileDescriptorEvent::getCallback(const EventType event_type)
+	//{
+	//	switch(event_type)
+	//	{
+	//	case READ:
+	//		return m_read_callback;
+	//	case WRITE:
+	//		return m_write_callback;
+	//	default:
+	//		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+	//		Assert(log_event,"getCallback");
+	//	}
+	//}
 
 
 	//将事件从已注册事件中删除，并触发之
@@ -35,7 +35,7 @@ namespace IOManagerSpace
 		m_registered_event_types = (EventType)(m_registered_event_types & ~event_type);
 
 		//以引用的形式获取文件描述符语境中的事件语境
-		auto& callback = getCallback(event_type);
+		//auto& callback = getCallback(event_type);
 
 		////如果事件语境有回调函数，用其调用调度方法
 		//if (callback)
