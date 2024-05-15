@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -38,11 +39,13 @@ extern "C"
 	extern ssize_t(*sendto_f)(int s,const void* msg, size_t len, int flags,const struct sockaddr* to, socklen_t tolen);
 	extern ssize_t(*sendmsg_f)(int s,const struct msghdr* msg, int flags);
 
+	//fdœ‡πÿ
 	extern int (*close_f)(int fd);
 	extern int (*fcntl_f)(int fd, int cmd, .../* arg */);
 	extern int (*ioctl_f)(int d, unsigned long int request, .../* arg */);
-
 	extern int (*getsockopt_f)(int sockfd, int level, int optname, void* optval, socklen_t* optlen);
 	extern int (*setsockopt_f)(int sockfd, int level, int optname,const void* optval, socklen_t optlen);
+
+	extern int connect_with_timeout(int sockfd, const struct sockaddr* addr, socklen_t addrlen, uint64_t timeout_ms);
 }
 

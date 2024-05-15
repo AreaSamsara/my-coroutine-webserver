@@ -462,6 +462,7 @@ extern "C"
 		return do_io(s, sendmsg_f, "sendmsg", IOManager::WRITE, SO_SNDTIMEO, msg, flags);
 	}
 
+	//fd相关
 	int close(int fd)
 	{
 		//如果没有hook住，则直接调用原始的库方法
@@ -482,7 +483,6 @@ extern "C"
 		}
 		return close_f(fd);
 	}
-
 	int fcntl(int fd, int cmd, .../* arg */)
 	{
 		va_list va;
@@ -597,13 +597,10 @@ extern "C"
 		}
 		return ioctl_f(d, request, arg);
 	}
-
-
 	int getsockopt(int sockfd, int level, int optname, void* optval, socklen_t* optlen)
 	{
 		return getsockopt_f(sockfd, level, optname, optval, optlen);
 	}
-
 	int setsockopt(int sockfd, int level, int optname, const void* optval, socklen_t optlen)
 	{
 		//如果没有hook住，则直接调用原始的库方法
