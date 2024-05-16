@@ -32,7 +32,6 @@ namespace LogSpace
 	}
 
 
-
 	//class LogEvent:public
 	LogEvent::LogEvent(const string& filename, const int32_t line, const pid_t thread_id,
 		const string& thread_name, const uint32_t fiber_id, const uint32_t elapse,

@@ -6,10 +6,8 @@
 namespace FdManagerSpace
 {
 	using namespace IOManagerSpace;
-	//using std::enable_shared_from_this;
 
 	//文件描述符实体类
-	//class FileDescriptorEntity :public enable_shared_from_this<FileDescriptorEntity>
 	class FileDescriptorEntity
 	{
 	public:
