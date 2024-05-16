@@ -6,10 +6,11 @@
 namespace FdManagerSpace
 {
 	using namespace IOManagerSpace;
-	using std::enable_shared_from_this;
+	//using std::enable_shared_from_this;
 
 	//文件描述符实体类
-	class FileDescriptorEntity :public enable_shared_from_this<FileDescriptorEntity>
+	//class FileDescriptorEntity :public enable_shared_from_this<FileDescriptorEntity>
+	class FileDescriptorEntity
 	{
 	public:
 		FileDescriptorEntity(const int file_descriptor);
@@ -31,10 +32,10 @@ namespace FdManagerSpace
 		//根据类型设置对应的超时时间
 		void setTimeout(const int type, const uint64_t timeout);
 	private:
-		//初始化
+		//初始化文件描述符实体
 		bool initialize();
 	private:
-		//将bool值按只占1位的位字段打包，节省内存（位字段不可在定义的同时初始化）
+		//将bool值按只占1位的位字段打包，节省内存（位字段不可在定义的同时初始化，故在初始化列表进行赋值）
 		//是否已初始化
 		bool m_is_initialized : 1;
 		//是否socket

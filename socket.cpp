@@ -7,6 +7,7 @@
 namespace SocketSpace
 {
 	using namespace FdManagerSpace;
+	using namespace HookSpace;
 	using std::dynamic_pointer_cast;
 
 	//class Socket:public

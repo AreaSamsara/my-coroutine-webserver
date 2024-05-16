@@ -176,7 +176,8 @@ namespace SchedulerSpace
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
 
 		
-		set_hook_enable(true);	//new
+		//set_hook_enable(true);
+		t_hook_enable = true;
 
 		//先将线程专属的当前调度器设置为本调度器（即使是调用者线程的线程替代者协程也一样）
 		SetThis(this);
