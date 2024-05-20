@@ -8,10 +8,32 @@ namespace FdManagerSpace
 
 	//class FileDescriptorEntity:public
 	FileDescriptorEntity::FileDescriptorEntity(const int file_descriptor)
-		:m_file_descriptor(file_descriptor),m_is_initialized(false),m_is_socket(false)
+		:m_file_descriptor(file_descriptor),m_is_socket(false)
 		,m_is_systemNonblock(false),m_is_userNonblock(false),m_is_close(false)
 	{
-		initialize();
+		//initialize();
+		
+		//尝试获取文件状态
+		struct stat file_descriptor_state;
+		//如果获取成功（fstat()不返回-1），根据S_ISSOCK设置其是否为socket（否则默认设置为非socket）
+		if (fstat(m_file_descriptor, &file_descriptor_state) == -1)
+		{
+			m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
+		}
+
+		//如果该文件描述符是socket，设置文件描述符为hook非阻塞（否则默认设置为hook阻塞）
+		if (m_is_socket)
+		{
+			//尝试获取文件标志（使用原始库函数）
+			int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
+			//如果文件标志未设置非阻塞，设置之（使用原始库函数）
+			if (!(flags & O_NONBLOCK))
+			{
+				fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
+			}
+			//设置文件描述符为hook非阻塞
+			m_is_systemNonblock = true;
+		}
 	}
 
 	//根据类型获取对应的超时时间
@@ -40,59 +62,59 @@ namespace FdManagerSpace
 		}
 	}
 
-	//class FileDescriptorEntity:private
-	//初始化文件描述符实体
-	bool FileDescriptorEntity::initialize()
-	{
-		//如果已经初始化了，直接返回true
-		if (m_is_initialized)
-		{
-			return true;
-		}
-		//重置超时时间
-		m_recv_timeout = -1;
-		m_send_timeout = -1;
+	////class FileDescriptorEntity:private
+	////初始化文件描述符实体
+	//bool FileDescriptorEntity::initialize()
+	//{
+	//	//如果已经初始化了，直接返回true
+	//	if (m_is_initialized)
+	//	{
+	//		return true;
+	//	}
+	//	//重置超时时间
+	//	m_recv_timeout = -1;
+	//	m_send_timeout = -1;
 
-		//尝试获取文件状态
-		struct stat file_descriptor_state;
-		//如果获取失败（fstat()返回-1），设置文件描述符为未初始化且非socket
-		if (fstat(m_file_descriptor, &file_descriptor_state) == -1)
-		{
-			m_is_initialized = false;
-			m_is_socket = false;
-		}
-		//否则设置文件描述符为已初始化，并根据S_ISSOCK设置其是否为socket
-		else
-		{
-			m_is_initialized = true;
-			m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
-		}
+	//	//尝试获取文件状态
+	//	struct stat file_descriptor_state;
+	//	//如果获取失败（fstat()返回-1），设置文件描述符为未初始化且非socket
+	//	if (fstat(m_file_descriptor, &file_descriptor_state) == -1)
+	//	{
+	//		m_is_initialized = false;
+	//		m_is_socket = false;
+	//	}
+	//	//否则设置文件描述符为已初始化，并根据S_ISSOCK设置其是否为socket
+	//	else
+	//	{
+	//		m_is_initialized = true;
+	//		m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
+	//	}
 
-		//如果该文件描述符是socket，设置文件描述符为hook非阻塞
-		if (m_is_socket)
-		{
-			//尝试获取文件标志
-			int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
-			//如果文件标志未设置非阻塞，设置之
-			if (!(flags & O_NONBLOCK))
-			{
-				fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
-			}
-			//设置文件描述符为hook非阻塞
-			m_is_systemNonblock = true;
-		}
-		//否则设置文件描述符为hook阻塞
-		else
-		{
-			m_is_systemNonblock = false;
-		}
+	//	//如果该文件描述符是socket，设置文件描述符为hook非阻塞
+	//	if (m_is_socket)
+	//	{
+	//		//尝试获取文件标志
+	//		int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
+	//		//如果文件标志未设置非阻塞，设置之
+	//		if (!(flags & O_NONBLOCK))
+	//		{
+	//			fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
+	//		}
+	//		//设置文件描述符为hook非阻塞
+	//		m_is_systemNonblock = true;
+	//	}
+	//	//否则设置文件描述符为hook阻塞
+	//	else
+	//	{
+	//		m_is_systemNonblock = false;
+	//	}
 
-		//重置文件描述符为用户主动设置非阻塞、关闭状态
-		m_is_userNonblock = false;
-		m_is_close = false;
+	//	//重置文件描述符为用户主动设置非阻塞、关闭状态
+	//	m_is_userNonblock = false;
+	//	m_is_close = false;
 
-		return m_is_initialized;
-	}
+	//	return m_is_initialized;
+	//}
 
 
 
