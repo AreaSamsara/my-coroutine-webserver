@@ -72,11 +72,11 @@ namespace FdManagerSpace
 		if (m_is_socket)
 		{
 			//尝试获取文件标志
-			int flags = fcntl_f(m_file_descriptor, F_GETFL, 0);
+			int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
 			//如果文件标志未设置非阻塞，设置之
 			if (!(flags & O_NONBLOCK))
 			{
-				fcntl_f(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
+				fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
 			}
 			//设置文件描述符为hook非阻塞
 			m_is_systemNonblock = true;

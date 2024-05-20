@@ -157,19 +157,6 @@ namespace IOManagerSpace
 		//添加event到已注册事件中（注册在控制epoll之后执行，以确保epoll控制已成功）
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types | event_type);
 
-		////以引用的形式获取文件描述符事件中的回调函数
-		//auto& file_descriptor_event_callback = file_descriptor_event->getCallback(event_type);
-
-		////文件描述符事件的回调函数应为空，否则报错
-		//if (file_descriptor_event_callback)
-		//{
-		//	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		//	Assert(log_event);
-		//}
-
-		////将文件描述符事件的回调函数设置为传入的回调函数
-		//file_descriptor_event_callback.swap(callback);
-
 		auto& file_descriptor_task = file_descriptor_event->getTask(event_type);
 
 		//如果传入的回调函数不为空，则将其设作文件描述符事件对应的回调函数
@@ -452,9 +439,6 @@ namespace IOManagerSpace
 				break;
 			}
 
-			//就绪的epollevent数量
-			//int epollevent_count = 0;
-			
 			//设置超时时间（静态变量）为3000ms
 			static const int MAX_TIMEOUT = 3000;
 
