@@ -12,6 +12,10 @@ namespace FdManagerSpace
 	* FileDescriptorEntity包含文件描述符及其相关信息以及设置超时时间的方法
 	* FileDescriptorManager内含装有多个FileDescriptorEntity的容器，对FileDescriptorEntity进行管理
 	*/
+	/*
+	* 文件描述符管理系统调用方法：
+	* 本系统用于封装文件描述符，以辅助其他系统（如hook系统、socket系统）对文件描述符进行管理
+	*/
 
 	//文件描述符实体类
 	class FileDescriptorEntity
@@ -21,7 +25,6 @@ namespace FdManagerSpace
 		~FileDescriptorEntity() {}
 
 		//获取私有成员
-		//bool isInitialized()const { return m_is_initialized; }
 		bool isSocket()const { return m_is_socket; }
 		bool isSystemNonblock()const { return m_is_systemNonblock; }
 		bool isUserNonblock()const { return m_is_userNonblock; }
@@ -36,12 +39,7 @@ namespace FdManagerSpace
 		//根据类型设置对应的超时时间
 		void setTimeout(const int type, const uint64_t timeout);
 	private:
-		//初始化文件描述符实体
-		//bool initialize();
-	private:
 		//将bool值按只占1位的位字段打包，节省内存（位字段不可在定义的同时初始化，故在初始化列表进行赋值）
-		//是否已初始化
-		//bool m_is_initialized : 1;
 		//是否socket
 		bool m_is_socket : 1;
 		//是否hook非阻塞

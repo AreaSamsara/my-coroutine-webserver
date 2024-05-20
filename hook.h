@@ -6,6 +6,11 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+/*
+* hook系统介绍：
+* 1.hook系统重写了多个原始库函数，使得其他系统在按原本方法调用对应函数时改为调用hook版本
+* 2.hook版本的函数在阻塞时凭借epoll系统和定时器系统以采用异步操作，提高了性能
+*/
 
 namespace HookSpace
 {
