@@ -42,7 +42,6 @@ namespace IOManagerSpace
 		{
 		public:
 			//根据事件类型获取对应的回调函数
-			//function<void()>& getCallback(const EventType event_type);
 			Task& getTask(const EventType event_type)
 			{
 				switch (event_type)

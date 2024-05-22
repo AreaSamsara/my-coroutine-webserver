@@ -18,147 +18,7 @@ namespace HookSpace
 	//线程专属静态变量，表示当前线程是否hook住（是否启用hook）
 	thread_local bool t_hook_enable = false;
 
-	//struct timer_information
-	//{
-	//	int cancelled = 0;
-	//};
-
-	////进行hook版本IO操作的通用函数
-	//template<typename OriginFunction, typename ... Args>
-	//static ssize_t do_io(int fd, OriginFunction function_origin, const char* hook_function_name, uint32_t event, int timeout_type, Args&&...args)
-	//{
-	//	//如果没有被hook住，直接执行原始的库方法
-	//	if (!t_hook_enable)
-	//	{
-	//		return function_origin(fd, forward<Args>(args)...);
-	//	}
-
-	//	//获取socket对应的文件描述符实体
-	//	//shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_shared_ptr()->getFile_descriptor(fd);
-	//	shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(fd);	//此处有不可言状的bug，在main函数结束时会调用两次write函数，会导致shared_ptr计数出错，故应该使用裸指针
-
-	//	//如果文件描述符实体不存在，说明肯定不是socket文件描述符，直接执行原始的库方法
-	//	if (!file_descriptor_entity)
-	//	{
-	//		return function_origin(fd, forward<Args>(args)...);
-	//	}
-	//	//如果文件描述符已经被关闭，将错误代码设置为"bad file descriptor"，并返回-1
-	//	else if (file_descriptor_entity->isClose())
-	//	{
-	//		errno = EBADF;
-	//		return -1;
-	//	}
-	//	//如果文件描述符不是socket,或者用户已经主动将其设置为非阻塞，直接执行原始的库方法
-	//	else if (!file_descriptor_entity->isSocket() || file_descriptor_entity->isUserNonblock())
-	//	{
-	//		return function_origin(fd, forward<Args>(args)...);
-	//	}
-
-
-	//	//超时时间
-	//	uint64_t timeout = file_descriptor_entity->getTimeout(timeout_type);
-	//	//定时器条件
-	//	shared_ptr<timer_information> timer_info(new timer_information);
-
-	//retry:
-	//	//尝试直接执行原始的库方法
-	//	ssize_t n = function_origin(fd, forward<Args>(args)...);
-	//	//如果返回值为-1且错误类型为中断，则不断尝试
-	//	while (n == -1 && errno == EINTR)
-	//	{
-	//		n = function_origin(fd, forward<Args>(args)...);
-	//	}
-	//	//否则如果返回值为-1且错误类型为资源暂时不可用，则进行异步操作
-	//	if (n == -1 && errno == EAGAIN)
-	//	{
-	//		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//		log_event->getSstream() << "do_io<" << hook_function_name << ">";
-	//		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
-
-	//		//获取当前线程的IO管理者
-	//		IOManager* iomanager = IOManager::GetThis();
-	//		//定时器
-	//		shared_ptr<Timer> timer;
-	//		//条件变量
-	//		weak_ptr<timer_information> winfo(timer_info);
-
-	//		//如果超时时间不等于-1，说明设置了超时时间
-	//		if (timeout != (uint64_t)-1)
-	//		{
-	//			//设置定时器，如果到时间时条件未失效，则结算事件
-	//			timer.reset(new Timer(timeout, [winfo, fd, iomanager, event]()
-	//				{
-	//					auto condition = winfo.lock();
-	//					//如果条件已经失效（do_io已经返回）或者事件已超时，直接返回
-	//					if (!condition || condition->cancelled)				//后半句有必要吗……
-	//					{
-	//						return;
-	//					}
-	//					//否则设置错误码并结算协程事件，唤醒do_io的当前协程
-	//					else
-	//					{
-	//						//设置操作超时错误码，表示在socket可用之前事件已超时
-	//						condition->cancelled = ETIMEDOUT;
-	//						//结算该socket的事件（即为将do_io当前协程唤醒，见后文）
-	//						iomanager->settleEvent(fd, IOManager::EventType(event));
-	//					}
-	//				}
-	//			, winfo));
-	//			//添加定时器
-	//			iomanager->addTimer(timer);
-	//		}
-
-	//		//不为事件设置回调函数，默认使用当前协程为回调参数
-	//		bool return_value = iomanager->addEvent(fd, IOManager::EventType(event), nullptr);
-	//		//如果添加失败，报错并返回-1
-	//		if (return_value == false)
-	//		{
-	//			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//			log_event->getSstream() << hook_function_name << " addEvent(" << fd << ", " << event << ")";
-	//			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
-
-	//			//如果定时器不为空，取消之
-	//			if (timer)
-	//			{
-	//				iomanager->getTimer_manager()->cancelTimer(timer);
-	//			}
-	//			return -1;
-	//		}
-	//		//否则添加成功
-	//		else
-	//		{
-	//			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//			log_event->getSstream() << "do_io<" << hook_function_name << ">";
-	//			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
-
-	//			//挂起当前协程，等待定时器唤醒或epoll处理事件（即socket已经可用）时被唤醒
-	//			Fiber::YieldToHold();
-
-	//			log_event->setSstream("");
-	//			log_event->getSstream() << "do_io<" << hook_function_name << ">";
-	//			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
-
-	//			//如果定时器不为空，取消之
-	//			if (timer)
-	//			{
-	//				iomanager->getTimer_manager()->cancelTimer(timer);
-	//			}
-	//			//如果是通过定时器任务唤醒的，设置错误代码并返回-1
-	//			if (timer_info->cancelled)
-	//			{
-	//				errno = timer_info->cancelled;
-	//				return -1;
-	//			}
-
-	//			//否则说明当前协程不是因为超时而是因为socket可用被唤醒，重新尝试执行函数
-	//			goto retry;
-	//		}
-	//	}
-
-	//	//如果返回值不为-1，则do_io()返回该返回值
-	//	return n;
-	//}
-//进行hook版本IO操作的通用函数
+	//进行hook版本IO操作的通用函数
 	template<typename OriginFunction, typename ... Args>
 	static ssize_t do_io(int fd, OriginFunction function_origin, const char* hook_function_name, uint32_t event, int timeout_type, Args&&...args)
 	{
@@ -192,9 +52,9 @@ namespace HookSpace
 
 		//超时时间
 		uint64_t timeout = file_descriptor_entity->getTimeout(timeout_type);
-		//定时器条件
-		//shared_ptr<timer_information> timer_info(new timer_information);
+		//标志定时器是否取消的shared_ptr
 		shared_ptr<int> timer_cancelled(new int);
+		//将timer_cancelled初始化为0，表示未取消
 		*timer_cancelled = 0;
 
 		//操作执行循环
@@ -218,8 +78,7 @@ namespace HookSpace
 				IOManager* iomanager = IOManager::GetThis();
 				//定时器
 				shared_ptr<Timer> timer;
-				//条件变量
-				//weak_ptr<timer_information> winfo(timer_info);
+				//标志定时器是否取消的weak_ptr，即定时器超时的条件
 				weak_ptr<int> timer_cancelled_weak(timer_cancelled);
 
 				//如果超时时间不等于-1，说明设置了超时时间
@@ -229,8 +88,7 @@ namespace HookSpace
 					timer.reset(new Timer(timeout, [timer_cancelled_weak, fd, iomanager, event]()
 						{
 							auto condition = timer_cancelled_weak.lock();
-							//如果条件已经失效（do_io已经返回）或者事件已超时，直接返回
-							//if (!condition || condition->cancelled)				//后半句有必要吗……
+							//如果条件已经失效（do_io已因被epoll系统处理而返回），直接返回
 							if (!condition)
 							{
 								return;
@@ -338,9 +196,6 @@ extern "C"
 
 	int (*getsockopt_origin)(int sockfd, int level, int optname, void* optval, socklen_t* optlen) = (int (*)(int sockfd, int level, int optname, void* optval, socklen_t * optlen))dlsym(RTLD_NEXT, "getsockopt");
 	int (*setsockopt_origin)(int sockfd, int level, int optname, const void* optval, socklen_t optlen) = (int (*)(int sockfd, int level, int optname, const void* optval, socklen_t optlen))dlsym(RTLD_NEXT, "setsockopt");
-
-
-
 
 
 
@@ -486,10 +341,11 @@ extern "C"
 			IOManager* iomanager = IOManager::GetThis();
 
 			shared_ptr<Timer> timer;
-			//shared_ptr<timer_information> timer_info(new timer_information);
-			//weak_ptr<timer_information> winfo(timer_info);
+			//标志定时器是否取消的shared_ptr
 			shared_ptr<int> timer_cancelled(new int);
+			//将timer_cancelled初始化为0，表示未取消
 			*timer_cancelled = 0;
+			//标志定时器是否取消的weak_ptr，即定时器超时的条件
 			weak_ptr<int> timer_cancelled_weak(timer_cancelled);
 
 			//如果设置了超时时间（超时时间不为-1）
@@ -500,8 +356,7 @@ extern "C"
 					{
 						//解锁条件的weak_ptr
 						auto condition = timer_cancelled_weak.lock();
-						//如果条件已经失效（connect_with_timeout已经返回）或者事件已超时，直接返回
-						//if (!condition || condition->cancelled)			//后半句有必要吗……
+						//如果条件已经失效（connect_with_timeout已因被epoll系统处理而返回），直接返回
 						if (!condition)
 						{
 							return;
