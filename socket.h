@@ -111,26 +111,11 @@ namespace SocketSpace
 		//结算所有事件
 		bool settleAllEvents();
 	public:
-		////根据address的协议族创建TCP类型的Socket
-		//static shared_ptr<Socket> CreateTCPSocket(shared_ptr<Address> address);
-		//static shared_ptr<Socket> CreateTCPSocket();
-		////根据address的协议族创建UDP类型的Socket
-		//static shared_ptr<Socket> CreateUDPSocket(shared_ptr<Address> address);
-		//static shared_ptr<Socket> CreateUDPSocket();
-		////根据address的协议族创建TCP类型的Socket
-		//static shared_ptr<Socket> CreateTCPSocket6(shared_ptr<Address> address);
-		//static shared_ptr<Socket> CreateTCPSocket6();
-		////根据address的协议族创建UDP类型的Socket
-		//static shared_ptr<Socket> CreateUDPSocket6(shared_ptr<Address> address);
-		//static shared_ptr<Socket> CreateUDPSocket6();
-		////根据address的协议族创建Unix类型的Socket
-		//static shared_ptr<Socket> CreateUnixSocket(shared_ptr<Address> address);
-		//static shared_ptr<Socket> CreateUnixSocket();
 		//根据协议族、socket类型、协议创建Socket
 		static shared_ptr<Socket> CreateSocket(const FamilyType family,const SocketType type,const int protocol = 0);
 
 		//初始化Socket对象
-		bool init(int socket);
+		//bool init(int socket);
 	private:
 		//初始化socket文件描述符
 		void initialize();

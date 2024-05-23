@@ -26,14 +26,6 @@ namespace SocketSpace
 	{
 		//通过单例文件描述符管理者根据socket文件描述符获取对应的文件描述符实体
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
-		////如果实体不为空，返回对应的发送超时时间
-		//if (file_descriptor_entity)
-		//{
-		//	return file_descriptor_entity->getTimeout(SO_SNDTIMEO);
-		//}
-		////否则返回-1
-		//return -1;
-
 		//如果实体不为空，返回对应的发送超时时间，否则返回-1
 		return file_descriptor_entity ? file_descriptor_entity->getTimeout(SO_SNDTIMEO) : -1;
 	}
@@ -51,14 +43,6 @@ namespace SocketSpace
 	{
 		//通过单例文件描述符管理者根据socket文件描述符获取对应的文件描述符实体
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
-		////如果实体不为空，返回对应的接收超时时间
-		//if (file_descriptor_entity)
-		//{
-		//	return file_descriptor_entity->getTimeout(SO_RCVTIMEO);
-		//}
-		////否则返回-1
-		//return -1;
-
 		//如果实体不为空，返回对应的接收超时时间，否则返回-1
 		return file_descriptor_entity ? file_descriptor_entity->getTimeout(SO_RCVTIMEO) : -1;
 	}
@@ -74,14 +58,6 @@ namespace SocketSpace
 	//获取socket选项
 	bool Socket::getOption(int level, int option, void* result, socklen_t* len)
 	{
-		////获取socket选项，成功返回0
-		//int return_value = getsockopt(m_socket, level, option, result, (socklen_t*)len);
-		//if (return_value != 0)
-		//{
-		//	return false;
-		//}
-		//return true;
-
 		//获取socket选项，成功返回0
 		return getsockopt(m_socket, level, option, result, (socklen_t*)len) == 0;
 	}
@@ -89,14 +65,6 @@ namespace SocketSpace
 	//设置socket选项
 	bool Socket::setOption(int level, int option, const void * result, socklen_t len)
 	{
-		////设置socket选项，成功返回0
-		//int return_value = setsockopt(m_socket, level, option, result, len);
-		//if (return_value != 0)
-		//{
-		//	return false;
-		//}
-		//return true;
-		 
 		//设置socket选项，成功返回0
 		return setsockopt(m_socket, level, option, result, len) == 0;
 	}
@@ -107,7 +75,7 @@ namespace SocketSpace
 		//根据当前socket对象的信息创造一个同类的socket对象
 		shared_ptr<Socket> socket(new Socket(m_family, m_type, m_protocol));
 
-		//调用全局accept()函数接收链接
+		//调用全局accept()函数接收链接（其hook版本会自动创建socket文件描述符对应的实体）
 		int new_socket = ::accept(m_socket, nullptr, nullptr);
 		//如果接收失败，报错并返回nullptr
 		if (new_socket == -1)
@@ -118,18 +86,33 @@ namespace SocketSpace
 			return nullptr;
 		}
 		//否则接受成功，尝试用取得的socket文件描述符初始化socket对象并返回socket对象，失败则返回nullptr
-		else   //new
+		//else
+		//{
+		//	return socket->init(new_socket) ? socket : nullptr;
+		//}
+		else
 		{
-			return socket->init(new_socket) ? socket : nullptr;
+			//获取new_socket对应的文件描述符实体（应该已经在hook版本的accept()函数中创建）
+			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(new_socket);
+			//如果该实体是socket且不处于关闭状态，则将socket对象初始化并返回
+			if (file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
+			{
+				socket->m_socket = new_socket;
+				socket->m_is_connected = true;
+				socket->initialize();
+				socket->getLocal_address();
+				socket->getRemote_address();
+				return socket;
+			}
+			//否则返回nullptr
+			else
+			{
+				return nullptr;
+			}
 		}
-		/*if (socket->init(new_socket))
-		{
-			return socket;
-		}
-		return nullptr;*/
 	}
 
-	bool Socket::init(int socket)
+	/*bool Socket::init(int socket)
 	{
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(socket);
 		if (file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
@@ -142,7 +125,7 @@ namespace SocketSpace
 			return true;
 		}
 		return false;
-	}
+	}*/
 
 	//绑定地址
 	bool Socket::bind(const shared_ptr<Address> address)
@@ -283,14 +266,6 @@ namespace SocketSpace
 	//发送数据
 	int Socket::send(const void* buffer, size_t length, int flags)
 	{
-		////如果当前处于已连接状态，调用全局send()函数并返回
-		//if (isConnected())
-		//{
-		//	return ::send(m_socket, buffer, length, flags);
-		//}
-		////否则返回-1
-		//return -1;
-		 
 		//如果当前处于已连接状态，调用全局send()函数并返回，否则返回-1
 		return isConnected() ? ::send(m_socket, buffer, length, flags) : -1;
 	}
@@ -310,14 +285,6 @@ namespace SocketSpace
 	}
 	int Socket::sendto(const void* buffer, size_t length, const shared_ptr<Address> to, int flags)
 	{
-		////如果当前处于已连接状态，调用全局sendto()函数并返回
-		//if (isConnected())
-		//{
-		//	return ::sendto(m_socket, buffer, length, flags,to->getAddress(),to->getAddress_length());
-		//}
-		////否则返回-1
-		//return -1;
-
 		//如果当前处于已连接状态，调用全局sendto()函数并返回，否则返回-1
 		return isConnected() ? ::sendto(m_socket, buffer, length, flags, to->getAddress(), to->getAddress_length()) : -1;
 	}
@@ -341,14 +308,6 @@ namespace SocketSpace
 	//接收数据
 	int Socket::recv(void* buffer, size_t length, int flags)
 	{
-		////如果当前处于已连接状态，调用全局recv()函数并返回
-		//if (isConnected())
-		//{
-		//	return ::recv(m_socket, buffer, length, flags);
-		//}
-		////否则返回-1
-		//return -1;
-
 		//如果当前处于已连接状态，调用全局recv()函数并返回，否则返回-1
 		return isConnected() ? ::recv(m_socket, buffer, length, flags) : -1;
 	}
@@ -508,11 +467,6 @@ namespace SocketSpace
 	{
 		int error = 0;
 		socklen_t length = sizeof(error);
-		/*if (!getOption(SOL_SOCKET, SO_ERROR, &error, &length))
-		{
-			return -1;
-		}
-		return error;*/
 		//调用getOption()函数尝试读取错误，成功则返回该错误，失败返回-1
 		return getOption(SOL_SOCKET, SO_ERROR, &error, &length) ? error : -1;
 	}
@@ -560,56 +514,6 @@ namespace SocketSpace
 
 
 	//class Socket:public static
-	//shared_ptr<Socket> Socket::CreateTCPSocket(shared_ptr<Address> address)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(address->getFamily(), TCP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateTCPSocket()
-	//{
-	//	shared_ptr<Socket> socket(new Socket(IPv4, TCP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUDPSocket(shared_ptr<Address> address)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(address->getFamily(), UDP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUDPSocket()
-	//{
-	//	shared_ptr<Socket> socket(new Socket(IPv4, UDP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateTCPSocket6(shared_ptr<Address> address)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(address->getFamily(), TCP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateTCPSocket6()
-	//{
-	//	shared_ptr<Socket> socket(new Socket(IPv6, TCP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUDPSocket6(shared_ptr<Address> address)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(address->getFamily(), UDP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUDPSocket6()
-	//{
-	//	shared_ptr<Socket> socket(new Socket(IPv6, UDP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUnixSocket(shared_ptr<Address> address)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(address->getFamily(), TCP, 0));
-	//	return socket;
-	//}
-	//shared_ptr<Socket> Socket::CreateUnixSocket()
-	//{
-	//	shared_ptr<Socket> socket(new Socket(UNIX, TCP, 0));
-	//	return socket;
-	//}
 	//根据协议族、socket类型、协议创建Socket
 	shared_ptr<Socket> Socket::CreateSocket(const FamilyType family, const SocketType type, const int protocol)
 	{
