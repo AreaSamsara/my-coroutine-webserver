@@ -35,14 +35,14 @@ namespace AddressSpace
 		virtual	ostream& getAddress_ostream(ostream& os)const = 0;
 
 		//返回协议族
-		int getFamily()const;
+		int getFamily()const { return getAddress()->sa_family; }
 		//将地址转化为字符串
 		string toString();
 
 		//重载比较运算符
-		bool operator<(const Address& rhs)const;
-		bool operator==(const Address& rhs)const;
-		bool operator!=(const Address & rhs)const;
+		bool operator<(const Address& right_address)const;
+		bool operator==(const Address& right_address)const;
+		bool operator!=(const Address& right_address)const;
 	public:
 		//用sockaddr指针创建Address对象
 		static shared_ptr<Address> Create(const sockaddr* address, socklen_t addrlen);
@@ -59,8 +59,8 @@ namespace AddressSpace
 		static bool GetInterfaceAddresses(multimap<string, pair<shared_ptr<Address>, uint32_t>>& result,
 			int family = AF_INET);
 		//获取指定网卡的地址和子网掩码位数
-		static bool GetInterfaceAddresses(vector<pair<shared_ptr<Address>,uint32_t>>& result,
-			const string& iface,int family = AF_INET);
+		static bool GetInterfaceAddresses(vector<pair<shared_ptr<Address>, uint32_t>>& result,
+			const string& iface, int family = AF_INET);
 	};
 
 	//IP地址类（基类），公有继承自Address类
@@ -92,15 +92,25 @@ namespace AddressSpace
 		//通过sockaddr_in构造IPv4Address
 		IPv4Address(const sockaddr_in& address);
 
-		virtual const sockaddr* getAddress()const override;
-		virtual sockaddr* getAddress()override;
-		virtual socklen_t getAddress_length()const override;
+		//获取只读版地址指针
+		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
+		//获取地址指针
+		virtual sockaddr* getAddress()override { return (sockaddr*)&m_address; }
+		//获取地址的长度
+		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
+		//获取可读性输出地址
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
+		//获取该地址的广播地址
 		virtual shared_ptr<IPAddress> broadcastAddress(uint32_t prefix_len) override;
+		//获取该地址的网段
 		virtual shared_ptr<IPAddress> networdAddress(uint32_t prefix_len) override;
+		//获取子网掩码地址
 		virtual shared_ptr<IPAddress> subnetMask(uint32_t prefix_len) override;
+
+		//获取端口号
 		virtual uint16_t getPort()const override;
+		//设置端口号
 		virtual void setPort(uint16_t port) override;
 	public:
 		//使用点分十进制地址创建IPv4Address
@@ -120,15 +130,25 @@ namespace AddressSpace
 		//通过sockaddr_in6构造IPv6Address
 		IPv6Address(const sockaddr_in6& address);
 
-		virtual const sockaddr* getAddress()const override;
-		virtual sockaddr* getAddress() override;
-		virtual socklen_t getAddress_length()const override;
+		//获取只读版地址指针
+		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
+		//获取地址指针
+		virtual sockaddr* getAddress() override { return (sockaddr*)&m_address; }
+		//获取地址的长度
+		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
+		//获取可读性输出地址
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
+		//获取该地址的广播地址
 		virtual shared_ptr<IPAddress> broadcastAddress(uint32_t prefix_len) override;
+		//获取该地址的网段
 		virtual shared_ptr<IPAddress> networdAddress(uint32_t prefix_len) override;
+		//获取子网掩码地址
 		virtual shared_ptr<IPAddress> subnetMask(uint32_t prefix_len) override;
+
+		//获取端口号
 		virtual uint16_t getPort()const override;
+		//设置端口号
 		virtual void setPort(uint16_t port) override;
 	public:
 		//通过IPv6地址字符串构造IPv6Address
@@ -146,11 +166,17 @@ namespace AddressSpace
 		//通过路径字符串构造UnixAddress
 		UnixAddress(const string& path);
 
-		virtual const sockaddr* getAddress()const override;
-		virtual sockaddr* getAddress() override;
-		virtual socklen_t getAddress_length()const override;
-		void setAddress_length(uint32_t address_length);
+		//获取只读版地址指针
+		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
+		//获取地址指针
+		virtual sockaddr* getAddress() override { return (sockaddr*)&m_address; }
+		//获取地址的长度
+		virtual socklen_t getAddress_length()const override { return m_length; }
+		//获取可读性输出地址
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
+
+		//设置地址长度
+		void setAddress_length(uint32_t address_length) { m_length = address_length; }
 	private:
 		//Unix地址结构体
 		sockaddr_un m_address;
@@ -166,9 +192,13 @@ namespace AddressSpace
 		//通过sockaddr构造UnknownAddress
 		UnknownAddress(const sockaddr& address);
 
-		virtual const sockaddr* getAddress()const override;
-		virtual sockaddr* getAddress() override;
-		virtual socklen_t getAddress_length()const override;
+		//获取只读版地址指针
+		virtual const sockaddr* getAddress()const override { return &m_address; }
+		//获取地址指针
+		virtual sockaddr* getAddress() override { return &m_address; }
+		//获取地址的长度
+		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
+		//获取可读性输出地址
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 	private:
 		//通用地址结构体

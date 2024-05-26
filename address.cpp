@@ -45,24 +45,26 @@ namespace AddressSpace
 
 	//class Address:public
 	//返回协议族
-	int Address::getFamily()const
+	/*int Address::getFamily()const
 	{
 		return getAddress()->sa_family;
-	}
+	}*/
+
 	//将地址转化为字符串
 	string Address::toString()
 	{
 		stringstream ss;
+		//先获取可读性输出地址（输出流），再将其转化为string对象
 		getAddress_ostream(ss);
 		return ss.str();
 	}
 
-	bool Address::operator<(const Address& rhs)const
+	bool Address::operator<(const Address& right_address)const
 	{
 		//取二者的较小长度作为memcmp的长度
-		socklen_t minlength = min(getAddress_length(), rhs.getAddress_length());
+		socklen_t minlength = min(getAddress_length(), right_address.getAddress_length());
 		//先比较内存中数据的大小
-		int result = memcmp(getAddress(), rhs.getAddress(), minlength);
+		int result = memcmp(getAddress(), right_address.getAddress(), minlength);
 		if (result < 0)
 		{
 			return true;
@@ -72,7 +74,7 @@ namespace AddressSpace
 			return false;
 		}
 		//若内存中数据的大小相等，再比较地址长度
-		else if (getAddress_length() < rhs.getAddress_length())
+		else if (getAddress_length() < right_address.getAddress_length())
 		{
 			return true;
 		}
@@ -81,15 +83,15 @@ namespace AddressSpace
 			return false;
 		}
 	}
-	bool Address::operator==(const Address& rhs)const
+	bool Address::operator==(const Address& right_address)const
 	{
 		//当且仅当内存中数据的大小相等且地址长度相等时返回true
-		return getAddress_length() == rhs.getAddress_length()
-			&& memcmp(getAddress(), rhs.getAddress(), getAddress_length()) == 0;
+		return getAddress_length() == right_address.getAddress_length()
+			&& memcmp(getAddress(), right_address.getAddress(), getAddress_length()) == 0;
 	}
-	bool Address::operator!=(const Address& rhs)const
+	bool Address::operator!=(const Address& right_address)const
 	{
-		return !(*this == rhs);
+		return !(*this == right_address);
 	}
 
 
@@ -404,7 +406,7 @@ namespace AddressSpace
 		m_address = address;
 	}
 
-	const sockaddr* IPv4Address::getAddress()const
+	/*const sockaddr* IPv4Address::getAddress()const
 	{
 		return (sockaddr*)&m_address;
 	}
@@ -415,8 +417,9 @@ namespace AddressSpace
 	socklen_t IPv4Address::getAddress_length()const
 	{
 		return sizeof(m_address);
-	}
+	}*/
 
+	//获取可读性输出地址
 	ostream& IPv4Address::getAddress_ostream(ostream& os)const
 	{
 		uint32_t address = ntohl(m_address.sin_addr.s_addr);
@@ -522,18 +525,20 @@ namespace AddressSpace
 		m_address = address;
 	}
 
-	const sockaddr* IPv6Address::getAddress()const
-	{
-		return (sockaddr*)&m_address;
-	}
-	sockaddr* IPv6Address::getAddress()
-	{
-		return (sockaddr*)&m_address;
-	}
-	socklen_t IPv6Address::getAddress_length()const
-	{
-		return sizeof(m_address);
-	}
+	//const sockaddr* IPv6Address::getAddress()const
+	//{
+	//	return (sockaddr*)&m_address;
+	//}
+	//sockaddr* IPv6Address::getAddress()
+	//{
+	//	return (sockaddr*)&m_address;
+	//}
+	//socklen_t IPv6Address::getAddress_length()const
+	//{
+	//	return sizeof(m_address);
+	//}
+
+	//获取可读性输出地址
 	ostream& IPv6Address::getAddress_ostream(ostream& os)const
 	{
 		os << "[";
@@ -621,10 +626,13 @@ namespace AddressSpace
 
 		return shared_ptr<IPv6Address>(new IPv6Address(subnet_mask));
 	}
+
+	//获取端口号
 	uint16_t IPv6Address::getPort()const
 	{
 		return ntohs(m_address.sin6_port);
 	}
+	//设置端口号
 	void IPv6Address::setPort(uint16_t port)
 	{
 		m_address.sin6_port = htons(port);
@@ -677,7 +685,7 @@ namespace AddressSpace
 		m_length += offsetof(sockaddr_un, sun_path);
 	}
 
-	const sockaddr* UnixAddress::getAddress()const
+	/*const sockaddr* UnixAddress::getAddress()const
 	{
 		return (sockaddr*)&m_address;
 	}
@@ -692,7 +700,7 @@ namespace AddressSpace
 	void UnixAddress::setAddress_length(uint32_t address_length)
 	{
 		m_length = address_length;
-	}
+	}*/
 	ostream& UnixAddress::getAddress_ostream(ostream& os)const
 	{
 		if (m_length > offsetof(sockaddr_un, sun_path) && m_address.sun_path[0]=='\0')
@@ -715,7 +723,7 @@ namespace AddressSpace
 		m_address = address;
 	}
 
-	const sockaddr* UnknownAddress::getAddress()const
+	/*const sockaddr* UnknownAddress::getAddress()const
 	{
 		return &m_address;
 	}
@@ -726,7 +734,7 @@ namespace AddressSpace
 	socklen_t UnknownAddress::getAddress_length()const
 	{
 		return sizeof(m_address);
-	}
+	}*/
 	ostream& UnknownAddress::getAddress_ostream(ostream& os)const
 	{
 		os << "[Unknow Address,family=" << m_address.sa_family << "]";

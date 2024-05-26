@@ -236,28 +236,8 @@ namespace SocketSpace
 
 
 	//关闭socket
-	//bool Socket::close()
 	void Socket::close()
 	{
-		////如果不是已连接状态且socket文件描述符无效，说明已经关闭，直接返回true
-		//if (!m_is_connected && m_socket == -1)
-		//{
-		//	return true;
-		//}
-		////否则设置为未连接状态，并在socket文件描述符有效时调用全局close()函数关闭之
-		//else
-		//{
-		//	m_is_connected = false;
-		//	if (m_socket != -1)
-		//	{
-		//		//调用全局的close()函数
-		//		::close(m_socket);
-		//		//将socket文件描述符设置为-1
-		//		m_socket = -1;
-		//	}
-		//	return false;
-		//}
-		
 		//如果是已连接状态，将其设置为未连接
 		if (m_is_connected)
 		{
@@ -525,22 +505,9 @@ namespace SocketSpace
 	{
 		return IOManager::GetThis()->settleAllEvents(m_socket);
 	}
-
-
-	//class Socket:public static
-	//根据协议族、socket类型、协议创建Socket
-	//shared_ptr<Socket> Socket::CreateSocket(const FamilyType family, const SocketType type, const int protocol)
-	//{
-	//	shared_ptr<Socket> socket(new Socket(family, type, protocol));
-	//	//如果要创建的是UDP socket，则直接创建socket文件描述符（否则在bind或connect中延迟创建）并默认处于已连接状态（实际上是无连接）
-	//	if (type == UDP)
-	//	{
-	//		socket->newSocket();
-	//		socket->m_is_connected = true;
-	//	}
-	//	return socket;
-	//}
 			
+
+
 
 	//class Socket:private
 	//初始化socket文件描述符

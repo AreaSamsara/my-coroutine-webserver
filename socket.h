@@ -71,7 +71,6 @@ namespace SocketSpace
 		bool connect(const shared_ptr<Address> address, const uint64_t timeout = -1);
 
 		//关闭socket
-		//bool close();
 		void close();
 
 		//发送数据
@@ -115,9 +114,6 @@ namespace SocketSpace
 		bool settleAccept_event();
 		//结算所有事件
 		bool settleAllEvents();
-	public:
-		//根据协议族、socket类型、协议创建Socket
-		//static shared_ptr<Socket> CreateSocket(const FamilyType family,const SocketType type,const int protocol = 0);
 	private:
 		//初始化socket文件描述符
 		void initializeSocket();

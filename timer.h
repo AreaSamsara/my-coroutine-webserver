@@ -64,7 +64,7 @@ namespace TimerSpace
 		class Comparator
 		{
 		public:
-			bool operator()(const shared_ptr<Timer>& lhs, const shared_ptr<Timer>& rhs)const;
+			bool operator()(const shared_ptr<Timer>& left_timer, const shared_ptr<Timer>& right_timer)const;
 		};
 	public:
 		TimerManager();
