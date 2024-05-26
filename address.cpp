@@ -44,12 +44,6 @@ namespace AddressSpace
 	}
 
 	//class Address:public
-	//返回协议族
-	/*int Address::getFamily()const
-	{
-		return getAddress()->sa_family;
-	}*/
-
 	//将地址转化为字符串
 	string Address::toString()
 	{
@@ -406,19 +400,6 @@ namespace AddressSpace
 		m_address = address;
 	}
 
-	/*const sockaddr* IPv4Address::getAddress()const
-	{
-		return (sockaddr*)&m_address;
-	}
-	sockaddr* IPv4Address::getAddress()
-	{
-		return (sockaddr*)&m_address;
-	}
-	socklen_t IPv4Address::getAddress_length()const
-	{
-		return sizeof(m_address);
-	}*/
-
 	//获取可读性输出地址
 	ostream& IPv4Address::getAddress_ostream(ostream& os)const
 	{
@@ -520,23 +501,10 @@ namespace AddressSpace
 		memcpy(&m_address.sin6_addr.s6_addr, address, 16);
 	}
 	//通过sockaddr_in6构造IPv6Address
-	IPv6Address::IPv6Address(const sockaddr_in6& address)
+	/*IPv6Address::IPv6Address(const sockaddr_in6& address)
 	{
 		m_address = address;
-	}
-
-	//const sockaddr* IPv6Address::getAddress()const
-	//{
-	//	return (sockaddr*)&m_address;
-	//}
-	//sockaddr* IPv6Address::getAddress()
-	//{
-	//	return (sockaddr*)&m_address;
-	//}
-	//socklen_t IPv6Address::getAddress_length()const
-	//{
-	//	return sizeof(m_address);
-	//}
+	}*/
 
 	//获取可读性输出地址
 	ostream& IPv6Address::getAddress_ostream(ostream& os)const
@@ -642,7 +610,7 @@ namespace AddressSpace
 	//通过IPv6地址字符串构造IPv6Address
 	shared_ptr<IPv6Address> IPv6Address::Create(const char* address, uint16_t port)
 	{
-		shared_ptr<IPv6Address> ipv6_address(new IPv6Address);
+		shared_ptr<IPv6Address> ipv6_address(new IPv6Address());
 		ipv6_address->m_address.sin6_port = htons(port);
 		int addr = inet_pton(AF_INET6, address, &ipv6_address->m_address.sin6_addr);
 		//如果inet_pton()调用失败，报错并返回nullptr
@@ -685,22 +653,7 @@ namespace AddressSpace
 		m_length += offsetof(sockaddr_un, sun_path);
 	}
 
-	/*const sockaddr* UnixAddress::getAddress()const
-	{
-		return (sockaddr*)&m_address;
-	}
-	sockaddr* UnixAddress::getAddress()
-	{
-		return (sockaddr*)&m_address;
-	}
-	socklen_t UnixAddress::getAddress_length()const
-	{
-		return m_length;
-	}
-	void UnixAddress::setAddress_length(uint32_t address_length)
-	{
-		m_length = address_length;
-	}*/
+	//获取可读性输出地址
 	ostream& UnixAddress::getAddress_ostream(ostream& os)const
 	{
 		if (m_length > offsetof(sockaddr_un, sun_path) && m_address.sun_path[0]=='\0')
@@ -718,23 +671,12 @@ namespace AddressSpace
 		m_address.sa_family = family;
 	}
 	//通过sockaddr构造UnknownAddress
-	UnknownAddress::UnknownAddress(const sockaddr& address)
+	/*UnknownAddress::UnknownAddress(const sockaddr& address)
 	{
 		m_address = address;
-	}
-
-	/*const sockaddr* UnknownAddress::getAddress()const
-	{
-		return &m_address;
-	}
-	sockaddr* UnknownAddress::getAddress()
-	{
-		return &m_address;
-	}
-	socklen_t UnknownAddress::getAddress_length()const
-	{
-		return sizeof(m_address);
 	}*/
+
+	//获取可读性输出地址
 	ostream& UnknownAddress::getAddress_ostream(ostream& os)const
 	{
 		os << "[Unknow Address,family=" << m_address.sa_family << "]";

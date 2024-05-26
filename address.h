@@ -128,7 +128,7 @@ namespace AddressSpace
 		//通过IPv6二进制地址构造IPv6Address
 		IPv6Address(const uint8_t address[16], uint16_t port = 0);
 		//通过sockaddr_in6构造IPv6Address
-		IPv6Address(const sockaddr_in6& address);
+		IPv6Address(const sockaddr_in6& address) { m_address = address; }
 
 		//获取只读版地址指针
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
@@ -190,7 +190,7 @@ namespace AddressSpace
 	public:
 		UnknownAddress(int family);
 		//通过sockaddr构造UnknownAddress
-		UnknownAddress(const sockaddr& address);
+		UnknownAddress(const sockaddr& address) { m_address = address; }
 
 		//获取只读版地址指针
 		virtual const sockaddr* getAddress()const override { return &m_address; }
