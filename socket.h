@@ -28,21 +28,21 @@ namespace SocketSpace
 			UNIX=AF_UNIX
 		};
 	public:
-		Socket(int family, int type, int protocol = 0);
+		Socket(const FamilyType family, const SocketType type, const int protocol = 0);
 		~Socket();
 
 		//获取发送超时时间
 		int64_t getSend_timout()const;
 		//设置发送超时时间
-		void setSend_timeout(int64_t send_timeout);
+		void setSend_timeout(const int64_t send_timeout);
 
 		//获取接收超时时间
 		int64_t getReceive_timout()const;
 		//设置接收超时时间
-		void setReceive_timeout(int64_t receive_timeout);
+		void setReceive_timeout(const int64_t receive_timeout);
 
 		//获取socket选项
-		bool getOption(int level, int option, void* result, socklen_t* len);
+		bool getOption(const int level, const int option, void* result, socklen_t* len);
 		template<class T>
 		bool getOption(int level, int option, T& result)
 		{
@@ -51,42 +51,42 @@ namespace SocketSpace
 		}
 
 		//设置socket选项
-		bool setOption(int level, int option, const void * result, socklen_t len);
+		bool setOption(const int level, const int option, const void * result, socklen_t len);
 		template<class T>
 		bool setOption(int level, int option,const T& result)
 		{
 			return setOption(level, option, &result, sizeof(T));
 		}
 
-		//接收connect链接
-		shared_ptr<Socket> accept();
+		
 
-		//绑定地址
+		//绑定地址（在socket无效时创建新的socket文件描述符）
 		bool bind(const shared_ptr<Address> address);
-		//连接地址
-		bool connect(const shared_ptr<Address> address, uint64_t timeout = -1);
 		//监听socket
-		bool listen(int backlog = SOMAXCONN);
+		bool listen(const int backlog) const;
+		//接收connect链接
+		shared_ptr<Socket> accept() const;
+
+		//连接地址（在socket无效时创建新的socket文件描述符）
+		bool connect(const shared_ptr<Address> address, const uint64_t timeout = -1);
+
 		//关闭socket
-		bool close();
+		//bool close();
+		void close();
 
 		//发送数据
-		int send(const void* buffer, size_t length, int flags = 0);
-		int send(const iovec* buffer, size_t length, int flags = 0);
-		int sendto(const void* buffer, size_t length, const shared_ptr<Address> to,int flags = 0);
-		int sendto(const iovec* buffer, size_t length, const shared_ptr<Address> to, int flags = 0);
+		int send(const void* buffer, const size_t length, const int flags = 0) const;
+		int send(const iovec* buffer, const size_t length, const int flags = 0) const;
+		int sendto(const void* buffer, const size_t length, const shared_ptr<Address> to, const int flags = 0) const;
+		int sendto(const iovec* buffer, const size_t length, const shared_ptr<Address> to, const int flags = 0) const;
 
 		//接收数据
-		int recv(void* buffer, size_t length, int flags = 0);
-		int recv(iovec* buffer, size_t length, int flags = 0);
-		int recvfrom(void* buffer, size_t length, shared_ptr<Address> from, int flags = 0);
-		int recvfrom(iovec* buffer, size_t length, shared_ptr<Address> from, int flags = 0);
+		int recv(void* buffer, const size_t length, const int flags = 0) const;
+		int recv(iovec* buffer, const size_t length, const int flags = 0) const;
+		int recvfrom(void* buffer, const size_t length, const shared_ptr<Address> from, const int flags = 0) const;
+		int recvfrom(iovec* buffer, const size_t length, const shared_ptr<Address> from, const int flags = 0) const;
 
-		//获取远端地址，并在首次调用时从系统读取之
-		shared_ptr<Address> getRemote_address();
-		//获取本地地址，并在首次调用时从系统读取之
-		shared_ptr<Address> getLocal_address();
-
+		
 		//返回私有成员
 		int getSocket()const { return m_socket; }
 		int getFamily()const { return m_family; }
@@ -98,6 +98,11 @@ namespace SocketSpace
 		bool isValid()const;
 		//返回Socket错误
 		int getError();
+
+		//获取远端地址，并在首次调用时从系统读取之
+		shared_ptr<Address> getRemote_address();
+		//获取本地地址，并在首次调用时从系统读取之
+		shared_ptr<Address> getLocal_address();
 
 		//输出信息到流中
 		ostream& dump(ostream& os)const;
@@ -112,14 +117,11 @@ namespace SocketSpace
 		bool settleAllEvents();
 	public:
 		//根据协议族、socket类型、协议创建Socket
-		static shared_ptr<Socket> CreateSocket(const FamilyType family,const SocketType type,const int protocol = 0);
-
-		//初始化Socket对象
-		//bool init(int socket);
+		//static shared_ptr<Socket> CreateSocket(const FamilyType family,const SocketType type,const int protocol = 0);
 	private:
 		//初始化socket文件描述符
-		void initialize();
-		//创建socket
+		void initializeSocket();
+		//为Socket对象创建socket文件描述符（延迟初始化）
 		void newSocket();
 	private:
 		//socket文件描述符
