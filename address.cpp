@@ -22,27 +22,19 @@ namespace AddressSpace
 	using std::dec;
 	using std::logic_error;
 	using std::dynamic_pointer_cast;
-
-
-	//template<class T>
-	////生成掩码（最低的bits位为1）
-	//static T CreateMask(uint32_t bits)
-	//{
-	//	return (1 << (sizeof(T) * 8 - bits)) - 1;
-	//}
 	
 
-	template<class T>
-	//计算参数二进制表达中1的位数
-	static uint32_t CountBytes(T value)
-	{
-		uint32_t result = 0;
-		for (; value; ++result)
-		{
-			value &= value - 1;
-		}
-		return result;
-	}
+	//template<class T>
+	////计算参数二进制表达中1的位数
+	//static uint32_t CountBytes(T value)
+	//{
+	//	uint32_t result = 0;
+	//	for (; value; ++result)
+	//	{
+	//		value &= value - 1;
+	//	}
+	//	return result;
+	//}
 
 	//class Address:public
 	//将地址转化为字符串
@@ -120,6 +112,68 @@ namespace AddressSpace
 	//通过host地址返回符合条件的所有Address(放入传入的容器中)
 	bool Address::Lookup(vector<shared_ptr<Address>>& addresses, const string& host, int family, int type, int protocol)
 	{
+		////设置搜索条件
+		//addrinfo hints;
+		//hints.ai_flags = 0;
+		//hints.ai_family = family;
+		//hints.ai_socktype = type;
+		//hints.ai_protocol = protocol;
+		//hints.ai_addrlen = 0;
+		//hints.ai_canonname = NULL;
+		//hints.ai_addr = NULL;
+
+		////搜索结果
+		//addrinfo* results = NULL;
+
+		////地址字符串（不包括中括号）
+		//string address_str;
+		////端口号字符指针
+		//const char* port_char_ptr = NULL;
+
+		////如果host地址不为空且以'['开头，说明其为携带中括号的IPv6地址，检查该ipv6地址是否携带端口号
+		//if (!host.empty() && host[0] == '[')
+		//{
+		//	//查找host地址字符串中']'第一次出现的位置，即为IPv6地址（不包含端口号）的末尾
+		//	const char* end_ipv6 = (const char*)memchr(host.c_str() + 1, ']', host.size() - 1);
+		//	//如果查找成功
+		//	if (end_ipv6)
+		//	{
+		//		//如果地址末尾的下一个字符为':'说明该host地址携带了端口号，读取之
+		//		if (*(end_ipv6 + 1) == ':')
+		//		{
+		//			port_char_ptr = end_ipv6 + 2;
+		//		}
+		//		//将地址设置为中括号以内的部分
+		//		address_str = host.substr(1, end_ipv6 - host.c_str() - 1);
+		//	}
+		//}
+
+		////如果地址字符串为空，说明其不携带中括号
+		//if (address_str.empty())
+		//{
+		//	//查找host地址字符串中':'第一次出现的位置，即为端口号字符指针的前一个位置
+		//	port_char_ptr = (const char*)memchr(host.c_str(), ':', host.size());
+		//	//如果查找成功，说明该host地址包含端口号
+		//	if (port_char_ptr)
+		//	{
+		//		//如果在接下来的部分中不再有':'，说明可以设置地址和端口号字符指针（？？？）
+		//		if (!memchr(port_char_ptr + 1, ':', host.c_str() + host.size() - port_char_ptr - 1))
+		//		{
+		//			//将地址设置为':'之前的部分
+		//			address_str = host.substr(0, port_char_ptr - host.c_str());
+		//			//将端口号字符指针移动一位，使其指向正确的位置
+		//			++port_char_ptr;
+		//		}
+		//	}
+		//}
+
+		////如果地址字符串为空，说明其不携带端口号，直接将其设为host地址（此时端口号字符指针为默认值NULL，getaddrinfo()函数的搜索将不考虑端口号）
+		//if (address_str.empty())
+		//{
+		//	address_str = host;
+		//}
+
+
 		//设置搜索条件
 		addrinfo hints;
 		hints.ai_flags = 0;
@@ -132,7 +186,6 @@ namespace AddressSpace
 
 		//搜索结果
 		addrinfo* results = NULL;
-
 		//地址字符串（不包括中括号）
 		string address_str;
 		//端口号字符指针
@@ -156,7 +209,7 @@ namespace AddressSpace
 			}
 		}
 
-		//如果地址字符串为空，说明其不携带中括号
+		//如果地址字符串仍为空，说明其不携带中括号
 		if (address_str.empty())
 		{
 			//查找host地址字符串中':'第一次出现的位置，即为端口号字符指针的前一个位置
@@ -173,13 +226,18 @@ namespace AddressSpace
 					++port_char_ptr;
 				}
 			}
+			//否则说明该host地址不携带端口号，直接将地址设置为host地址（此时端口号字符指针为默认值NULL，getaddrinfo()函数的搜索将不考虑端口号）
+			else
+			{
+				address_str = host;
+			}
 		}
 
-		//如果地址字符串为空，说明其不携带端口号，直接将其设为host地址（此时端口号字符指针为默认值NULL，getaddrinfo()函数的搜索将不考虑端口号）
-		if (address_str.empty())
-		{
-			address_str = host;
-		}
+		////如果地址字符串为空，说明其不携带端口号，直接将其设为host地址（此时端口号字符指针为默认值NULL，getaddrinfo()函数的搜索将不考虑端口号）
+		//if (address_str.empty())
+		//{
+		//	address_str = host;
+		//}
 
 		//调用getaddrinfo()函数尝试解析address的信息（成功返回0）
 		int error = getaddrinfo(address_str.c_str(), port_char_ptr, &hints, &results);
@@ -239,6 +297,7 @@ namespace AddressSpace
 		return nullptr;
 	}
 	
+
 	//返回本机所有网卡的<网卡名, 地址, 子网掩码位数>
 	bool Address::GetInterfaceAddresses(multimap<string, pair<shared_ptr<Address>, uint32_t>>& result, int family)
 	{
@@ -334,6 +393,7 @@ namespace AddressSpace
 		}
 		return true;
 	}
+
 
 
 	//class IPAddress :public static
@@ -493,6 +553,10 @@ namespace AddressSpace
 
 
 
+
+
+
+
 	//class IPv6Address : public
 	IPv6Address::IPv6Address()
 	{
@@ -524,8 +588,6 @@ namespace AddressSpace
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 		}
 	}
-
-
 
 	//获取可读性输出地址
 	ostream& IPv6Address::getAddress_ostream(ostream& os)const
@@ -629,6 +691,10 @@ namespace AddressSpace
 	}
 
 
+
+
+
+
 	//class UinxAddress :public
 	static const size_t MAX_PATH_LEN = sizeof(((sockaddr_un*)0)->sun_path) - 1;
 	UnixAddress::UnixAddress()
@@ -666,6 +732,9 @@ namespace AddressSpace
 		}
 		return os << m_address.sun_path;
 	}
+
+
+
 
 
 

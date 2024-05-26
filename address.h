@@ -61,6 +61,18 @@ namespace AddressSpace
 		//获取指定网卡的地址和子网掩码位数
 		static bool GetInterfaceAddresses(vector<pair<shared_ptr<Address>, uint32_t>>& result,
 			const string& iface, int family = AF_INET);
+	private:
+		//计算参数二进制表达中1的位数
+		template<class T>
+		static uint32_t CountBytes(T value)
+		{
+			uint32_t result = 0;
+			for (; value; ++result)
+			{
+				value &= value - 1;
+			}
+			return result;
+		}
 	};
 
 	//IP地址类（基类），公有继承自Address类
