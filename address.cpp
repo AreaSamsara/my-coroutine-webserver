@@ -91,7 +91,7 @@ namespace AddressSpace
 
 	//class Address:public static
 	//用sockaddr指针创建Address对象
-	shared_ptr<Address> Address::Create(const sockaddr* address, socklen_t addrlen)
+	shared_ptr<Address> Address::CreateAddress(const sockaddr* address, socklen_t addrlen)
 	{
 		//如果sockaddr指针为空，直接返回nullptr
 		if (address == nullptr)
@@ -196,7 +196,7 @@ namespace AddressSpace
 		addrinfo* next_result = results;
 		while (next_result)
 		{
-			addresses.push_back(Create(next_result->ai_addr, (socklen_t)next_result->ai_addrlen));
+			addresses.push_back(CreateAddress(next_result->ai_addr, (socklen_t)next_result->ai_addrlen));
 			next_result = next_result->ai_next;
 		}
 
@@ -264,14 +264,14 @@ namespace AddressSpace
 				{
 				case AF_INET:
 				{
-					address = Create(next->ifa_addr, sizeof(sockaddr_in));
+					address = CreateAddress(next->ifa_addr, sizeof(sockaddr_in));
 					uint32_t netmask = ((sockaddr_in*)next->ifa_netmask)->sin_addr.s_addr;
 					prefix_length = CountBytes(netmask);
 				}
 					break;
 				case AF_INET6:
 				{
-					address = Create(next->ifa_addr, sizeof(sockaddr_in6));
+					address = CreateAddress(next->ifa_addr, sizeof(sockaddr_in6));
 					in6_addr& netmask = ((sockaddr_in6*)next->ifa_netmask)->sin6_addr;
 					prefix_length = 0;
 					for (int i = 0; i < 16; ++i)
@@ -337,7 +337,7 @@ namespace AddressSpace
 
 	//class IPAddress :public static
 	//通过域名,IP,服务器名创建IPAddress
-	shared_ptr<IPAddress> IPAddress::Create(const char* address, uint32_t port)
+	shared_ptr<IPAddress> IPAddress::CreateIPAddress(const char* address, uint32_t port)
 	{
 		//设置搜索条件
 		addrinfo hints;
@@ -367,7 +367,7 @@ namespace AddressSpace
 		try
 		{
 			//保证智能指针转换的安全
-			shared_ptr<IPAddress> ip_address = dynamic_pointer_cast<IPAddress>(Address::Create(results->ai_addr, (socklen_t)results->ai_addrlen));
+			shared_ptr<IPAddress> ip_address = dynamic_pointer_cast<IPAddress>(Address::CreateAddress(results->ai_addr, (socklen_t)results->ai_addrlen));
 			//如果创建成功则设置其端口
 			if (ip_address)
 			{
@@ -395,9 +395,26 @@ namespace AddressSpace
 		m_address.sin_addr.s_addr = htonl(address);
 	}
 	//通过sockaddr_in构造IPv4Address
-	IPv4Address::IPv4Address(const sockaddr_in& address)
+	/*IPv4Address::IPv4Address(const sockaddr_in& address)
 	{
 		m_address = address;
+	}*/
+	//使用点分十进制地址构造IPv4Address
+	IPv4Address::IPv4Address(const char* address, uint16_t port)
+	{
+		memset(&m_address, 0, sizeof(m_address));
+		m_address.sin_family = AF_INET;
+		m_address.sin_port = htons(port);
+
+		int return_value = inet_pton(AF_INET, address, &this->m_address.sin_addr);
+		//如果inet_pton()调用失败则报错
+		if (return_value <= 0)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << return_value
+				<< " errno=" << errno << " strerror=" << strerror(errno);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		}
 	}
 
 	//获取可读性输出地址
@@ -455,10 +472,12 @@ namespace AddressSpace
 		return shared_ptr<IPv4Address>(new IPv4Address(subnet_mask));
 	}
 
+	//获取端口号
 	uint16_t IPv4Address::getPort()const
 	{
 		return ntohs(m_address.sin_port);
 	}
+	//设置端口号
 	void IPv4Address::setPort(uint16_t port)
 	{
 		m_address.sin_port = htons(port);
@@ -467,22 +486,22 @@ namespace AddressSpace
 
 	//class IPv4Address :public static
 	//使用点分十进制地址创建IPv4Address
-	shared_ptr<IPv4Address> IPv4Address::Create(const char* address, uint16_t port)
-	{
-		shared_ptr<IPv4Address> ipv4_address(new IPv4Address);
-		ipv4_address->m_address.sin_port = htons(port);
-		int addr = inet_pton(AF_INET, address, &ipv4_address->m_address.sin_addr);
-		//如果inet_pton()调用失败，报错并返回nullptr
-		if (addr <= 0)
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << addr
-				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
-			return nullptr;
-		}
-		return ipv4_address;
-	}
+	//shared_ptr<IPv4Address> IPv4Address::Create(const char* address, uint16_t port)
+	//{
+	//	shared_ptr<IPv4Address> ipv4_address(new IPv4Address);
+	//	ipv4_address->m_address.sin_port = htons(port);
+	//	int addr = inet_pton(AF_INET, address, &ipv4_address->m_address.sin_addr);
+	//	//如果inet_pton()调用失败，报错并返回nullptr
+	//	if (addr <= 0)
+	//	{
+	//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+	//		event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << addr
+	//			<< " errno=" << errno << " strerror=" << strerror(errno);
+	//		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+	//		return nullptr;
+	//	}
+	//	return ipv4_address;
+	//}
 
 
 
@@ -500,11 +519,25 @@ namespace AddressSpace
 		m_address.sin6_port = htons(port);
 		memcpy(&m_address.sin6_addr.s6_addr, address, 16);
 	}
-	//通过sockaddr_in6构造IPv6Address
-	/*IPv6Address::IPv6Address(const sockaddr_in6& address)
+	//通过IPv6地址字符串构造IPv6Address
+	IPv6Address::IPv6Address(const char* address, uint16_t port)
 	{
-		m_address = address;
-	}*/
+		memset(&m_address, 0, sizeof(m_address));
+		m_address.sin6_family = AF_INET6;
+		m_address.sin6_port = htons(port);
+
+		int return_value = inet_pton(AF_INET6, address, &this->m_address.sin6_addr);
+		//如果inet_pton()调用失败则报错
+		if (return_value <= 0)
+		{
+			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << return_value
+				<< " errno=" << errno << " strerror=" << strerror(errno);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+		}
+	}
+
+
 
 	//获取可读性输出地址
 	ostream& IPv6Address::getAddress_ostream(ostream& os)const
@@ -608,22 +641,22 @@ namespace AddressSpace
 
 	//class IPv6Address :public static
 	//通过IPv6地址字符串构造IPv6Address
-	shared_ptr<IPv6Address> IPv6Address::Create(const char* address, uint16_t port)
-	{
-		shared_ptr<IPv6Address> ipv6_address(new IPv6Address());
-		ipv6_address->m_address.sin6_port = htons(port);
-		int addr = inet_pton(AF_INET6, address, &ipv6_address->m_address.sin6_addr);
-		//如果inet_pton()调用失败，报错并返回nullptr
-		if (addr <= 0)
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << addr
-				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
-			return nullptr;
-		}
-		return ipv6_address;
-	}
+	//shared_ptr<IPv6Address> IPv6Address::Create(const char* address, uint16_t port)
+	//{
+	//	shared_ptr<IPv6Address> ipv6_address(new IPv6Address());
+	//	ipv6_address->m_address.sin6_port = htons(port);
+	//	int addr = inet_pton(AF_INET6, address, &ipv6_address->m_address.sin6_addr);
+	//	//如果inet_pton()调用失败，报错并返回nullptr
+	//	if (addr <= 0)
+	//	{
+	//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+	//		event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << addr
+	//			<< " errno=" << errno << " strerror=" << strerror(errno);
+	//		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+	//		return nullptr;
+	//	}
+	//	return ipv6_address;
+	//}
 
 	//class UinxAddress :public
 	static const size_t MAX_PATH_LEN = sizeof(((sockaddr_un*)0)->sun_path) - 1;
@@ -664,17 +697,13 @@ namespace AddressSpace
 	}
 
 
+
 	//class UnknowAddress :public
 	UnknownAddress::UnknownAddress(int family)
 	{
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sa_family = family;
 	}
-	//通过sockaddr构造UnknownAddress
-	/*UnknownAddress::UnknownAddress(const sockaddr& address)
-	{
-		m_address = address;
-	}*/
 
 	//获取可读性输出地址
 	ostream& UnknownAddress::getAddress_ostream(ostream& os)const

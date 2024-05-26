@@ -45,7 +45,7 @@ namespace AddressSpace
 		bool operator!=(const Address& right_address)const;
 	public:
 		//用sockaddr指针创建Address对象
-		static shared_ptr<Address> Create(const sockaddr* address, socklen_t addrlen);
+		static shared_ptr<Address> CreateAddress(const sockaddr* address, socklen_t addrlen);
 		//通过host地址返回符合条件的所有Address(放入传入的容器中)
 		static bool Lookup(vector<shared_ptr<Address>>& addresses, const string& host,
 			int family = AF_INET, int type = 0, int protocol = 0);		//默认返回IPv4的地址，因为其通用且速度快于IPv6
@@ -80,7 +80,7 @@ namespace AddressSpace
 		virtual void setPort(uint16_t port) = 0;
 	public:
 		//通过域名,IP,服务器名创建IPAddress
-		static shared_ptr<IPAddress> Create(const char* address, uint32_t port = 0);
+		static shared_ptr<IPAddress> CreateIPAddress(const char* address, uint32_t port = 0);
 	};
 
 	//IPv4地址类，公有继承自IPAddress类
@@ -90,7 +90,9 @@ namespace AddressSpace
 		//通过IPv4二进制地址构造IPv4Address
 		IPv4Address(uint32_t address = INADDR_ANY, uint16_t port = 0);
 		//通过sockaddr_in构造IPv4Address
-		IPv4Address(const sockaddr_in& address);
+		IPv4Address(const sockaddr_in& address) { m_address = address; }
+		//使用点分十进制地址构造IPv4Address
+		IPv4Address(const char* address, uint16_t port);	//new
 
 		//获取只读版地址指针
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
@@ -114,7 +116,7 @@ namespace AddressSpace
 		virtual void setPort(uint16_t port) override;
 	public:
 		//使用点分十进制地址创建IPv4Address
-		static shared_ptr<IPv4Address> Create(const char* address, uint16_t port);
+		//static shared_ptr<IPv4Address> Create(const char* address, uint16_t port);
 	private:
 		//IPv4地址结构体
 		sockaddr_in m_address;
@@ -129,6 +131,8 @@ namespace AddressSpace
 		IPv6Address(const uint8_t address[16], uint16_t port = 0);
 		//通过sockaddr_in6构造IPv6Address
 		IPv6Address(const sockaddr_in6& address) { m_address = address; }
+		//通过IPv6地址字符串构造IPv6Address
+		IPv6Address(const char* address, uint16_t port);	//new
 
 		//获取只读版地址指针
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
@@ -152,7 +156,7 @@ namespace AddressSpace
 		virtual void setPort(uint16_t port) override;
 	public:
 		//通过IPv6地址字符串构造IPv6Address
-		static shared_ptr<IPv6Address> Create(const char* address, uint16_t port);
+		//static shared_ptr<IPv6Address> Create(const char* address, uint16_t port);
 	private:
 		//IPv6地址结构体
 		sockaddr_in6 m_address;
