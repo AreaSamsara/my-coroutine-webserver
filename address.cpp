@@ -25,7 +25,7 @@ namespace AddressSpace
 
 	//class Address:public
 	//将地址转化为字符串
-	string Address::toString()
+	string Address::toString() const
 	{
 		stringstream ss;
 		//先获取可读性输出地址（输出流），再将其转化为string对象
@@ -322,7 +322,7 @@ namespace AddressSpace
 
 	//class IPAddress :public static
 	//通过域名,IP,服务器名创建IPAddress
-	shared_ptr<IPAddress> IPAddress::CreateIPAddress(const char* address, uint32_t port)
+	shared_ptr<IPAddress> IPAddress::CreateIPAddress(const char* address, const uint32_t port)
 	{
 		//设置搜索条件
 		addrinfo hints;
@@ -376,7 +376,7 @@ namespace AddressSpace
 
 	//class IPv4Address :public
 	//通过IPv4二进制地址构造IPv4Address
-	IPv4Address::IPv4Address(uint32_t address, uint16_t port)
+	IPv4Address::IPv4Address(const uint32_t address, const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sin_family = AF_INET;
@@ -385,7 +385,7 @@ namespace AddressSpace
 	}
 	
 	//使用点分十进制地址构造IPv4Address
-	IPv4Address::IPv4Address(const char* address, uint16_t port)
+	IPv4Address::IPv4Address(const char* address, const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sin_family = AF_INET;
@@ -422,13 +422,13 @@ namespace AddressSpace
 		return ntohs(m_address.sin_port);
 	}
 	//设置端口号
-	void IPv4Address::setPort(uint16_t port)
+	void IPv4Address::setPort(const uint16_t port)
 	{
 		m_address.sin_port = htons(port);
 	}
 
 	//获取该地址的广播地址
-	shared_ptr<IPAddress> IPv4Address::broadcastAddress(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv4Address::broadcastAddress(const uint32_t prefix_len)
 	{
 		//掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
@@ -444,7 +444,7 @@ namespace AddressSpace
 	}
 
 	//获取该地址的网段
-	shared_ptr<IPAddress> IPv4Address::networdAddress(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv4Address::networdAddress(const uint32_t prefix_len)
 	{
 		//掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
@@ -460,7 +460,7 @@ namespace AddressSpace
 	}
 
 	//获取子网掩码地址
-	shared_ptr<IPAddress> IPv4Address::subnetMask(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv4Address::subnetMask(const uint32_t prefix_len)
 	{
 		//掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
@@ -494,7 +494,7 @@ namespace AddressSpace
 		m_address.sin6_family = AF_INET6;
 	}
 	//通过IPv6二进制地址构造IPv6Address
-	IPv6Address::IPv6Address(const uint8_t address[16], uint16_t port)
+	IPv6Address::IPv6Address(const uint8_t address[16], const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sin6_family = AF_INET6;
@@ -502,7 +502,7 @@ namespace AddressSpace
 		memcpy(&m_address.sin6_addr.s6_addr, address, 16);
 	}
 	//通过IPv6地址字符串构造IPv6Address
-	IPv6Address::IPv6Address(const char* address, uint16_t port)
+	IPv6Address::IPv6Address(const char* address, const  uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sin6_family = AF_INET6;
@@ -568,12 +568,12 @@ namespace AddressSpace
 		return ntohs(m_address.sin6_port);
 	}
 	//设置端口号
-	void IPv6Address::setPort(uint16_t port)
+	void IPv6Address::setPort(const uint16_t port)
 	{
 		m_address.sin6_port = htons(port);
 	}
 
-	shared_ptr<IPAddress> IPv6Address::broadcastAddress(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv6Address::broadcastAddress(const uint32_t prefix_len)
 	{
 		//将当前地址与prefix_len位掩码取或，得到广播地址
 		sockaddr_in6 broadcast_address(m_address);
@@ -587,7 +587,7 @@ namespace AddressSpace
 
 		return shared_ptr<IPv6Address>(new IPv6Address(broadcast_address));
 	}
-	shared_ptr<IPAddress> IPv6Address::networdAddress(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv6Address::networdAddress(const uint32_t prefix_len)
 	{
 		//将当前地址与子网掩码（掩码的反码）取与，得到网段
 		sockaddr_in6 netword_address(m_address);
@@ -601,7 +601,7 @@ namespace AddressSpace
 
 		return shared_ptr<IPv6Address>(new IPv6Address(netword_address));
 	}
-	shared_ptr<IPAddress> IPv6Address::subnetMask(uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv6Address::subnetMask(const uint32_t prefix_len)
 	{
 		//prefix_len位掩码的反码即为子网掩码
 		sockaddr_in6 subnet_mask;

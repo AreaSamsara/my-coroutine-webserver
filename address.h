@@ -53,7 +53,7 @@ namespace AddressSpace
 		//返回协议族
 		int getFamily()const { return getAddress()->sa_family; }
 		//将地址转化为字符串
-		string toString();
+		string toString() const;
 
 		//重载比较运算符
 		bool operator<(const Address& right_address)const;
@@ -98,23 +98,23 @@ namespace AddressSpace
 	{
 	public:
 		//获取该地址的广播地址
-		virtual shared_ptr<IPAddress> broadcastAddress(uint32_t prefix_len) = 0;
+		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) = 0;
 		//获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(uint32_t prefix_len) = 0;
+		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) = 0;
 		//获取子网掩码地址
-		virtual shared_ptr<IPAddress> subnetMask(uint32_t prefix_len) = 0;
+		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) = 0;
 
 		//获取端口号
 		virtual uint16_t getPort()const = 0;
 		//设置端口号
-		virtual void setPort(uint16_t port) = 0;
+		virtual void setPort(const uint16_t port) = 0;
 	public:
 		//通过域名,IP,服务器名创建IPAddress
-		static shared_ptr<IPAddress> CreateIPAddress(const char* address, uint32_t port = 0);
+		static shared_ptr<IPAddress> CreateIPAddress(const char* address, const uint32_t port = 0);
 	protected:
 		//生成掩码（最低的bits位为1）
 		template<class T>
-		static T CreateMask(uint32_t bits)
+		static T CreateMask(const uint32_t bits)
 		{
 			return (1 << (sizeof(T) * 8 - bits)) - 1;
 		}
@@ -125,11 +125,11 @@ namespace AddressSpace
 	{
 	public:
 		//通过IPv4二进制地址构造IPv4Address
-		IPv4Address(uint32_t address = INADDR_ANY, uint16_t port = 0);
+		IPv4Address(const uint32_t address = INADDR_ANY, const uint16_t port = 0);
 		//通过sockaddr_in构造IPv4Address
 		IPv4Address(const sockaddr_in& address) { m_address = address; }
 		//使用点分十进制地址构造IPv4Address
-		IPv4Address(const char* address, uint16_t port);
+		IPv4Address(const char* address, const uint16_t port);
 
 		//获取只读版地址指针
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
@@ -143,14 +143,14 @@ namespace AddressSpace
 		//获取端口号
 		virtual uint16_t getPort()const override;
 		//设置端口号
-		virtual void setPort(uint16_t port) override;
+		virtual void setPort(const uint16_t port) override;
 
 		//获取该地址的广播地址
-		virtual shared_ptr<IPAddress> broadcastAddress(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
 		//获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
 		//获取子网掩码地址
-		virtual shared_ptr<IPAddress> subnetMask(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 	private:
 		//IPv4地址结构体
 		sockaddr_in m_address;
@@ -162,7 +162,7 @@ namespace AddressSpace
 	public:
 		IPv6Address();
 		//通过IPv6二进制地址构造IPv6Address
-		IPv6Address(const uint8_t address[16], uint16_t port = 0);
+		IPv6Address(const uint8_t address[16], const uint16_t port = 0);
 		//通过sockaddr_in6构造IPv6Address
 		IPv6Address(const sockaddr_in6& address) { m_address = address; }
 		//通过IPv6地址字符串构造IPv6Address
@@ -180,14 +180,14 @@ namespace AddressSpace
 		//获取端口号
 		virtual uint16_t getPort()const override;
 		//设置端口号
-		virtual void setPort(uint16_t port) override;
+		virtual void setPort(const uint16_t port) override;
 
 		//获取该地址的广播地址
-		virtual shared_ptr<IPAddress> broadcastAddress(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
 		//获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
 		//获取子网掩码地址
-		virtual shared_ptr<IPAddress> subnetMask(uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 	private:
 		//IPv6地址结构体
 		sockaddr_in6 m_address;
@@ -211,7 +211,7 @@ namespace AddressSpace
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
 		//设置地址长度
-		void setAddress_length(uint32_t address_length) { m_length = address_length; }
+		void setAddress_length(const uint32_t address_length) { m_length = address_length; }
 	private:
 		//Unix地址结构体
 		sockaddr_un m_address;
@@ -226,7 +226,7 @@ namespace AddressSpace
 	class UnknownAddress :public Address
 	{
 	public:
-		UnknownAddress(int family);
+		UnknownAddress(const int family);
 		//通过sockaddr构造UnknownAddress
 		UnknownAddress(const sockaddr& address) { m_address = address; }
 
