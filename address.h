@@ -81,6 +81,13 @@ namespace AddressSpace
 	public:
 		//通过域名,IP,服务器名创建IPAddress
 		static shared_ptr<IPAddress> CreateIPAddress(const char* address, uint32_t port = 0);
+	protected:
+		//生成掩码（最低的bits位为1）
+		template<class T>
+		static T CreateMask(uint32_t bits)
+		{
+			return (1 << (sizeof(T) * 8 - bits)) - 1;
+		}
 	};
 
 	//IPv4地址类，公有继承自IPAddress类
@@ -114,9 +121,6 @@ namespace AddressSpace
 		virtual uint16_t getPort()const override;
 		//设置端口号
 		virtual void setPort(uint16_t port) override;
-	public:
-		//使用点分十进制地址创建IPv4Address
-		//static shared_ptr<IPv4Address> Create(const char* address, uint16_t port);
 	private:
 		//IPv4地址结构体
 		sockaddr_in m_address;
@@ -154,9 +158,6 @@ namespace AddressSpace
 		virtual uint16_t getPort()const override;
 		//设置端口号
 		virtual void setPort(uint16_t port) override;
-	public:
-		//通过IPv6地址字符串构造IPv6Address
-		//static shared_ptr<IPv6Address> Create(const char* address, uint16_t port);
 	private:
 		//IPv6地址结构体
 		sockaddr_in6 m_address;

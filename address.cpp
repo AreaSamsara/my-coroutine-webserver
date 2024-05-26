@@ -24,12 +24,13 @@ namespace AddressSpace
 	using std::dynamic_pointer_cast;
 
 
-	template<class T>
-	//生成子网掩码的反码（最低的bits位为1）
-	static T CreateMask(uint32_t bits)
-	{
-		return (1 << (sizeof(T) * 8 - bits)) - 1;
-	}
+	//template<class T>
+	////生成掩码（最低的bits位为1）
+	//static T CreateMask(uint32_t bits)
+	//{
+	//	return (1 << (sizeof(T) * 8 - bits)) - 1;
+	//}
+	
 
 	template<class T>
 	//计算参数二进制表达中1的位数
@@ -394,11 +395,7 @@ namespace AddressSpace
 		m_address.sin_port = htons(port);
 		m_address.sin_addr.s_addr = htonl(address);
 	}
-	//通过sockaddr_in构造IPv4Address
-	/*IPv4Address::IPv4Address(const sockaddr_in& address)
-	{
-		m_address = address;
-	}*/
+	
 	//使用点分十进制地址构造IPv4Address
 	IPv4Address::IPv4Address(const char* address, uint16_t port)
 	{
@@ -431,44 +428,55 @@ namespace AddressSpace
 		return os;
 	}
 
+	//获取该地址的广播地址
 	shared_ptr<IPAddress> IPv4Address::broadcastAddress(uint32_t prefix_len)
 	{
-		//子网掩码的掩盖位数不应该超过32位，否则返回nullptr
+		//掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
 		{
 			return nullptr;
 		}
 
-		//将当前地址与子网掩码的反码取或，得到广播地址
+		//将当前地址与prefix_len位掩码取或，得到广播地址
 		sockaddr_in broadcast_address(m_address);
 		broadcast_address.sin_addr.s_addr |= htonl(CreateMask<uint32_t>(prefix_len));
 
 		return shared_ptr<IPv4Address>(new IPv4Address(broadcast_address));
 	}
 
+	//获取该地址的网段
 	shared_ptr<IPAddress> IPv4Address::networdAddress(uint32_t prefix_len)
 	{
-		//子网掩码的掩盖位数不应该超过32位，否则返回nullptr
+		//掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
 		{
 			return nullptr;
 		}
 
-		//将当前地址与子网掩码的反码取与，得到网段（此处有误）
+		//将当前地址与子网掩码（掩码的反码）取与，得到网段
 		sockaddr_in broadcast_address(m_address);
-		broadcast_address.sin_addr.s_addr &= htonl(CreateMask<uint32_t>(prefix_len));
+		broadcast_address.sin_addr.s_addr &= ~htonl(CreateMask<uint32_t>(prefix_len));
 
 		return shared_ptr<IPv4Address>(new IPv4Address(broadcast_address));
 	}
 
+	//获取子网掩码地址
 	shared_ptr<IPAddress> IPv4Address::subnetMask(uint32_t prefix_len)
 	{
+		//掩码的掩盖位数不应该超过32位，否则返回nullptr
+		if (prefix_len > 32)
+		{
+			return nullptr;
+		}
+
 		//对子网掩码对象只设置协议族，其他不必要的成员置空，提高效率
 		sockaddr_in subnet_mask;
 		memset(&subnet_mask, 0, sizeof(subnet_mask));
 		subnet_mask.sin_family = AF_INET;
-		//对子网掩码的反码取反，得到子网掩码（？？？）
+
+		//prefix_len位掩码的反码即为子网掩码
 		subnet_mask.sin_addr.s_addr = ~htonl(CreateMask<uint32_t>(prefix_len));
+
 		return shared_ptr<IPv4Address>(new IPv4Address(subnet_mask));
 	}
 
@@ -482,26 +490,6 @@ namespace AddressSpace
 	{
 		m_address.sin_port = htons(port);
 	}
-
-
-	//class IPv4Address :public static
-	//使用点分十进制地址创建IPv4Address
-	//shared_ptr<IPv4Address> IPv4Address::Create(const char* address, uint16_t port)
-	//{
-	//	shared_ptr<IPv4Address> ipv4_address(new IPv4Address);
-	//	ipv4_address->m_address.sin_port = htons(port);
-	//	int addr = inet_pton(AF_INET, address, &ipv4_address->m_address.sin_addr);
-	//	//如果inet_pton()调用失败，报错并返回nullptr
-	//	if (addr <= 0)
-	//	{
-	//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//		event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << addr
-	//			<< " errno=" << errno << " strerror=" << strerror(errno);
-	//		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
-	//		return nullptr;
-	//	}
-	//	return ipv4_address;
-	//}
 
 
 
@@ -584,7 +572,7 @@ namespace AddressSpace
 
 	shared_ptr<IPAddress> IPv6Address::broadcastAddress(uint32_t prefix_len)
 	{
-		//将当前地址与子网掩码的反码取或，得到广播地址
+		//将当前地址与prefix_len位掩码取或，得到广播地址
 		sockaddr_in6 broadcast_address(m_address);
 		//只对临界的字节进行或操作
 		broadcast_address.sin6_addr.s6_addr[prefix_len / 8] |= CreateMask<uint8_t>(prefix_len % 8);
@@ -598,10 +586,10 @@ namespace AddressSpace
 	}
 	shared_ptr<IPAddress> IPv6Address::networdAddress(uint32_t prefix_len)
 	{
-		//将当前地址与子网掩码的反码取与，得到网段（此处有误）
+		//将当前地址与子网掩码（掩码的反码）取与，得到网段
 		sockaddr_in6 netword_address(m_address);
 		//只对临界的字节进行与操作
-		netword_address.sin6_addr.s6_addr[prefix_len / 8] &= CreateMask<uint8_t>(prefix_len % 8);
+		netword_address.sin6_addr.s6_addr[prefix_len / 8] &= ~CreateMask<uint8_t>(prefix_len % 8);
 		//临界字节以后的字节直接置低（s6_addr数组存储是从地址的高位开始的）
 		for (size_t i = prefix_len / 8 + 1; i < 16; ++i)
 		{
@@ -612,11 +600,12 @@ namespace AddressSpace
 	}
 	shared_ptr<IPAddress> IPv6Address::subnetMask(uint32_t prefix_len)
 	{
-		//对子网掩码的反码取反，得到子网掩码（？？？）
+		//prefix_len位掩码的反码即为子网掩码
 		sockaddr_in6 subnet_mask;
 		//对子网掩码对象只设置协议族，其他不必要的成员置空，提高效率
 		memset(&subnet_mask, 0, sizeof(subnet_mask));
 		subnet_mask.sin6_family = AF_INET6;
+
 		//只对临界的字节进行取反操作
 		subnet_mask.sin6_addr.s6_addr[prefix_len / 8] = ~CreateMask<uint8_t>(prefix_len % 8);
 		//临界字节以前的字节直接置高（s6_addr数组存储是从地址的高位开始的）
@@ -639,24 +628,6 @@ namespace AddressSpace
 		m_address.sin6_port = htons(port);
 	}
 
-	//class IPv6Address :public static
-	//通过IPv6地址字符串构造IPv6Address
-	//shared_ptr<IPv6Address> IPv6Address::Create(const char* address, uint16_t port)
-	//{
-	//	shared_ptr<IPv6Address> ipv6_address(new IPv6Address());
-	//	ipv6_address->m_address.sin6_port = htons(port);
-	//	int addr = inet_pton(AF_INET6, address, &ipv6_address->m_address.sin6_addr);
-	//	//如果inet_pton()调用失败，报错并返回nullptr
-	//	if (addr <= 0)
-	//	{
-	//		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	//		event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << addr
-	//			<< " errno=" << errno << " strerror=" << strerror(errno);
-	//		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
-	//		return nullptr;
-	//	}
-	//	return ipv6_address;
-	//}
 
 	//class UinxAddress :public
 	static const size_t MAX_PATH_LEN = sizeof(((sockaddr_un*)0)->sun_path) - 1;
