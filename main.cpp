@@ -27,7 +27,7 @@ void test()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeInt64(i);
+		bytearray->writeFint64(i);
 	}
 
 	bytearray->setPosition(0);
@@ -36,7 +36,7 @@ void test()
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数并打印
-		int32_t value = bytearray->readInt64();
+		int32_t value = bytearray->readFint64();
 
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];
@@ -59,7 +59,7 @@ void test()
 
 
 	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getSize();
+	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 
 
@@ -108,7 +108,7 @@ void test_file()
 	}
 
 	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getSize();
+	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 
 
@@ -133,14 +133,14 @@ void test_file()
 	bytearray2->setPosition(0);
 
 
-	{
+	/*{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << "bytearray:" << bytearray->toString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 		log_event->setSstream("");
 		log_event->getSstream() << "bytearray2:" << bytearray2->toString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	}
+	}*/
 
 	if (bytearray->toString() != bytearray2->toString())
 	{

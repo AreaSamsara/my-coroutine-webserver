@@ -18,8 +18,8 @@ namespace ByteArraySpace
 	using std::ifstream;
 
 	//class Node:public
-	ByteArray::Node::Node(const size_t size) :m_ptr(new char[size]), m_next(nullptr), m_size(size) {}
-	ByteArray::Node::Node() :m_ptr(nullptr), m_next(nullptr), m_size(0) {}
+	ByteArray::Node::Node(const size_t block_size) :m_ptr(new char[block_size]), m_next(nullptr), m_block_size(block_size) {}
+	ByteArray::Node::Node() :m_ptr(nullptr), m_next(nullptr), m_block_size(0) {}
 	ByteArray::Node::~Node()
 	{
 		if (m_ptr)
@@ -29,10 +29,11 @@ namespace ByteArraySpace
 	}
 
 	//class ByteArray:public
-	ByteArray::ByteArray(const size_t base_size) :m_base_size(base_size), m_position(0), m_capacity(base_size)
-		, m_size(0), m_root(new Node(base_size)), m_current(m_root) {}
+	ByteArray::ByteArray(const size_t block_size) :m_block_size(block_size), m_capacity(block_size),
+		m_data_size(0), m_position(0), m_root(new Node(block_size)), m_current(m_root) {}
 	ByteArray::~ByteArray()
 	{
+		//从根节点开始依次释放所有节点的内存
 		Node* temp = m_root;
 		while (temp)
 		{
@@ -336,8 +337,8 @@ namespace ByteArraySpace
 	void ByteArray::clear()
 	{
 		m_position = 0;;
-		m_size = 0;
-		m_capacity = m_base_size;
+		m_data_size = 0;
+		m_capacity = m_block_size;
 		Node* temp = m_root->m_next;
 		while (temp)
 		{
@@ -355,18 +356,18 @@ namespace ByteArraySpace
 		{
 			return;
 		}
-		addCapacity(size);
+		expendCapacity(size);
 
-		size_t npos = m_position % m_base_size;
-		size_t ncap = m_current->m_size - npos;
+		size_t now_position = m_position % m_block_size;
+		size_t now_capacity = m_current->m_block_size - now_position;
 		size_t bpos = 0;
 
 		while (size > 0)
 		{
-			if (ncap >= size)
+			if (now_capacity >= size)
 			{
-				memcpy(m_current->m_ptr + npos, (const char*)buffer + bpos, size);
-				if (m_current->m_size == (npos + size))
+				memcpy(m_current->m_ptr + now_position, (const char*)buffer + bpos, size);
+				if (m_current->m_block_size == (now_position + size))
 				{
 					m_current = m_current->m_next;
 				}
@@ -376,19 +377,19 @@ namespace ByteArraySpace
 			}
 			else
 			{
-				memcpy(m_current->m_ptr + npos, (const char*)buffer + bpos, ncap);
-				m_position += ncap;
-				bpos += ncap;
-				size -= ncap;
+				memcpy(m_current->m_ptr + now_position, (const char*)buffer + bpos, now_capacity);
+				m_position += now_capacity;
+				bpos += now_capacity;
+				size -= now_capacity;
 				m_current = m_current->m_next;
-				ncap = m_current->m_size;
-				npos = 0;
+				now_capacity = m_current->m_block_size;
+				now_position = 0;
 			}
 		}
 
-		if (m_position > m_size)
+		if (m_position > m_data_size)
 		{
-			m_size = m_position;
+			m_data_size = m_position;
 		}
 	}
 
@@ -399,15 +400,15 @@ namespace ByteArraySpace
 			throw out_of_range("not enough length");
 		}
 
-		size_t npos = m_position % m_base_size;
-		size_t ncap = m_current->m_size - npos;
+		size_t npos = m_position % m_block_size;
+		size_t ncap = m_current->m_block_size - npos;
 		size_t bpos = 0;
 		while (size > 0)
 		{
 			if (ncap >= size)
 			{
 				memcpy((char*)buffer + bpos, m_current->m_ptr + npos, size);
-				if (m_current->m_size == npos + size)
+				if (m_current->m_block_size == npos + size)
 				{
 					m_current = m_current->m_next;
 				}
@@ -422,7 +423,7 @@ namespace ByteArraySpace
 				bpos += ncap;
 				size -= ncap;	
 				m_current = m_current->m_next;
-				ncap = m_current->m_size;
+				ncap = m_current->m_block_size;
 				npos = 0;
 			}
 		}
@@ -430,13 +431,13 @@ namespace ByteArraySpace
 
 	void ByteArray::read(void* buffer, size_t size, size_t position)const
 	{
-		if (size > (m_size - position))
+		if (size > (m_data_size - position))
 		{
 			throw out_of_range("not enough length");
 		}
 
-		size_t npos = position % m_base_size;
-		size_t ncap = m_current->m_size - npos;
+		size_t npos = position % m_block_size;
+		size_t ncap = m_current->m_block_size - npos;
 		size_t bpos = 0;
 
 		Node* current = m_current;
@@ -446,7 +447,7 @@ namespace ByteArraySpace
 			if (ncap >= size)
 			{
 				memcpy((char*)buffer + bpos, current->m_ptr + npos, size);
-				if (current->m_size == (npos + size))
+				if (current->m_block_size == (npos + size))
 				{
 					current = current->m_next;
 				}
@@ -461,7 +462,7 @@ namespace ByteArraySpace
 				bpos += ncap;
 				size -= ncap;
 				current = current->m_next;
-				ncap = current->m_size;
+				ncap = current->m_block_size;
 				npos = 0;
 			}
 		}
@@ -475,18 +476,18 @@ namespace ByteArraySpace
 		}
 
 		m_position = position;
-		if (m_position > m_size)
+		if (m_position > m_data_size)
 		{
-			m_size = m_position;
+			m_data_size = m_position;
 		}
 
 		m_current = m_root;
-		while (position > m_current->m_size)
+		while (position > m_current->m_block_size)
 		{
-			position -= m_current->m_size;
+			position -= m_current->m_block_size;
 			m_current = m_current->m_next;
 		}
-		if (position == m_current->m_size)
+		if (position == m_current->m_block_size)
 		{
 			m_current = m_current->m_next;
 		}
@@ -511,8 +512,8 @@ namespace ByteArraySpace
 
 		while (read_size > 0)
 		{
-			int differ = position % m_base_size;
-			int64_t length = (read_size > (int64_t)m_base_size ? m_base_size : read_size) - differ;
+			int differ = position % m_block_size;
+			int64_t length = (read_size > (int64_t)m_block_size ? m_block_size : read_size) - differ;
 			fout.write(current->m_ptr + differ, length);
 			current = current->m_next;
 			position += length;
@@ -534,10 +535,10 @@ namespace ByteArraySpace
 			return false;
 		}
 
-		shared_ptr<char> buffer(new char[m_base_size], [](char* ptr) { delete[]ptr; });
+		shared_ptr<char> buffer(new char[m_block_size], [](char* ptr) { delete[]ptr; });
 		while (!fin.eof())
 		{
-			fin.read(buffer.get(), m_base_size);
+			fin.read(buffer.get(), m_block_size);
 			write(buffer.get(), fin.gcount());
 		}
 		return true;
@@ -582,8 +583,8 @@ namespace ByteArraySpace
 
 		uint64_t size = length;
 
-		size_t npos = m_position % m_base_size;
-		size_t ncap = m_current->m_size - npos;
+		size_t npos = m_position % m_block_size;
+		size_t ncap = m_current->m_block_size - npos;
 		iovec iov;
 		Node* current = m_current;
 
@@ -601,7 +602,7 @@ namespace ByteArraySpace
 				iov.iov_len = ncap;
 				length -= ncap;
 				current = current->m_next;
-				ncap = current->m_size;
+				ncap = current->m_block_size;
 				npos = 0;
 			}
 			buffers.push_back(iov);
@@ -618,9 +619,9 @@ namespace ByteArraySpace
 
 		uint64_t size = length;
 
-		size_t npos = position % m_base_size;
+		size_t npos = position % m_block_size;
 
-		size_t count = position / m_base_size;
+		size_t count = position / m_block_size;
 		Node* current = m_root;
 		while (count > 0)
 		{
@@ -628,7 +629,7 @@ namespace ByteArraySpace
 			--count;
 		}
 
-		size_t ncap = current->m_size - npos;
+		size_t ncap = current->m_block_size - npos;
 		iovec iov;
 
 		while (length > 0)
@@ -645,7 +646,7 @@ namespace ByteArraySpace
 				iov.iov_len = ncap;
 				length -= ncap;
 				current = current->m_next;
-				ncap = current->m_size;
+				ncap = current->m_block_size;
 				npos = 0;
 			}
 			buffers.push_back(iov);
@@ -659,11 +660,11 @@ namespace ByteArraySpace
 		{
 			return 0;
 		}
-		addCapacity(length);
+		expendCapacity(length);
 		uint64_t size = length;
 
-		size_t npos = m_position % m_base_size;
-		size_t ncap = m_current->m_size - npos;
+		size_t npos = m_position % m_block_size;
+		size_t ncap = m_current->m_block_size - npos;
 		iovec iov;
 		Node* current = m_current;
 		while (length > 0)
@@ -681,7 +682,7 @@ namespace ByteArraySpace
 
 				length -= ncap;
 				current = current->m_next;
-				ncap = current->m_size;
+				ncap = current->m_block_size;
 				npos = 0;
 			}
 			buffers.push_back(iov);
@@ -690,42 +691,57 @@ namespace ByteArraySpace
 	}
 
 
-	void ByteArray::addCapacity(size_t size)
+	void ByteArray::expendCapacity(const size_t capacity_required)
 	{
-		if (size == 0)
+		/*if (capacity_required == 0)
 		{
 			return;
-		}
+		}*/
 
-		size_t old_capacity = getCapacity();
-		if (old_capacity >= size)
+		//如果当前可写入容量充足，则无需扩充，直接返回
+		size_t available_capacity = getAvailable_capacity();
+		if (available_capacity >= capacity_required)
 		{
 			return;
 		}
 		
-		size = size - old_capacity;
-		size_t count = (size / m_base_size) + ((size % m_base_size) > old_capacity ? 1 : 0);
-		Node* temp = m_root;
-		while (temp->m_next)
+		//否则获取所需容量与当前可写入容量的差值
+		size_t differ_capacity = capacity_required - available_capacity;
+
+		//需要增加的内存块数量（容量差值除以每个内存块的大小，向上取整）
+		size_t block_count = (differ_capacity / m_block_size) + ((differ_capacity % m_block_size == 0) ? 0 : 1);
+
+		//从根节点开始，直到查找到最后一个节点为止
+		Node* tempnode = m_root;
+		while (tempnode->m_next)
 		{
-			temp = temp->m_next;
+			tempnode = tempnode->m_next;
 		}
 
-		Node* first = NULL;
-		for (size_t i = 0; i < count; ++i)
+
+		//新增的第一个存储节点
+		Node* first_newnode = NULL;
+
+		//新建对应数量的存储节点
+		for (size_t i = 0; i < block_count; ++i)
 		{
-			temp->m_next = new Node(m_base_size);
-			if (first == NULL)
+			tempnode->m_next = new Node(m_block_size);
+
+			//设置新增的第一个存储节点
+			if (first_newnode == NULL)
 			{
-				first = temp->m_next;
+				first_newnode = tempnode->m_next;
 			}
-			temp = temp->m_next;
-			m_capacity += m_base_size;
+
+			tempnode = tempnode->m_next;
+			//每新建一个存储节点，总容量增加一个内存块的大小
+			m_capacity += m_block_size;
 		}
 
-		if (old_capacity == 0)
+		//如果原先可用容量为0，则将新增的第一个节点设作当前操作节点（原本应该为NULL）
+		if (available_capacity == 0)
 		{
-			m_current = first;
+			m_current = first_newnode;
 		}
 	}
 }
