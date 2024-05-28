@@ -16,7 +16,7 @@ void test()
 	int count = 100, base_size = 1;
 
 
-	vector<int64_t> vec;
+	vector<uint64_t> vec;
 	//获取多个随机数
 	for (int i = 0; i < count; ++i)
 	{
@@ -27,7 +27,7 @@ void test()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeInt64(i);
+		bytearray->writeUint64(i);
 	}
 
 	bytearray->setPosition(0);
@@ -36,7 +36,7 @@ void test()
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数并打印
-		int32_t value = bytearray->readInt64();
+		int32_t value = bytearray->readUint64();
 
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];

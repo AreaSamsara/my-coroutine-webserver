@@ -44,6 +44,7 @@ namespace ByteArraySpace
 	}
 
 	//write
+	//写入固定长度的对应类型的数据
 	void ByteArray::writeFint8(const int8_t value)
 	{
 		write(&value, sizeof(value));
@@ -77,59 +78,30 @@ namespace ByteArraySpace
 		write(&value, sizeof(value));
 	}
 
-	//ZigZag编码在许多情况下可以减小数据的大小，特别是在处理大量绝对值小的负数或正数时，但在特定情况下（负数较少或数据的绝对值较大时），它也可能导致数据大小的增加
-	//32位zigzag编码
-	static uint32_t EncodeZigzag32(const int32_t value)
-	{
-		if (value < 0)
-		{
-			return (uint32_t(-value)) * 2 - 1;
-		}
-		else
-		{
-			return (uint32_t)value * 2;
-		}
-	}
-	//64位zigzag编码
-	static uint64_t EncodeZigzag64(const int64_t value)
-	{
-		if (value < 0)
-		{
-			return (uint64_t(-value)) * 2 - 1;
-		}
-		else
-		{
-			return (uint64_t)value * 2;
-		}
-	}
-
-	//32位zigzag解码
-	static int32_t DecodeZigzag32(const uint32_t value)
-	{
-		return (value >> 1) ^ -(value & 1);
-	}
-
-	//64位zigzag解码
-	static int64_t DecodeZigzag64(const uint64_t value)
-	{
-		return (value >> 1) ^ -(value & 1);
-	}
-
+	//写入可变长度（压缩）的对应类型的数据
 	void ByteArray::writeInt32(const int32_t value)
 	{
 		writeUint32(EncodeZigzag32(value));
 	}
 	void ByteArray::writeUint32(uint32_t value)
 	{
-		uint8_t temp[5];
+		uint8_t buffer[5];	//由于继续位的存在，每次右移7位，故应该保证缓冲区大小乘以七大于等于数据位数（5*7>32）
 		uint8_t i = 0;
+
+		//当value的值大于或等于0x80，即第一个字节的第八位（继续位）为1时，为压缩后的字节设置继续位
 		while (value >= 0x80)
 		{
-			temp[i++] = (value & 0x7F) | 0x80;
+			//将value的最低7位提取出来，并与0x80进行或操作，设置最高位为1，表示这个字节之后还有更多字节
+			buffer[i++] = (value & 0x7F) | 0x80;
+			//右移七位
 			value >>= 7;
 		}
-		temp[i++] = value;
-		write(temp, i);
+
+		//最后一个字节不需要设置继续位，直接写入缓冲区
+		buffer[i++] = value;
+
+		//将缓冲区的内容写入字节序列
+		write(buffer, i);
 	}
 	void ByteArray::writeInt64(const int64_t value)
 	{
@@ -137,15 +109,22 @@ namespace ByteArraySpace
 	}
 	void ByteArray::writeUint64(uint64_t value)
 	{
-		uint8_t temp[5];
+		uint8_t buffer[10];	//由于继续位的存在，每次右移7位，故应该保证数组大小乘以七大于等于数据位数（10*7>64）
 		uint8_t i = 0;
+		//当value的值大于或等于0x80，即第八位为1时
 		while (value >= 0x80)
 		{
-			temp[i++] = (value & 0x7F) | 0x80;
+			//将value的最低7位提取出来，并与0x80进行或操作，设置最高位为1，表示这个字节之后还有更多字节
+			buffer[i++] = (value & 0x7F) | 0x80;
+			//右移七位
 			value >>= 7;
 		}
-		temp[i++] = value;
-		write(temp, i);
+
+		//最后一个字节不需要设置继续位，直接写入缓冲区
+		buffer[i++] = value;
+
+		//将缓冲区的内容写入字节序列
+		write(buffer, i);
 	}
 
 	//写入float类型的数据
@@ -159,31 +138,31 @@ namespace ByteArraySpace
 		write(&value, sizeof(value));
 	}
 
-	//length:int16,data
+	//读取string类型的数据，用uint16_t作为长度类型
 	void ByteArray::writeStringF16(const string& value)
 	{
 		writeFuint16(value.size());
 		write(value.c_str(), value.size());
 	}
-	//length:int32,data
+	//读取string类型的数据，用uint32_t作为长度类型
 	void ByteArray::writeStringF32(const string& value)
 	{
 		writeFuint32(value.size());
 		write(value.c_str(), value.size());
 	}
-	//length:int64,data
+	//读取string类型的数据，用uint64_t作为长度类型
 	void ByteArray::writeStringF64(const string& value)
 	{
 		writeFuint64(value.size());
 		write(value.c_str(), value.size());
 	}
-	//length:varint,data
+	//读取string类型的数据，用可变长度的uint64_t作为长度类型
 	void ByteArray::writeStringVint(const string& value)
 	{
-		writeFuint64(value.size());
+		writeUint64(value.size());
 		write(value.c_str(), value.size());
 	}
-	//data
+	//写入string类型的数据，不附带长度
 	void ByteArray::writeStringWithoutLength(const string& value)
 	{
 		write(value.c_str(), value.size());
@@ -191,6 +170,7 @@ namespace ByteArraySpace
 
 
 	//read 
+	//读取固定长度的对应类型的数据
 	int8_t ByteArray::readFint8()
 	{
 		int8_t value;
@@ -240,6 +220,7 @@ namespace ByteArraySpace
 		return value;
 	}
 
+	//读取可变长度（压缩）的对应类型的数据
 	int32_t ByteArray::readInt32()
 	{
 		return DecodeZigzag32(readUint32());
@@ -249,15 +230,19 @@ namespace ByteArraySpace
 		uint32_t result = 0;
 		for (int i = 0; i < 32; i += 7)
 		{
-			uint8_t b = readFuint8();
-			if (b < 0x80)
+			//从字节序列中读取一个字节
+			uint8_t byte = readFuint8();
+			//当byte的值小于0x80，即第八位（继续位）为0时，说明这是最后一个字节
+			if (byte < 0x80)
 			{
-				result |= ((uint32_t)b) << i;
+				//将byte左移i位后和result取或
+				result |= ((uint32_t)byte) << i;
 				break;
 			}
 			else
 			{
-				result |= ((uint32_t)(b & 0x7F)) << i;
+				//将byte的最低七位左移i位后和result取或
+				result |= ((uint32_t)(byte & 0x7F)) << i;
 			}
 		}
 		return result;
@@ -269,16 +254,20 @@ namespace ByteArraySpace
 	uint64_t ByteArray::readUint64()
 	{
 		uint64_t result = 0;
-		for (int i = 0; i < 32; i += 7)
+		for (int i = 0; i < 64; i += 7)
 		{
+			//从字节序列中读取一个字节
 			uint8_t b = readFuint8();
+			//当byte的值小于0x80，即第八位（继续位）为0时，说明这是最后一个字节
 			if (b < 0x80)
 			{
+				//将byte左移i位后和result取或
 				result |= ((uint64_t)b) << i;
 				break;
 			}
 			else
 			{
+				//将byte的最低七位左移i位后和result取或
 				result |= ((uint64_t)(b & 0x7F)) << i;
 			}
 		}
@@ -304,7 +293,7 @@ namespace ByteArraySpace
 		return float_value;
 	}
 
-	//length:int16,data
+	//读取string类型的数据，用固定长度的uint16_t作为长度类型
 	string ByteArray::readStringF16()
 	{
 		uint16_t length = readFuint16();
@@ -313,7 +302,7 @@ namespace ByteArraySpace
 		read(&buffer[0], length);
 		return buffer;
 	}
-	//length:int32,data
+	//读取string类型的数据，用固定长度的uint32_t作为长度类型
 	string ByteArray::readStringF32()
 	{
 		uint32_t length = readFuint32();
@@ -322,17 +311,8 @@ namespace ByteArraySpace
 		read(&buffer[0], length);
 		return buffer;
 	}
-	//length:int64,data
+	//读取string类型的数据，用固定长度的uint64_t作为长度类型
 	string ByteArray::readStringF64()
-	{
-		uint64_t length = readFuint64();
-		string buffer;
-		buffer.resize(length);
-		read(&buffer[0], length);
-		return buffer;
-	}
-	//length:varint,data
-	string ByteArray::readStringVint()
 	{
 		uint64_t length = readFuint64();
 		string buffer;
@@ -341,6 +321,18 @@ namespace ByteArraySpace
 		read(&buffer[0], length);
 		return buffer;
 	}
+	//写入string类型的数据，用可变长度的uint64_t作为长度类型
+	string ByteArray::readStringVint()
+	{
+		uint64_t length = readUint64();
+		string buffer;
+		buffer.resize(length);
+
+		read(&buffer[0], length);
+		return buffer;
+	}
+
+
 
 	//清空ByteArray
 	void ByteArray::clear()
@@ -862,6 +854,12 @@ namespace ByteArraySpace
 		return size;
 	}
 
+
+
+
+
+
+	//class ByteArray:private
 	//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
 	void ByteArray::expendCapacity(const size_t capacity_required)
 	{
@@ -910,5 +908,46 @@ namespace ByteArraySpace
 		{
 			m_current = first_newnode;
 		}
+	}
+
+	//ZigZag编码在许多情况下可以减小数据的大小，特别是在处理大量绝对值小的负数或正数时，但在特定情况下（负数较少或数据的绝对值较大时），它也可能导致数据大小的增加
+	//32位zigzag编码
+	uint32_t ByteArray::EncodeZigzag32(const int32_t value)
+	{
+		//将负数转化为奇数，非负数转化为偶数
+		if (value < 0)
+		{
+			return (uint32_t(-value)) * 2 - 1;
+		}
+		else
+		{
+			return (uint32_t)value * 2;
+		}
+	}
+	//64位zigzag编码
+	uint64_t ByteArray::EncodeZigzag64(const int64_t value)
+	{
+		//将负数转化为奇数，非负数转化为偶数
+		if (value < 0)
+		{
+			return (uint64_t(-value)) * 2 - 1;
+		}
+		else
+		{
+			return (uint64_t)value * 2;
+		}
+	}
+
+	//32位zigzag解码
+	int32_t ByteArray::DecodeZigzag32(const uint32_t value)
+	{
+		//将奇数转化为负数，偶数转化为非负数
+		return (value >> 1) ^ -(value & 1);
+	}
+	//64位zigzag解码
+	int64_t ByteArray::DecodeZigzag64(const uint64_t value)
+	{
+		//将奇数转化为负数，偶数转化为非负数
+		return (value >> 1) ^ -(value & 1);
 	}
 }

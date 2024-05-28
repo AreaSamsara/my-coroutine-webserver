@@ -42,6 +42,7 @@ namespace ByteArraySpace
 		void writeFint64(const int64_t value);
 		void writeFuint64(const uint64_t value);
 
+		//写入可变长度（压缩）的对应类型的数据
 		void writeInt32(const int32_t value);
 		void writeUint32(uint32_t value);
 		void writeInt64(const int64_t value);
@@ -52,15 +53,15 @@ namespace ByteArraySpace
 		//写入double类型的数据
 		void writeDouble(const double value);
 
-		//写入string类型的数据，用uint16_t作为长度类型
+		//写入string类型的数据，用固定长度的uint16_t作为长度类型
 		void writeStringF16(const string& value);
-		//写入string类型的数据，用uint32_t作为长度类型
+		//写入string类型的数据，用固定长度的uint32_t作为长度类型
 		void writeStringF32(const string& value);
-		//写入string类型的数据，用uint64_t作为长度类型
+		//写入string类型的数据，用固定长度的uint64_t作为长度类型
 		void writeStringF64(const string& value);
-		//写入string类型的数据，用无符号Varint64作为长度类型
+		//写入string类型的数据，用可变长度的uint64_t作为长度类型
 		void writeStringVint(const string& value);
-		//写入string类型的数据，无长度
+		//写入string类型的数据，不附带长度
 		void writeStringWithoutLength(const string& value);
 
 
@@ -75,6 +76,7 @@ namespace ByteArraySpace
 		int64_t readFint64();
 		uint64_t readFuint64();
 
+		//读取可变长度（压缩）的对应类型的数据
 		int32_t readInt32();
 		uint32_t readUint32();
 		int64_t readInt64();
@@ -143,6 +145,17 @@ namespace ByteArraySpace
 		void expendCapacity(const size_t capacity_required);
 		//获取当前的可写入容量
 		size_t getAvailable_capacity()const { return m_capacity - m_position; }
+
+		//ZigZag编码在许多情况下可以减小数据的大小，特别是在处理大量绝对值小的负数或正数时，但在特定情况下（负数较少或数据的绝对值较大时），它也可能导致数据大小的增加
+		//32位zigzag编码
+		uint32_t EncodeZigzag32(const int32_t value);
+		//64位zigzag编码
+		uint64_t EncodeZigzag64(const int64_t value);
+
+		//32位zigzag解码
+		int32_t DecodeZigzag32(const uint32_t value);
+		//64位zigzag解码
+		int64_t DecodeZigzag64(const uint64_t value);
 	private:
 		//每个（存储节点的）内存块的大小(单位：字节)
 		size_t m_block_size;
