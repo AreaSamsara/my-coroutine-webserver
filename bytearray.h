@@ -95,50 +95,49 @@ namespace ByteArraySpace
 		string readStringVint();
 
 
-
-
-		//清空ByteArray
-		void clear();
-
-		//写入size长度的数据
+		//写入size长度的数据（同时移动当前操作位置）
 		void write(const void* buffer, size_t size);
-		//读取size长度的数据
+		//读取size长度的数据（同时移动当前操作位置）
 		void read(void* buffer, size_t size);
+		//读取size长度的数据（不移动当前操作位置）
 		void read(void* buffer, size_t size, size_t position)const;
+		//把ByteArray的数据写入到文件中
+		bool writeToFile(const string& filename)const;
+		//从文件中读取数据
+		bool readFromFile(const string& filename);
+
 
 		//返回每个（存储节点的）内存块的大小
 		size_t getBlock_size()const { return m_block_size; }
-
+		//返回可读取数据大小
+		size_t getRead_size()const { return m_data_size - m_position; }
+		//返回数据的长度
+		size_t getData_size()const { return m_data_size; }
 		//返回ByteArray当前位置
 		size_t getPosition()const { return m_position; }
 		//设置ByteArray当前位置
 		void setPosition(size_t position);
 
-		//返回可读取数据大小
-		size_t getRead_size()const { return m_data_size - m_position; }
-
-		//把ByteArray的数据写入到文件中
-		bool writeToFile(const string& name)const;
-		//从文件中读取数据
-		bool readFromFile(const string& name);
+		
 
 		//将ByteArray里面的数据[m_position, m_size)转成string对象
 		string toString() const;
 		//将ByteArray里面的数据[m_position, m_size)转成16进制的string对象
 		string toHexString() const;
 
+
+		//清空ByteArray
+		void clear();
+
 		//只获取内容，不修改position
 		//获取可读取的缓存,保存成iovec数组
-		int64_t getReadBuffers(vector<iovec>& buffers, uint64_t length = ~0ull);
+		uint64_t getReadBuffers(vector<iovec>& buffers, uint64_t length = ~0ull);
 		//获取可读取的缓存,保存成iovec数组,从position位置开始
-		int64_t getReadBuffers(vector<iovec>& buffers, uint64_t length, uint64_t position)const;
+		uint64_t getReadBuffers(vector<iovec>& buffers, uint64_t length, uint64_t position)const;
 
 		//增加容量，不修改position
 		//获取可写入的缓存,保存成iovec数组
-		int64_t getWriteBuffers(vector<iovec>& buffers, uint64_t length);
-
-		//返回数据的长度
-		size_t getData_size()const { return m_data_size; }
+		uint64_t getWriteBuffers(vector<iovec>& buffers, uint64_t length);		
 	private:
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
 		void expendCapacity(const size_t capacity_required);
