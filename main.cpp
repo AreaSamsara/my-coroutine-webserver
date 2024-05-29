@@ -16,7 +16,7 @@ void test()
 	int count = 100, base_size = 1;
 
 
-	vector<uint64_t> vec;
+	vector<uint32_t> vec;
 	//获取多个随机数
 	for (int i = 0; i < count; ++i)
 	{
@@ -27,16 +27,22 @@ void test()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeUint64(i);
+		bytearray->writeFuint32(i);
 	}
 
 	bytearray->setPosition(0);
+
+	/*{
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		log_event->getSstream() << "bytearray:" << bytearray->toString();
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+	}*/
 
 
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数并打印
-		int32_t value = bytearray->readUint64();
+		int32_t value = bytearray->readFuint32();
 
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];
@@ -58,12 +64,11 @@ void test()
 	}
 
 
+
+
 	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-
-
-	
 }
 
 void test_file()
@@ -71,7 +76,7 @@ void test_file()
 	int count = 100, base_size = 1;
 
 
-	vector<int64_t> vec;
+	vector<uint64_t> vec;
 	//获取多个随机数
 	for (int i = 0; i < count; ++i)
 	{
@@ -81,7 +86,7 @@ void test_file()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeFint64(i);
+		bytearray->writeUint64(i);
 	}
 
 	bytearray->setPosition(0);
@@ -90,7 +95,7 @@ void test_file()
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数
-		int32_t value = bytearray->readFint64();
+		int32_t value = bytearray->readUint64();
 
 		//value应该等于vec[i]，否则报错
 		if (value != vec[i])

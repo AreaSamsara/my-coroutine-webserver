@@ -97,12 +97,12 @@ namespace ByteArraySpace
 		string readStringVint();
 
 
-		//写入size长度的数据（同时移动当前操作位置）
-		void write(const void* buffer, size_t size);
-		//读取size长度的数据（同时移动当前操作位置）
-		void read(void* buffer, size_t size);
-		//读取size长度的数据（不移动当前操作位置）
-		void read(void* buffer, size_t size, size_t position)const;
+		//写入指定长度的数据（同时移动当前操作位置）
+		void write(const void* buffer, size_t write_size);
+		//读取指定长度的数据（同时移动当前操作位置）
+		void read(void* buffer, size_t read_size);
+		//从指定位置开始读取指定长度的数据（不移动当前操作位置）
+		void read_without_moving(void* buffer, size_t read_size, size_t position)const;
 		//把ByteArray的数据写入到文件中
 		bool writeToFile(const string& filename)const;
 		//从文件中读取数据
@@ -111,13 +111,13 @@ namespace ByteArraySpace
 
 		//返回每个（存储节点的）内存块的大小
 		size_t getBlock_size()const { return m_block_size; }
-		//返回可读取数据大小
+		//返回可读取数据大小（已保存数据的总大小减去当前位置）
 		size_t getRead_size()const { return m_data_size - m_position; }
 		//返回数据的长度
 		size_t getData_size()const { return m_data_size; }
 		//返回ByteArray当前位置
 		size_t getPosition()const { return m_position; }
-		//设置ByteArray当前位置
+		//设置ByteArray当前位置（同时改变当前操作节点位置）
 		void setPosition(size_t position);
 
 		

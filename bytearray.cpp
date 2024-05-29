@@ -337,7 +337,7 @@ namespace ByteArraySpace
 	//清空ByteArray
 	void ByteArray::clear()
 	{
-		m_position = 0;;
+		m_position = 0;
 		m_data_size = 0;
 		m_capacity = m_block_size;
 
@@ -353,47 +353,86 @@ namespace ByteArraySpace
 		m_root->m_next = NULL;
 	}
 
-	//写入size长度的数据（同时移动当前操作位置）
-	void ByteArray::write(const void* buffer, size_t size)
+	//写入指定长度的数据（同时移动当前操作位置）
+	void ByteArray::write(const void* buffer, size_t write_size)
 	{
-		if (size == 0)
+		/*if (size == 0)
 		{
 			return;
-		}
+		}*/
 
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
-		expendCapacity(size);
+		expendCapacity(write_size);
 
 		//相对于当前内存块的位置
 		size_t position_in_block = m_position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
-		size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		size_t capacity_in_block = m_block_size - position_in_block;
 		//缓冲区当前操作位置
 		size_t buffer_position = 0;
 
 		//写入循环
-		while (size > 0)
+		//while (write_size > 0)
+		//{
+		//	//如果当前内存块剩余的容量足以写入
+		//	if (capacity_in_block >= write_size)
+		//	{
+		//		//尽数写入所有的内容
+		//		memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, write_size);
+
+		//		//移动当前位置
+		//		m_position += write_size;
+		//		//移动缓冲区位置
+		//		buffer_position += write_size;
+		//		//已全部写入，将还需要写入的大小设为0
+		//		write_size = 0;
+
+		//		//如果恰好填满当前内存块，移动当前节点
+		//		if (m_current->m_block_size == (position_in_block + write_size))
+		//		{
+		//			m_current = m_current->m_next;
+		//		}
+		//	}
+		//	//如果不足以写入
+		//	else
+		//	{
+		//		//只将当前剩余容量填满
+		//		memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, capacity_in_block);
+
+		//		//移动当前位置
+		//		m_position += capacity_in_block;
+		//		//移动缓冲区位置
+		//		buffer_position += capacity_in_block;
+
+		//		//更新还需要写入的大小
+		//		write_size -= capacity_in_block;
+
+		//		//当前内存块已被填满，移动当前节点
+		//		m_current = m_current->m_next;
+		//		//重置当前内存块还剩余的容量
+		//		capacity_in_block = m_current->m_block_size;
+		//		//重置相对于当前内存块的位置
+		//		position_in_block = 0;
+		//	}
+		//}
+
+		while (write_size > 0)
 		{
-			//如果当前内存块剩余的容量足以写入
-			if (capacity_in_block >= size)
+			//如果当前内存块剩余的容量足以写入（不包含恰好写满）
+			if (capacity_in_block > write_size)
 			{
 				//尽数写入所有的内容
-				memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, size);
-
-				//如果恰好填满当前内存块，移动当前节点
-				if (m_current->m_block_size == (position_in_block + size))
-				{
-					m_current = m_current->m_next;
-				}
+				memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, write_size);
 
 				//移动当前位置
-				m_position += size;
+				m_position += write_size;
 				//移动缓冲区位置
-				buffer_position += size;
-				//已全部写入，清空
-				size = 0;
+				buffer_position += write_size;
+				//已全部写入，将还需要写入的大小设为0
+				write_size = 0;
 			}
-			//如果不足以写入
+			//如果不足以写入或恰能写满
 			else
 			{
 				//只将当前剩余容量填满
@@ -403,14 +442,13 @@ namespace ByteArraySpace
 				m_position += capacity_in_block;
 				//移动缓冲区位置
 				buffer_position += capacity_in_block;
-
-				size -= capacity_in_block;
+				//更新还需要写入的大小
+				write_size -= capacity_in_block;
 
 				//当前内存块已被填满，移动当前节点
 				m_current = m_current->m_next;
-
 				//重置当前内存块还剩余的容量
-				capacity_in_block = m_current->m_block_size;
+				capacity_in_block = m_block_size;
 				//重置相对于当前内存块的位置
 				position_in_block = 0;
 			}
@@ -423,11 +461,11 @@ namespace ByteArraySpace
 		}
 	}
 
-	//读取size长度的数据（同时移动当前操作位置）
-	void ByteArray::read(void* buffer, size_t size)
+	//读取指定长度的数据（同时移动当前操作位置）
+	void ByteArray::read(void* buffer, size_t read_size)
 	{
 		//如果要读取的数据大小超过可读取的值，抛出out_of_range异常
-		if (size > getRead_size())
+		if (read_size > getRead_size())
 		{
 			throw out_of_range("not enough length");
 		}
@@ -435,33 +473,72 @@ namespace ByteArraySpace
 		//相对于当前内存块的位置
 		size_t position_in_block = m_position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
-		size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		size_t capacity_in_block = m_block_size - position_in_block;
 		//缓冲区当前操作位置
 		size_t buffer_position = 0;
 
 		//读取循环
-		while (size > 0)
+		//while (read_size > 0)
+		//{
+		//	//如果无法读取完当前内存块剩余的内容
+		//	if (capacity_in_block >= read_size)
+		//	{
+		//		//读取对应大小的数据
+		//		memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, read_size);
+
+		//		//如果恰好读取完当前内存块，移动当前节点
+		//		if (m_current->m_block_size == position_in_block + read_size)
+		//		{
+		//			m_current = m_current->m_next;
+		//		}
+
+		//		//移动当前位置
+		//		m_position += read_size;
+		//		//移动缓冲区位置
+		//		buffer_position += read_size;
+		//		//已全部读取，清空
+		//		read_size = 0;
+		//	}
+		//	//如果能够读取完
+		//	else
+		//	{
+		//		//尽数读取所有的内容
+		//		memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, capacity_in_block);
+
+		//		//移动当前位置
+		//		m_position += capacity_in_block;
+		//		//移动缓冲区位置
+		//		buffer_position += capacity_in_block;
+
+		//		read_size -= capacity_in_block;
+
+		//		//当前内存块已被读完，移动当前节点
+		//		m_current = m_current->m_next;
+
+		//		//重置当前内存块还剩余的容量
+		//		capacity_in_block = m_current->m_block_size;
+		//		//重置相对于当前内存块的位置
+		//		position_in_block = 0;
+		//	}
+		//}
+
+		while (read_size > 0)
 		{
-			//如果无法读取完当前内存块剩余的内容
-			if (capacity_in_block >= size)
+			//如果无法读取完当前内存块剩余的内容（不包括恰好读完）
+			if (capacity_in_block > read_size)
 			{
 				//读取对应大小的数据
-				memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, size);
-
-				//如果恰好读取完当前内存块，移动当前节点
-				if (m_current->m_block_size == position_in_block + size)
-				{
-					m_current = m_current->m_next;
-				}
+				memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, read_size);
 
 				//移动当前位置
-				m_position += size;
+				m_position += read_size;
 				//移动缓冲区位置
-				buffer_position += size;
-				//已全部读取，清空
-				size = 0;
+				buffer_position += read_size;
+				//已全部读取，将还需要读取的大小设为0
+				read_size = 0;
 			}
-			//如果能够读取完
+			//如果能够读取完（包括恰好读完）
 			else
 			{
 				//尽数读取所有的内容
@@ -471,25 +548,24 @@ namespace ByteArraySpace
 				m_position += capacity_in_block;
 				//移动缓冲区位置
 				buffer_position += capacity_in_block;
-
-				size -= capacity_in_block;
+				//设置还需要读取的大小
+				read_size -= capacity_in_block;
 
 				//当前内存块已被读完，移动当前节点
 				m_current = m_current->m_next;
-
 				//重置当前内存块还剩余的容量
-				capacity_in_block = m_current->m_block_size;
+				capacity_in_block = m_block_size;
 				//重置相对于当前内存块的位置
 				position_in_block = 0;
 			}
 		}
 	}
 
-	//读取size长度的数据（不移动当前操作位置）
-	void ByteArray::read(void* buffer, size_t size, size_t position)const
+	//从指定位置开始读取指定长度的数据（不移动当前操作位置）
+	void ByteArray::read_without_moving(void* buffer, size_t read_size, size_t position)const
 	{
 		//如果要读取的数据大小超过可读取的值，抛出out_of_range异常
-		if (size > (m_data_size - position))
+		if (read_size > (m_data_size - position))
 		{
 			throw out_of_range("not enough length");
 		}
@@ -497,57 +573,95 @@ namespace ByteArraySpace
 		//相对于当前内存块的位置
 		size_t position_in_block = position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
-		size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
+		size_t capacity_in_block = m_block_size - position_in_block;
 		//缓冲区当前操作位置
 		size_t buffer_position = 0;
 
 		Node* current = m_current;
 
-		while (size > 0)
+		//while (read_size > 0)
+		//{
+		//	//如果无法读取完当前内存块剩余的内容
+		//	if (capacity_in_block >= read_size)
+		//	{
+		//		//读取对应大小的数据
+		//		memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, read_size);
+
+		//		//如果恰好读取完当前内存块，移动当前节点
+		//		if (current->m_block_size == (position_in_block + read_size))
+		//		{
+		//			current = current->m_next;
+		//		}
+
+		//		//移动当前位置
+		//		position += read_size;
+		//		//移动缓冲区位置
+		//		buffer_position += read_size;
+		//		//已全部读取，清空
+		//		read_size = 0;
+		//	}
+		//	//如果能够读取完
+		//	else
+		//	{
+		//		//尽数读取所有的内容
+		//		memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, capacity_in_block);
+		//		//移动当前位置
+		//		position += capacity_in_block;
+		//		//移动缓冲区位置
+		//		buffer_position += capacity_in_block;
+
+		//		read_size -= capacity_in_block;
+
+		//		//当前内存块已被读完，移动当前节点
+		//		current = current->m_next;
+
+		//		//重置当前内存块还剩余的容量
+		//		capacity_in_block = current->m_block_size;
+		//		//重置相对于当前内存块的位置
+		//		position_in_block = 0;
+		//	}
+		//}
+
+		while (read_size > 0)
 		{
-			//如果无法读取完当前内存块剩余的内容
-			if (capacity_in_block >= size)
+			//如果无法读取完当前内存块剩余的内容（不包括恰好读完）
+			if (capacity_in_block >= read_size)
 			{
 				//读取对应大小的数据
-				memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, size);
-
-				//如果恰好读取完当前内存块，移动当前节点
-				if (current->m_block_size == (position_in_block + size))
-				{
-					current = current->m_next;
-				}
+				memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, read_size);
 
 				//移动当前位置
-				position += size;
+				position += read_size;
 				//移动缓冲区位置
-				buffer_position += size;
-				//已全部读取，清空
-				size = 0;
+				buffer_position += read_size;
+				//已全部读取，将还需要读取的大小设为0
+				read_size = 0;
 			}
-			//如果能够读取完
+			//如果能够读取完（包括恰好读完）
 			else
 			{
 				//尽数读取所有的内容
 				memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, capacity_in_block);
+
 				//移动当前位置
 				position += capacity_in_block;
 				//移动缓冲区位置
 				buffer_position += capacity_in_block;
-
-				size -= capacity_in_block;
+				//设置还需要读取的大小
+				read_size -= capacity_in_block;
 
 				//当前内存块已被读完，移动当前节点
 				current = current->m_next;
-
 				//重置当前内存块还剩余的容量
-				capacity_in_block = current->m_block_size;
+				capacity_in_block = m_block_size;
 				//重置相对于当前内存块的位置
 				position_in_block = 0;
 			}
 		}
 	}
 
-	//设置ByteArray当前位置
+	//设置ByteArray当前位置（同时改变当前操作节点位置）
 	void ByteArray::setPosition(size_t position)
 	{
 		//如果要设置的位置超出总容量，抛出out_of_range异常
@@ -567,13 +681,19 @@ namespace ByteArraySpace
 
 		//先将当前节点设回根节点
 		m_current = m_root;
-		while (position > m_current->m_block_size)
+		//根据当前位置设置当前节点
+		/*while (position > m_current->m_block_size)
 		{
 			position -= m_current->m_block_size;
 			m_current = m_current->m_next;
 		}
 		if (position == m_current->m_block_size)
 		{
+			m_current = m_current->m_next;
+		}*/
+		while (position >= m_current->m_block_size)
+		{
+			position -= m_current->m_block_size;
 			m_current = m_current->m_next;
 		}
 	}
@@ -648,12 +768,21 @@ namespace ByteArraySpace
 	string ByteArray::toString() const
 	{
 		string str;
+		//将string大小设置为可读取数据大小
 		str.resize(getRead_size());
-		if (str.empty())
+
+		/*if (str.empty())
 		{
 			return str;
 		}
 		read(&str[0], str.size(), m_position);
+		return str;*/
+
+		//如果可读取的数据大小不为0，则从当前位置开始读取（否则直接返回）
+		if (!str.empty())
+		{
+			read_without_moving(&str[0], str.size(), m_position);
+		}
 		return str;
 	}
 
@@ -665,6 +794,7 @@ namespace ByteArraySpace
 
 		for (size_t i = 0; i < str.size(); ++i)
 		{
+			//每输出32个字节换一次行
 			if (i > 0 && i % 32 == 0)
 			{
 				ss << endl;
@@ -884,29 +1014,46 @@ namespace ByteArraySpace
 		}
 
 
-		//新增的第一个存储节点
-		Node* first_newnode = NULL;
+		////新增的第一个存储节点
+		//Node* first_newnode = NULL;
 
+		////新建对应数量的存储节点
+		//for (size_t i = 0; i < block_count; ++i)
+		//{
+		//	tempnode->m_next = new Node(m_block_size);
+
+		//	//设置新增的第一个存储节点
+		//	if (first_newnode == NULL)
+		//	{
+		//		first_newnode = tempnode->m_next;
+		//	}
+
+		//	tempnode = tempnode->m_next;
+		//	//每新建一个存储节点，总容量增加一个内存块的大小
+		//	m_capacity += m_block_size;
+		//}
+
+		////如果原先可用容量为0，则将新增的第一个节点设作当前操作节点（原本应该为NULL）
+		//if (available_capacity == 0)
+		//{
+		//	m_current = first_newnode;
+		//}
+
+		
 		//新建对应数量的存储节点
 		for (size_t i = 0; i < block_count; ++i)
 		{
 			tempnode->m_next = new Node(m_block_size);
+			tempnode = tempnode->m_next;
 
-			//设置新增的第一个存储节点
-			if (first_newnode == NULL)
+			//如果原先可用容量为0，则将新增的第一个节点设作当前操作节点
+			if (i == 0 && available_capacity == 0)
 			{
-				first_newnode = tempnode->m_next;
+				m_current = tempnode;
 			}
 
-			tempnode = tempnode->m_next;
 			//每新建一个存储节点，总容量增加一个内存块的大小
 			m_capacity += m_block_size;
-		}
-
-		//如果原先可用容量为0，则将新增的第一个节点设作当前操作节点（原本应该为NULL）
-		if (available_capacity == 0)
-		{
-			m_current = first_newnode;
 		}
 	}
 
