@@ -10,7 +10,7 @@ namespace IOManagerSpace
 
 	/*
 	* 类关系：
-	* FileDescriptorEvent类是被IOManager类包含的私有类，由文件描述符、事件标志和回调函数组成，基本上只有
+	* FileDescriptorEvent类是被IOManager类包含的私有类，由文件描述符、事件标志和回调函数组成
 	* FileDescriptorEvent类内部只有读取或修改私有成员的方法和触发事件的方法，大部分复杂方法都位于IOManager类内部
 	* IOManager类内部有装有多个文件描述符事件的容器，以及多个操纵文件描述符事件的方法
 	* IOManager类通过FileDescriptorEvent类容器与epoll系统进行交互，而通过TimerManager类处理定时器

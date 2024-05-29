@@ -45,45 +45,45 @@ namespace ByteArraySpace
 
 	//write
 	//写入固定长度的对应类型的数据
-	void ByteArray::writeFint8(const int8_t value)
+	void ByteArray::writeInt8(const int8_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFuint8(const uint8_t value)
+	void ByteArray::writeUint8(const uint8_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFint16(const int16_t value)
+	void ByteArray::writeInt16(const int16_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFuint16(const uint16_t value)
+	void ByteArray::writeUint16(const uint16_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFint32(const int32_t value)
+	void ByteArray::writeInt32(const int32_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFuint32(const uint32_t value)
+	void ByteArray::writeUint32(const uint32_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFint64(const int64_t value)
+	void ByteArray::writeInt64(const int64_t value)
 	{
 		write(&value, sizeof(value));
 	}
-	void ByteArray::writeFuint64(const uint64_t value)
+	void ByteArray::writeUint64(const uint64_t value)
 	{
 		write(&value, sizeof(value));
 	}
 
 	//写入可变长度（压缩）的对应类型的数据
-	void ByteArray::writeInt32(const int32_t value)
+	void ByteArray::writeInt32_compressed(const int32_t value)
 	{
-		writeUint32(EncodeZigzag32(value));
+		writeUint32_compressed(EncodeZigzag32(value));
 	}
-	void ByteArray::writeUint32(uint32_t value)
+	void ByteArray::writeUint32_compressed(uint32_t value)
 	{
 		uint8_t buffer[5];	//由于继续位的存在，每次右移7位，故应该保证缓冲区大小乘以七大于等于数据位数（5*7>32）
 		uint8_t i = 0;
@@ -103,11 +103,11 @@ namespace ByteArraySpace
 		//将缓冲区的内容写入字节序列
 		write(buffer, i);
 	}
-	void ByteArray::writeInt64(const int64_t value)
+	void ByteArray::writeInt64_compressed(const int64_t value)
 	{
-		writeUint64(EncodeZigzag64(value));
+		writeUint64_compressed(EncodeZigzag64(value));
 	}
-	void ByteArray::writeUint64(uint64_t value)
+	void ByteArray::writeUint64_compressed(uint64_t value)
 	{
 		uint8_t buffer[10];	//由于继续位的存在，每次右移7位，故应该保证数组大小乘以七大于等于数据位数（10*7>64）
 		uint8_t i = 0;
@@ -139,27 +139,27 @@ namespace ByteArraySpace
 	}
 
 	//读取string类型的数据，用uint16_t作为长度类型
-	void ByteArray::writeStringF16(const string& value)
+	void ByteArray::writeString16(const string& value)
 	{
-		writeFuint16(value.size());
+		writeUint16(value.size());
 		write(value.c_str(), value.size());
 	}
 	//读取string类型的数据，用uint32_t作为长度类型
-	void ByteArray::writeStringF32(const string& value)
+	void ByteArray::writeString32(const string& value)
 	{
-		writeFuint32(value.size());
+		writeUint32(value.size());
 		write(value.c_str(), value.size());
 	}
 	//读取string类型的数据，用uint64_t作为长度类型
-	void ByteArray::writeStringF64(const string& value)
+	void ByteArray::writeString64(const string& value)
 	{
-		writeFuint64(value.size());
+		writeUint64(value.size());
 		write(value.c_str(), value.size());
 	}
 	//读取string类型的数据，用可变长度的uint64_t作为长度类型
-	void ByteArray::writeStringVint(const string& value)
+	void ByteArray::writeString64_compressed(const string& value)
 	{
-		writeUint64(value.size());
+		writeUint64_compressed(value.size());
 		write(value.c_str(), value.size());
 	}
 	//写入string类型的数据，不附带长度
@@ -171,49 +171,49 @@ namespace ByteArraySpace
 
 	//read 
 	//读取固定长度的对应类型的数据
-	int8_t ByteArray::readFint8()
+	int8_t ByteArray::readInt8()
 	{
 		int8_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	uint8_t ByteArray::readFuint8()
+	uint8_t ByteArray::readUint8()
 	{
 		uint8_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	int16_t ByteArray::readFint16()
+	int16_t ByteArray::readInt16()
 	{
 		int16_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	uint16_t ByteArray::readFuint16()
+	uint16_t ByteArray::readUint16()
 	{
 		uint16_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	int32_t ByteArray::readFint32()
+	int32_t ByteArray::readInt32()
 	{
 		int32_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	uint32_t ByteArray::readFuint32()
+	uint32_t ByteArray::readUint32()
 	{
 		uint32_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	int64_t ByteArray::readFint64()
+	int64_t ByteArray::readInt64()
 	{
 		int64_t value;
 		read(&value, sizeof(value));
 		return value;
 	}
-	uint64_t ByteArray::readFuint64()
+	uint64_t ByteArray::readUint64()
 	{
 		uint64_t value;
 		read(&value, sizeof(value));
@@ -221,17 +221,17 @@ namespace ByteArraySpace
 	}
 
 	//读取可变长度（压缩）的对应类型的数据
-	int32_t ByteArray::readInt32()
+	int32_t ByteArray::readInt32_compressed()
 	{
-		return DecodeZigzag32(readUint32());
+		return DecodeZigzag32(readUint32_compressed());
 	}
-	uint32_t ByteArray::readUint32()
+	uint32_t ByteArray::readUint32_compressed()
 	{
 		uint32_t result = 0;
 		for (int i = 0; i < 32; i += 7)
 		{
 			//从字节序列中读取一个字节
-			uint8_t byte = readFuint8();
+			uint8_t byte = readUint8();
 			//当byte的值小于0x80，即第八位（继续位）为0时，说明这是最后一个字节
 			if (byte < 0x80)
 			{
@@ -247,17 +247,17 @@ namespace ByteArraySpace
 		}
 		return result;
 	}
-	int64_t ByteArray::readInt64()
+	int64_t ByteArray::readInt64_compressed()
 	{
-		return DecodeZigzag64(readUint64());
+		return DecodeZigzag64(readUint64_compressed());
 	}
-	uint64_t ByteArray::readUint64()
+	uint64_t ByteArray::readUint64_compressed()
 	{
 		uint64_t result = 0;
 		for (int i = 0; i < 64; i += 7)
 		{
 			//从字节序列中读取一个字节
-			uint8_t b = readFuint8();
+			uint8_t b = readUint8();
 			//当byte的值小于0x80，即第八位（继续位）为0时，说明这是最后一个字节
 			if (b < 0x80)
 			{
@@ -278,7 +278,7 @@ namespace ByteArraySpace
 	float ByteArray::readFloat()
 	{
 		//先读取固定长度的32位数据，再将其内容复制到float变量中
-		uint32_t value = readFuint32();
+		uint32_t value = readUint32();
 		float float_value;
 		memcpy(&float_value, &value, sizeof(value));
 		return float_value;
@@ -287,42 +287,32 @@ namespace ByteArraySpace
 	double ByteArray::readDouble()
 	{
 		//先读取固定长度的64位数据，再将其内容复制到double变量中
-		uint64_t value = readFuint64();
+		uint64_t value = readUint64();
 		float float_value;
 		memcpy(&float_value, &value, sizeof(value));
 		return float_value;
 	}
 
 	//读取string类型的数据，用固定长度的uint16_t作为长度类型
-	string ByteArray::readStringF16()
+	string ByteArray::readString16()
 	{
-		uint16_t length = readFuint16();
+		uint16_t length = readUint16();
 		string buffer;
 		buffer.resize(length);
 		read(&buffer[0], length);
 		return buffer;
 	}
 	//读取string类型的数据，用固定长度的uint32_t作为长度类型
-	string ByteArray::readStringF32()
+	string ByteArray::readString32()
 	{
-		uint32_t length = readFuint32();
+		uint32_t length = readUint32();
 		string buffer;
 		buffer.resize(length);
 		read(&buffer[0], length);
 		return buffer;
 	}
 	//读取string类型的数据，用固定长度的uint64_t作为长度类型
-	string ByteArray::readStringF64()
-	{
-		uint64_t length = readFuint64();
-		string buffer;
-		buffer.resize(length);
-
-		read(&buffer[0], length);
-		return buffer;
-	}
-	//写入string类型的数据，用可变长度的uint64_t作为长度类型
-	string ByteArray::readStringVint()
+	string ByteArray::readString64()
 	{
 		uint64_t length = readUint64();
 		string buffer;
@@ -331,27 +321,18 @@ namespace ByteArraySpace
 		read(&buffer[0], length);
 		return buffer;
 	}
-
-
-
-	//清空ByteArray
-	void ByteArray::clear()
+	//写入string类型的数据，用可变长度的uint64_t作为长度类型
+	string ByteArray::readString64_compressed()
 	{
-		m_position = 0;
-		m_data_size = 0;
-		m_capacity = m_block_size;
+		uint64_t length = readUint64_compressed();
+		string buffer;
+		buffer.resize(length);
 
-		//释放除根节点以外的所有节点
-		Node* temp = m_root->m_next;
-		while (temp)
-		{
-			m_current = temp;
-			temp = temp->m_next;
-			delete m_current;
-		}
-		m_current = m_root;
-		m_root->m_next = NULL;
+		read(&buffer[0], length);
+		return buffer;
 	}
+
+
 
 	//写入指定长度的数据（同时移动当前操作位置）
 	void ByteArray::write(const void* buffer, size_t write_size)
@@ -485,49 +466,7 @@ namespace ByteArraySpace
 
 		Node* current = m_current;
 
-		//while (read_size > 0)
-		//{
-		//	//如果无法读取完当前内存块剩余的内容
-		//	if (capacity_in_block >= read_size)
-		//	{
-		//		//读取对应大小的数据
-		//		memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, read_size);
-
-		//		//如果恰好读取完当前内存块，移动当前节点
-		//		if (current->m_block_size == (position_in_block + read_size))
-		//		{
-		//			current = current->m_next;
-		//		}
-
-		//		//移动当前位置
-		//		position += read_size;
-		//		//移动缓冲区位置
-		//		buffer_position += read_size;
-		//		//已全部读取，清空
-		//		read_size = 0;
-		//	}
-		//	//如果能够读取完
-		//	else
-		//	{
-		//		//尽数读取所有的内容
-		//		memcpy((char*)buffer + buffer_position, current->m_ptr + position_in_block, capacity_in_block);
-		//		//移动当前位置
-		//		position += capacity_in_block;
-		//		//移动缓冲区位置
-		//		buffer_position += capacity_in_block;
-
-		//		read_size -= capacity_in_block;
-
-		//		//当前内存块已被读完，移动当前节点
-		//		current = current->m_next;
-
-		//		//重置当前内存块还剩余的容量
-		//		capacity_in_block = current->m_block_size;
-		//		//重置相对于当前内存块的位置
-		//		position_in_block = 0;
-		//	}
-		//}
-
+		//读取循环
 		while (read_size > 0)
 		{
 			//如果无法读取完当前内存块剩余的内容（不包括恰好读完）
@@ -566,51 +505,9 @@ namespace ByteArraySpace
 		}
 	}
 
-	//设置ByteArray当前位置（同时改变当前操作节点位置）
-	void ByteArray::setPosition(size_t position)
-	{
-		//如果要设置的位置超出总容量，抛出out_of_range异常
-		if (position > m_capacity)
-		{
-			throw out_of_range("set_position out of range");
-		}
-
-		//设置当前操作位置
-		m_position = position;
-
-		//将已保存数据大小与当前操作位置同步
-		if (m_position > m_data_size)
-		{
-			m_data_size = m_position;
-		}
-
-		//先将当前节点设回根节点
-		m_current = m_root;
-		//根据当前位置设置当前节点
-		/*while (position > m_current->m_block_size)
-		{
-			position -= m_current->m_block_size;
-			m_current = m_current->m_next;
-		}
-		if (position == m_current->m_block_size)
-		{
-			m_current = m_current->m_next;
-		}*/
-		while (position >= m_current->m_block_size)
-		{
-			position -= m_current->m_block_size;
-			m_current = m_current->m_next;
-		}
-	}
-
-
 	//把ByteArray的数据写入到文件中
 	bool ByteArray::writeToFile(const string& filename)const
 	{
-		//ofstream fout;
-		////以截断和二进制模式打开文件
-		//fout.open(filename, std::ios::trunc | std::ios::binary);
-		
 		//以截断和二进制模式打开文件
 		ofstream fout(filename, std::ios::trunc | std::ios::binary);
 		
@@ -627,22 +524,6 @@ namespace ByteArraySpace
 		int64_t read_size = getRead_size();
 		int64_t position = m_position;
 		Node* current = m_current;
-
-		//while (read_size > 0)
-		//{
-		//	//相对于当前内存块的位置
-		//	int position_in_block = position % m_block_size;
-
-		//	int64_t write_length = (read_size > (int64_t)m_block_size ? m_block_size : read_size) - position_in_block;	//疑似有误
-		//	//将数据写入文件
-		//	fout.write(current->m_ptr + position_in_block, write_length);
-
-		//	current = current->m_next;	//疑似有误
-		//	//移动当前操作位置
-		//	position += write_length;
-		//	//更新剩余可读取的数据大小
-		//	read_size -= write_length;
-		//}
 
 		while (read_size > 0)
 		{
@@ -669,10 +550,6 @@ namespace ByteArraySpace
 	//从文件中读取数据
 	bool ByteArray::readFromFile(const string& filename)
 	{
-		//ifstream fin;
-		////以二进制模式打开文件
-		//fin.open(filename, std::ios::binary);
-		 
 		//以二进制模式打开文件
 		ifstream fin(filename, std::ios::binary);
 		
@@ -695,43 +572,6 @@ namespace ByteArraySpace
 		return true;
 	}
 
-
-	//将ByteArray里面的数据[m_position, m_size)转成string对象
-	string ByteArray::toString() const
-	{
-		string str;
-		//将string大小设置为可读取数据大小
-		str.resize(getRead_size());
-
-		//如果可读取的数据大小不为0，则从当前位置开始读取（否则直接返回）
-		if (!str.empty())
-		{
-			read_without_moving(&str[0], str.size(), m_position);
-		}
-		return str;
-	}
-
-	//将ByteArray里面的数据[m_position, m_size)转成16进制的string对象
-	string ByteArray::toHexString() const
-	{
-		string str = toString();
-		stringstream ss;
-
-		for (size_t i = 0; i < str.size(); ++i)
-		{
-			//每输出32个字节换一次行
-			if (i > 0 && i % 32 == 0)
-			{
-				ss << endl;
-			}
-			ss << std::setw(2) << std::setfill('0') << std::hex << (int)(uint8_t)str[i] << " ";
-		}
-		return ss.str();
-	}
-
-	
-	
-	
 	//获取可读取的缓存,保存成iovec数组,从position位置开始（不修改position）
 	uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, const uint64_t read_size, uint64_t position)const
 	{
@@ -808,62 +648,6 @@ namespace ByteArraySpace
 	//获取可写入的缓存,保存成iovec数组（不修改position，可能扩容）
 	uint64_t ByteArray::getWriteBuffers(vector<iovec>& buffers, const uint64_t write_size)
 	{
-		//if (write_size == 0)
-		//{
-		//	return 0;
-		//}
-
-		////扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
-		//expendCapacity(write_size);
-
-		////成功写入的数据大小
-		//uint64_t size = write_size;
-
-		////相对于当前内存块的位置
-		//size_t position_in_block = m_position % m_block_size;
-		////当前内存块还剩余的容量（单位：字节）
-		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
-
-		//iovec iov;
-		//Node* current = m_current;
-
-		////写入循环
-		//while (write_size > 0)
-		//{
-		//	//如果当前内存块剩余的容量足以写入
-		//	if (capacity_in_block >= write_size)
-		//	{
-		//		//尽数写入所有的内容
-		//		iov.iov_base = current->m_ptr + position_in_block;
-		//		iov.iov_len = write_size;
-
-		//		//已全部写入，清空
-		//		write_size = 0;
-		//	}
-		//	//如果不足以写入
-		//	else
-		//	{
-		//		//只将当前剩余容量填满
-		//		iov.iov_base = current->m_ptr + position_in_block;
-		//		iov.iov_len = capacity_in_block;
-
-		//		write_size -= capacity_in_block;
-
-		//		//当前内存块已被填满，移动当前节点
-		//		current = current->m_next;
-
-		//		//重置当前内存块还剩余的容量
-		//		capacity_in_block = current->m_block_size;
-		//		//重置相对于当前内存块的位置
-		//		position_in_block = 0;
-		//	}
-		//	buffers.push_back(iov);
-		//}
-
-		////返回成功写入的数据大小
-		//return size;
-
-
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
 		expendCapacity(write_size);
 
@@ -916,6 +700,90 @@ namespace ByteArraySpace
 		return write_size;
 	}
 
+
+	//设置ByteArray当前位置（同时改变当前操作节点位置）
+	void ByteArray::setPosition(size_t position)
+	{
+		//如果要设置的位置超出总容量，抛出out_of_range异常
+		if (position > m_capacity)
+		{
+			throw out_of_range("set_position out of range");
+		}
+
+		//设置当前操作位置
+		m_position = position;
+
+		//将已保存数据大小与当前操作位置同步
+		if (m_position > m_data_size)
+		{
+			m_data_size = m_position;
+		}
+
+		//先将当前节点设回根节点
+		m_current = m_root;
+		//根据当前位置设置当前节点
+		while (position >= m_current->m_block_size)
+		{
+			position -= m_current->m_block_size;
+			m_current = m_current->m_next;
+		}
+	}
+
+
+	//将ByteArray里面的数据[m_position, m_size)转成string对象
+	string ByteArray::toString() const
+	{
+		string str;
+		//将string大小设置为可读取数据大小
+		str.resize(getRead_size());
+
+		//如果可读取的数据大小不为0，则从当前位置开始读取（否则直接返回）
+		if (!str.empty())
+		{
+			read_without_moving(&str[0], str.size(), m_position);
+		}
+		return str;
+	}
+
+	//将ByteArray里面的数据[m_position, m_size)转成16进制的string对象
+	string ByteArray::toHexString() const
+	{
+		string str = toString();
+		stringstream ss;
+
+		for (size_t i = 0; i < str.size(); ++i)
+		{
+			//每输出32个字节换一次行
+			if (i > 0 && i % 32 == 0)
+			{
+				ss << endl;
+			}
+			ss << std::setw(2) << std::setfill('0') << std::hex << (int)(uint8_t)str[i] << " ";
+		}
+		return ss.str();
+	}
+
+	//清空ByteArray
+	void ByteArray::clear()
+	{
+		m_position = 0;
+		m_data_size = 0;
+		m_capacity = m_block_size;
+
+		//释放除根节点以外的所有节点
+		Node* temp = m_root->m_next;
+		while (temp)
+		{
+			m_current = temp;
+			temp = temp->m_next;
+			delete m_current;
+		}
+		m_current = m_root;
+		m_root->m_next = NULL;
+	}
+	
+	
+	
 
 
 

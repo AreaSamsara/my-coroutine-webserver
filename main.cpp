@@ -27,7 +27,7 @@ void test()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeFuint32(i);
+		bytearray->writeUint32(i);
 	}
 
 	bytearray->setPosition(0);
@@ -42,7 +42,7 @@ void test()
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数并打印
-		int32_t value = bytearray->readFuint32();
+		int32_t value = bytearray->readUint32();
 
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];
@@ -86,7 +86,7 @@ void test_file()
 	//将所有随机数依次写入
 	for (auto& i : vec)
 	{
-		bytearray->writeUint64(i);
+		bytearray->writeUint64_compressed(i);
 	}
 
 	bytearray->setPosition(0);
@@ -95,7 +95,7 @@ void test_file()
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		//读取随机数
-		int32_t value = bytearray->readUint64();
+		int32_t value = bytearray->readUint64_compressed();
 
 		//value应该等于vec[i]，否则报错
 		if (value != vec[i])
@@ -169,7 +169,7 @@ void test_file()
 
 int main(int argc, char** argv)
 {
-	//test();
+	test();
 	test_file();
 	return 0;
 }
