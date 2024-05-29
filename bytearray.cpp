@@ -804,101 +804,161 @@ namespace ByteArraySpace
 		return ss.str();
 	}
 
-	//只获取内容，不修改position
-	//获取可读取的缓存,保存成iovec数组
-	uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, uint64_t length)
+	
+	//获取可读取的缓存,保存成iovec数组（不修改position）
+	//uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, uint64_t read_size)const
+	//{
+	//	//read_size = read_size > getRead_size() ? getRead_size() : read_size;
+	//	//if (read_size == 0)
+	//	//{
+	//	//	return 0;
+	//	//}
+
+	//	////读取到的数据大小
+	//	//uint64_t size = read_size;
+
+	//	////相对于当前内存块的位置
+	//	//size_t position_in_block = m_position % m_block_size;
+	//	////当前内存块还剩余的容量（单位：字节）
+	//	//size_t capacity_in_block = m_current->m_block_size - position_in_block;
+
+	//	//iovec iov;
+	//	//Node* current = m_current;
+
+	//	//while (read_size > 0)
+	//	//{
+	//	//	//如果无法读取完当前内存块剩余的内容
+	//	//	if (capacity_in_block >= read_size)
+	//	//	{
+	//	//		//读取对应大小的数据
+	//	//		iov.iov_base = current->m_ptr + position_in_block;
+	//	//		iov.iov_len = read_size;
+
+	//	//		//已全部读取，清空
+	//	//		read_size = 0;
+	//	//	}
+	//	//	//如果能够读取完
+	//	//	else
+	//	//	{
+	//	//		//尽数读取所有的内容
+	//	//		iov.iov_base = current->m_ptr + position_in_block;
+	//	//		iov.iov_len = capacity_in_block;
+
+	//	//		read_size -= capacity_in_block;
+
+	//	//		//当前内存块已被读完，移动当前节点
+	//	//		current = current->m_next;
+
+	//	//		//重置当前内存块还剩余的容量
+	//	//		capacity_in_block = current->m_block_size;
+	//	//		//重置相对于当前内存块的位置
+	//	//		position_in_block = 0;
+	//	//	}
+	//	//	buffers.push_back(iov);
+	//	//}
+
+	//	////返回读取到的数据大小
+	//	//return size;
+
+
+	//	//如果要读取的数据大小超过可读取的值，抛出out_of_range异常
+	//	if (read_size > getRead_size())
+	//	{
+	//		throw out_of_range("not enough length");
+	//	}
+
+	//	//相对于当前内存块的位置
+	//	size_t position_in_block = m_position % m_block_size;
+	//	//当前内存块还剩余的容量（单位：字节）
+	//	size_t capacity_in_block = m_current->m_block_size - position_in_block;
+
+	//	iovec iov;
+	//	Node* current = m_current;
+
+	//	while (read_size > 0)
+	//	{
+	//		//如果无法读取完当前内存块剩余的内容
+	//		if (capacity_in_block >= read_size)
+	//		{
+	//			//读取对应大小的数据
+	//			iov.iov_base = current->m_ptr + position_in_block;
+	//			iov.iov_len = read_size;
+
+	//			//已全部读取，清空
+	//			read_size = 0;
+	//		}
+	//		//如果能够读取完
+	//		else
+	//		{
+	//			//尽数读取所有的内容
+	//			iov.iov_base = current->m_ptr + position_in_block;
+	//			iov.iov_len = capacity_in_block;
+
+	//			read_size -= capacity_in_block;
+
+	//			//当前内存块已被读完，移动当前节点
+	//			current = current->m_next;
+
+	//			//重置当前内存块还剩余的容量
+	//			capacity_in_block = current->m_block_size;
+	//			//重置相对于当前内存块的位置
+	//			position_in_block = 0;
+	//		}
+	//		buffers.push_back(iov);
+	//	}
+
+	//	//返回读取到的数据大小
+	//	return read_size;
+	//}
+	
+	//获取可读取的缓存,保存成iovec数组,从position位置开始（不修改position）
+	uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, const uint64_t read_size, uint64_t position)const
 	{
-		length = length > getRead_size() ? getRead_size() : length;
-		if (length == 0)
+		//如果要读取的数据大小超过可读取的值，不进行读取，返回0
+		if (read_size > getRead_size())
 		{
 			return 0;
 		}
 
-		//读取到的数据大小
-		uint64_t size = length;
+		//还需要读取的数据大小
+		uint64_t size_to_read = read_size;
 
-		//相对于当前内存块的位置
-		size_t position_in_block = m_position % m_block_size;
-		//当前内存块还剩余的容量（单位：字节）
-		size_t capacity_in_block = m_current->m_block_size - position_in_block;
-
-		iovec iov;
-		Node* current = m_current;
-
-		while (length > 0)
+		Node* current = m_root;
+		//如果起始位置为当前操作位置，直接获取当前操作节点
+		if (position == m_position)
 		{
-			//如果无法读取完当前内存块剩余的内容
-			if (capacity_in_block >= length)
+			current = m_current;
+		}
+		//否则根据起始位置设置节点
+		else
+		{
+			size_t count = position / m_block_size;
+			while (count > 0)
 			{
-				//读取对应大小的数据
-				iov.iov_base = current->m_ptr + position_in_block;
-				iov.iov_len = length;
-
-				//已全部读取，清空
-				length = 0;
-			}
-			//如果能够读取完
-			else
-			{
-				//尽数读取所有的内容
-				iov.iov_base = current->m_ptr + position_in_block;
-				iov.iov_len = capacity_in_block;
-
-				length -= capacity_in_block;
-
-				//当前内存块已被读完，移动当前节点
 				current = current->m_next;
-
-				//重置当前内存块还剩余的容量
-				capacity_in_block = current->m_block_size;
-				//重置相对于当前内存块的位置
-				position_in_block = 0;
+				--count;
 			}
-			buffers.push_back(iov);
 		}
-
-		//返回读取到的数据大小
-		return size;
-	}
-	//获取可读取的缓存,保存成iovec数组,从position位置开始
-	uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, uint64_t length, uint64_t position)const
-	{
-		length = length > getRead_size() ? getRead_size() : length;
-		if (length == 0)
-		{
-			return 0;
-		}
-
-		//读取到的数据大小
-		uint64_t size = length;
 
 		//相对于当前内存块的位置
 		size_t position_in_block = position % m_block_size;
-
-
-		size_t count = position / m_block_size;
-		Node* current = m_root;
-		while (count > 0)
-		{
-			current = current->m_next;
-			--count;
-		}
-
 		//当前内存块还剩余的容量（单位：字节）
-		size_t capacity_in_block = current->m_block_size - position_in_block;
+		size_t capacity_in_block = m_block_size - position_in_block;
+		//临时的io向量
 		iovec iov;
 
-		while (length > 0)
+		//读取循环
+		while (size_to_read > 0)
 		{
 			//如果无法读取完当前内存块剩余的内容
-			if (capacity_in_block >= length)
+			if (capacity_in_block >= size_to_read)
 			{
 				//读取对应大小的数据
 				iov.iov_base = current->m_ptr + position_in_block;
-				iov.iov_len = length;
+				iov.iov_len = size_to_read;
 
-				//已全部读取，清空
-				length = 0;
+				//已全部读取，清空还需要读取的数据大小
+				size_to_read = 0;
 			}
 			//如果能够读取完
 			else
@@ -907,11 +967,11 @@ namespace ByteArraySpace
 				iov.iov_base = current->m_ptr + position_in_block;
 				iov.iov_len = capacity_in_block;
 
-				length -= capacity_in_block;
+				//设置还需要读取的数据大小
+				size_to_read -= capacity_in_block;
 
 				//当前内存块已被读完，移动当前节点
 				current = current->m_next;
-
 				//重置当前内存块还剩余的容量
 				capacity_in_block = current->m_block_size;
 				//重置相对于当前内存块的位置
@@ -921,44 +981,95 @@ namespace ByteArraySpace
 		}
 
 		//返回读取到的数据大小
-		return size;
+		return read_size;
 	}
 
-	//增加容量，不修改position
-	//获取可写入的缓存,保存成iovec数组
-	uint64_t ByteArray::getWriteBuffers(vector<iovec>& buffers, uint64_t length)
+	//获取可写入的缓存,保存成iovec数组（不修改position，可能扩容）
+	uint64_t ByteArray::getWriteBuffers(vector<iovec>& buffers, const uint64_t write_size)
 	{
-		if (length == 0)
-		{
-			return 0;
-		}
+		//if (write_size == 0)
+		//{
+		//	return 0;
+		//}
+
+		////扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
+		//expendCapacity(write_size);
+
+		////成功写入的数据大小
+		//uint64_t size = write_size;
+
+		////相对于当前内存块的位置
+		//size_t position_in_block = m_position % m_block_size;
+		////当前内存块还剩余的容量（单位：字节）
+		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
+
+		//iovec iov;
+		//Node* current = m_current;
+
+		////写入循环
+		//while (write_size > 0)
+		//{
+		//	//如果当前内存块剩余的容量足以写入
+		//	if (capacity_in_block >= write_size)
+		//	{
+		//		//尽数写入所有的内容
+		//		iov.iov_base = current->m_ptr + position_in_block;
+		//		iov.iov_len = write_size;
+
+		//		//已全部写入，清空
+		//		write_size = 0;
+		//	}
+		//	//如果不足以写入
+		//	else
+		//	{
+		//		//只将当前剩余容量填满
+		//		iov.iov_base = current->m_ptr + position_in_block;
+		//		iov.iov_len = capacity_in_block;
+
+		//		write_size -= capacity_in_block;
+
+		//		//当前内存块已被填满，移动当前节点
+		//		current = current->m_next;
+
+		//		//重置当前内存块还剩余的容量
+		//		capacity_in_block = current->m_block_size;
+		//		//重置相对于当前内存块的位置
+		//		position_in_block = 0;
+		//	}
+		//	buffers.push_back(iov);
+		//}
+
+		////返回成功写入的数据大小
+		//return size;
+
 
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
-		expendCapacity(length);
+		expendCapacity(write_size);
 
-		//成功写入的数据大小
-		uint64_t size = length;
+		//还需要写入的数据大小
+		uint64_t size_to_write = write_size;
 
 		//相对于当前内存块的位置
 		size_t position_in_block = m_position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
 		size_t capacity_in_block = m_current->m_block_size - position_in_block;
 
+		//临时的io向量
 		iovec iov;
 		Node* current = m_current;
 
 		//写入循环
-		while (length > 0)
+		while (size_to_write > 0)
 		{
 			//如果当前内存块剩余的容量足以写入
-			if (capacity_in_block >= length)
+			if (capacity_in_block >= size_to_write)
 			{
 				//尽数写入所有的内容
 				iov.iov_base = current->m_ptr + position_in_block;
-				iov.iov_len = length;
+				iov.iov_len = size_to_write;
 
-				//已全部写入，清空
-				length = 0;
+				//已全部写入，清空还需要写入的数据大小
+				size_to_write = 0;
 			}
 			//如果不足以写入
 			else
@@ -967,11 +1078,11 @@ namespace ByteArraySpace
 				iov.iov_base = current->m_ptr + position_in_block;
 				iov.iov_len = capacity_in_block;
 
-				length -= capacity_in_block;
+				//设置还需要写入的数据大小
+				size_to_write -= capacity_in_block;
 
 				//当前内存块已被填满，移动当前节点
 				current = current->m_next;
-
 				//重置当前内存块还剩余的容量
 				capacity_in_block = current->m_block_size;
 				//重置相对于当前内存块的位置
@@ -981,7 +1092,7 @@ namespace ByteArraySpace
 		}
 
 		//返回成功写入的数据大小
-		return size;
+		return write_size;
 	}
 
 

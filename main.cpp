@@ -32,11 +32,11 @@ void test()
 
 	bytearray->setPosition(0);
 
-	/*{
+	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 		log_event->getSstream() << "bytearray:" << bytearray->toString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	}*/
+	}
 
 
 	for (size_t i = 0; i < vec.size(); ++i)

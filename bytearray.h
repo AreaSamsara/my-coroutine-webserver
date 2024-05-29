@@ -131,15 +131,13 @@ namespace ByteArraySpace
 		//清空ByteArray
 		void clear();
 
-		//只获取内容，不修改position
-		//获取可读取的缓存,保存成iovec数组
-		uint64_t getReadBuffers(vector<iovec>& buffers, uint64_t length = ~0ull);
+		//获取可读取的缓存,保存成iovec数组（不修改position）
+		//uint64_t getReadBuffers(vector<iovec>& buffers, uint64_t read_size = ~0ull)const;
 		//获取可读取的缓存,保存成iovec数组,从position位置开始
-		uint64_t getReadBuffers(vector<iovec>& buffers, uint64_t length, uint64_t position)const;
+		uint64_t getReadBuffers(vector<iovec>& buffers, const uint64_t read_size, uint64_t position)const;
 
-		//增加容量，不修改position
-		//获取可写入的缓存,保存成iovec数组
-		uint64_t getWriteBuffers(vector<iovec>& buffers, uint64_t length);		
+		//获取可写入的缓存,保存成iovec数组（不修改position，可能扩容）
+		uint64_t getWriteBuffers(vector<iovec>& buffers, const uint64_t size_to_write);
 	private:
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
 		void expendCapacity(const size_t capacity_required);
