@@ -356,67 +356,18 @@ namespace ByteArraySpace
 	//写入指定长度的数据（同时移动当前操作位置）
 	void ByteArray::write(const void* buffer, size_t write_size)
 	{
-		/*if (size == 0)
-		{
-			return;
-		}*/
-
 		//扩容ByteArray使其可写入容量至少为指定值(如果原本就足以容纳,则不扩容)
 		expendCapacity(write_size);
 
 		//相对于当前内存块的位置
 		size_t position_in_block = m_position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
-		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
 		size_t capacity_in_block = m_block_size - position_in_block;
 		//缓冲区当前操作位置
 		size_t buffer_position = 0;
 
+
 		//写入循环
-		//while (write_size > 0)
-		//{
-		//	//如果当前内存块剩余的容量足以写入
-		//	if (capacity_in_block >= write_size)
-		//	{
-		//		//尽数写入所有的内容
-		//		memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, write_size);
-
-		//		//移动当前位置
-		//		m_position += write_size;
-		//		//移动缓冲区位置
-		//		buffer_position += write_size;
-		//		//已全部写入，将还需要写入的大小设为0
-		//		write_size = 0;
-
-		//		//如果恰好填满当前内存块，移动当前节点
-		//		if (m_current->m_block_size == (position_in_block + write_size))
-		//		{
-		//			m_current = m_current->m_next;
-		//		}
-		//	}
-		//	//如果不足以写入
-		//	else
-		//	{
-		//		//只将当前剩余容量填满
-		//		memcpy(m_current->m_ptr + position_in_block, (const char*)buffer + buffer_position, capacity_in_block);
-
-		//		//移动当前位置
-		//		m_position += capacity_in_block;
-		//		//移动缓冲区位置
-		//		buffer_position += capacity_in_block;
-
-		//		//更新还需要写入的大小
-		//		write_size -= capacity_in_block;
-
-		//		//当前内存块已被填满，移动当前节点
-		//		m_current = m_current->m_next;
-		//		//重置当前内存块还剩余的容量
-		//		capacity_in_block = m_current->m_block_size;
-		//		//重置相对于当前内存块的位置
-		//		position_in_block = 0;
-		//	}
-		//}
-
 		while (write_size > 0)
 		{
 			//如果当前内存块剩余的容量足以写入（不包含恰好写满）
@@ -473,55 +424,9 @@ namespace ByteArraySpace
 		//相对于当前内存块的位置
 		size_t position_in_block = m_position % m_block_size;
 		//当前内存块还剩余的容量（单位：字节）
-		//size_t capacity_in_block = m_current->m_block_size - position_in_block;
 		size_t capacity_in_block = m_block_size - position_in_block;
 		//缓冲区当前操作位置
 		size_t buffer_position = 0;
-
-		//读取循环
-		//while (read_size > 0)
-		//{
-		//	//如果无法读取完当前内存块剩余的内容
-		//	if (capacity_in_block >= read_size)
-		//	{
-		//		//读取对应大小的数据
-		//		memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, read_size);
-
-		//		//如果恰好读取完当前内存块，移动当前节点
-		//		if (m_current->m_block_size == position_in_block + read_size)
-		//		{
-		//			m_current = m_current->m_next;
-		//		}
-
-		//		//移动当前位置
-		//		m_position += read_size;
-		//		//移动缓冲区位置
-		//		buffer_position += read_size;
-		//		//已全部读取，清空
-		//		read_size = 0;
-		//	}
-		//	//如果能够读取完
-		//	else
-		//	{
-		//		//尽数读取所有的内容
-		//		memcpy((char*)buffer + buffer_position, m_current->m_ptr + position_in_block, capacity_in_block);
-
-		//		//移动当前位置
-		//		m_position += capacity_in_block;
-		//		//移动缓冲区位置
-		//		buffer_position += capacity_in_block;
-
-		//		read_size -= capacity_in_block;
-
-		//		//当前内存块已被读完，移动当前节点
-		//		m_current = m_current->m_next;
-
-		//		//重置当前内存块还剩余的容量
-		//		capacity_in_block = m_current->m_block_size;
-		//		//重置相对于当前内存块的位置
-		//		position_in_block = 0;
-		//	}
-		//}
 
 		while (read_size > 0)
 		{
@@ -702,9 +607,13 @@ namespace ByteArraySpace
 	//把ByteArray的数据写入到文件中
 	bool ByteArray::writeToFile(const string& filename)const
 	{
-		ofstream fout;
+		//ofstream fout;
+		////以截断和二进制模式打开文件
+		//fout.open(filename, std::ios::trunc | std::ios::binary);
+		
 		//以截断和二进制模式打开文件
-		fout.open(filename, std::ios::trunc | std::ios::binary);
+		ofstream fout(filename, std::ios::trunc | std::ios::binary);
+		
 		//如果文件打开失败，报错并返回false
 		if (!fout.is_open())
 		{
@@ -719,16 +628,35 @@ namespace ByteArraySpace
 		int64_t position = m_position;
 		Node* current = m_current;
 
+		//while (read_size > 0)
+		//{
+		//	//相对于当前内存块的位置
+		//	int position_in_block = position % m_block_size;
+
+		//	int64_t write_length = (read_size > (int64_t)m_block_size ? m_block_size : read_size) - position_in_block;	//疑似有误
+		//	//将数据写入文件
+		//	fout.write(current->m_ptr + position_in_block, write_length);
+
+		//	current = current->m_next;	//疑似有误
+		//	//移动当前操作位置
+		//	position += write_length;
+		//	//更新剩余可读取的数据大小
+		//	read_size -= write_length;
+		//}
+
 		while (read_size > 0)
 		{
 			//相对于当前内存块的位置
 			int position_in_block = position % m_block_size;
 
-			int64_t write_length = (read_size > (int64_t)m_block_size ? m_block_size : read_size) - position_in_block;	//疑似有误
+			//如果还需要读取的数据大小小于当前内存块还剩余的容量，尽数读取；否则读取当前内存块剩余的内容（理论上从读取第二个内存块开始就会从内存块的开头开始读取）
+			int64_t write_length = (read_size < (m_block_size - position_in_block) ? read_size : (m_block_size - position_in_block));	//疑似有误
+
 			//将数据写入文件
 			fout.write(current->m_ptr + position_in_block, write_length);
 
-			current = current->m_next;	//疑似有误
+			//更新当前操作节点
+			current = current->m_next;
 			//移动当前操作位置
 			position += write_length;
 			//更新剩余可读取的数据大小
@@ -741,9 +669,13 @@ namespace ByteArraySpace
 	//从文件中读取数据
 	bool ByteArray::readFromFile(const string& filename)
 	{
-		ifstream fin;
+		//ifstream fin;
+		////以二进制模式打开文件
+		//fin.open(filename, std::ios::binary);
+		 
 		//以二进制模式打开文件
-		fin.open(filename, std::ios::binary);
+		ifstream fin(filename, std::ios::binary);
+		
 		//如果文件打开失败，报错并返回false
 		if (!fin.is_open())
 		{
@@ -770,13 +702,6 @@ namespace ByteArraySpace
 		string str;
 		//将string大小设置为可读取数据大小
 		str.resize(getRead_size());
-
-		/*if (str.empty())
-		{
-			return str;
-		}
-		read(&str[0], str.size(), m_position);
-		return str;*/
 
 		//如果可读取的数据大小不为0，则从当前位置开始读取（否则直接返回）
 		if (!str.empty())
@@ -805,111 +730,7 @@ namespace ByteArraySpace
 	}
 
 	
-	//获取可读取的缓存,保存成iovec数组（不修改position）
-	//uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, uint64_t read_size)const
-	//{
-	//	//read_size = read_size > getRead_size() ? getRead_size() : read_size;
-	//	//if (read_size == 0)
-	//	//{
-	//	//	return 0;
-	//	//}
-
-	//	////读取到的数据大小
-	//	//uint64_t size = read_size;
-
-	//	////相对于当前内存块的位置
-	//	//size_t position_in_block = m_position % m_block_size;
-	//	////当前内存块还剩余的容量（单位：字节）
-	//	//size_t capacity_in_block = m_current->m_block_size - position_in_block;
-
-	//	//iovec iov;
-	//	//Node* current = m_current;
-
-	//	//while (read_size > 0)
-	//	//{
-	//	//	//如果无法读取完当前内存块剩余的内容
-	//	//	if (capacity_in_block >= read_size)
-	//	//	{
-	//	//		//读取对应大小的数据
-	//	//		iov.iov_base = current->m_ptr + position_in_block;
-	//	//		iov.iov_len = read_size;
-
-	//	//		//已全部读取，清空
-	//	//		read_size = 0;
-	//	//	}
-	//	//	//如果能够读取完
-	//	//	else
-	//	//	{
-	//	//		//尽数读取所有的内容
-	//	//		iov.iov_base = current->m_ptr + position_in_block;
-	//	//		iov.iov_len = capacity_in_block;
-
-	//	//		read_size -= capacity_in_block;
-
-	//	//		//当前内存块已被读完，移动当前节点
-	//	//		current = current->m_next;
-
-	//	//		//重置当前内存块还剩余的容量
-	//	//		capacity_in_block = current->m_block_size;
-	//	//		//重置相对于当前内存块的位置
-	//	//		position_in_block = 0;
-	//	//	}
-	//	//	buffers.push_back(iov);
-	//	//}
-
-	//	////返回读取到的数据大小
-	//	//return size;
-
-
-	//	//如果要读取的数据大小超过可读取的值，抛出out_of_range异常
-	//	if (read_size > getRead_size())
-	//	{
-	//		throw out_of_range("not enough length");
-	//	}
-
-	//	//相对于当前内存块的位置
-	//	size_t position_in_block = m_position % m_block_size;
-	//	//当前内存块还剩余的容量（单位：字节）
-	//	size_t capacity_in_block = m_current->m_block_size - position_in_block;
-
-	//	iovec iov;
-	//	Node* current = m_current;
-
-	//	while (read_size > 0)
-	//	{
-	//		//如果无法读取完当前内存块剩余的内容
-	//		if (capacity_in_block >= read_size)
-	//		{
-	//			//读取对应大小的数据
-	//			iov.iov_base = current->m_ptr + position_in_block;
-	//			iov.iov_len = read_size;
-
-	//			//已全部读取，清空
-	//			read_size = 0;
-	//		}
-	//		//如果能够读取完
-	//		else
-	//		{
-	//			//尽数读取所有的内容
-	//			iov.iov_base = current->m_ptr + position_in_block;
-	//			iov.iov_len = capacity_in_block;
-
-	//			read_size -= capacity_in_block;
-
-	//			//当前内存块已被读完，移动当前节点
-	//			current = current->m_next;
-
-	//			//重置当前内存块还剩余的容量
-	//			capacity_in_block = current->m_block_size;
-	//			//重置相对于当前内存块的位置
-	//			position_in_block = 0;
-	//		}
-	//		buffers.push_back(iov);
-	//	}
-
-	//	//返回读取到的数据大小
-	//	return read_size;
-	//}
+	
 	
 	//获取可读取的缓存,保存成iovec数组,从position位置开始（不修改position）
 	uint64_t ByteArray::getReadBuffers(vector<iovec>& buffers, const uint64_t read_size, uint64_t position)const
@@ -1167,6 +988,7 @@ namespace ByteArraySpace
 			m_capacity += m_block_size;
 		}
 	}
+
 
 	//ZigZag编码在许多情况下可以减小数据的大小，特别是在处理大量绝对值小的负数或正数时，但在特定情况下（负数较少或数据的绝对值较大时），它也可能导致数据大小的增加
 	//32位zigzag编码

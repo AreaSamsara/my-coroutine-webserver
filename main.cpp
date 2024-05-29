@@ -34,7 +34,7 @@ void test()
 
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		log_event->getSstream() << "bytearray:" << bytearray->toString();
+		log_event->getSstream() << "bytearray:" << bytearray->toHexString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 	}
 
@@ -138,14 +138,14 @@ void test_file()
 	bytearray2->setPosition(0);
 
 
-	/*{
+	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		log_event->getSstream() << "bytearray:" << bytearray->toString();
+		log_event->getSstream() << "bytearray:" << bytearray->toHexString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 		log_event->setSstream("");
-		log_event->getSstream() << "bytearray2:" << bytearray2->toString();
+		log_event->getSstream() << "bytearray2:" << bytearray2->toHexString();
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	}*/
+	}
 
 	if (bytearray->toString() != bytearray2->toString())
 	{
@@ -169,7 +169,7 @@ void test_file()
 
 int main(int argc, char** argv)
 {
-	test();
+	//test();
 	test_file();
 	return 0;
 }
