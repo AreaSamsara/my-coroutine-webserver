@@ -62,7 +62,8 @@ namespace HttpSpace
     //class CaseInsensitiveLess:public
 	bool CaseInsensitiveLess::operator()(const string& lhs, const string& rhs)const
 	{
-		return strcasecmp(lhs.c_str(), rhs.c_str());
+		//按字典顺序比较两个字符串，不区分大小写
+		return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
 	}
 
 

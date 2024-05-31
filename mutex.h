@@ -352,13 +352,6 @@ namespace MutexSpace
 		void wait();
 		//将信号量加一
 		void notify();
-	//private:
-	//	//删除复制构造函数
-	//	Semaphore(const Semaphore&) = delete;
-	//	//删除移动构造函数
-	//	Semaphore(const Semaphore&&) = delete;
-	//	//删除赋值运算符
-	//	Semaphore& operator=(const Semaphore&) = delete;
 	private:
 		sem_t m_semaphore;		//信号量
 	};

@@ -30,7 +30,7 @@ namespace HttpSpace
         }
         parser->getRequest()->setMethod(method);
     }
-    void on_request_url(void* data, const char* at, size_t length)
+    void on_request_uri(void* data, const char* at, size_t length)
     {
 
     }
@@ -96,7 +96,7 @@ namespace HttpSpace
         m_request.reset(new HttpRequest);
         http_parser_init(&m_parser);
         m_parser.request_method = on_request_method;
-        m_parser.request_uri = on_request_url;
+        m_parser.request_uri = on_request_uri;
         m_parser.fragment = on_request_fragment;
         m_parser.request_path = on_request_path;
         m_parser.query_string = on_request_query;

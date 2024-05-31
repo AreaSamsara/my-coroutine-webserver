@@ -3,6 +3,13 @@
 #include <map>
 #include <boost/lexical_cast.hpp>
 
+//#include "log.h"
+//#include "singleton.h"
+//#include "utility.h"
+//
+//using namespace LogSpace;
+//using namespace SingletonSpace;
+//using namespace UtilitySpace;
 
 namespace HttpSpace
 {
@@ -142,7 +149,7 @@ HttpMethod CharsTOHttpMethod(const char* method);
 const char* HttpMethodToString(const HttpMethod& method);
 const char* HttpStatusToString(const HttpStatus& status);
 
-
+//忽略大小写比较字符串
 class CaseInsensitiveLess
 {
 public:

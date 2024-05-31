@@ -31,7 +31,6 @@ void test_request()
 	tempstr.resize(tempstr.size() - return_value);
 	log_event->getSstream() << parser.getRequest()->toString() << endl
 		<< tempstr;
-
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 }
 
