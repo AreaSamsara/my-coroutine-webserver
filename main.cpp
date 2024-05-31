@@ -1,175 +1,84 @@
-#include "bytearray.h"
-#include "utility.h"
+#include "http_parser.h"
 #include "log.h"
-#include "utility.h"
 #include "singleton.h"
+#include "utility.h"
 
-using namespace ByteArraySpace; 
-using namespace UtilitySpace;
-using namespace SingletonSpace;
 using namespace LogSpace;
-using std::shared_ptr;
+using namespace SingletonSpace;
+using namespace UtilitySpace;
+using namespace HttpSpace;
+
+const char test_request_data[] =
+"POST / HTTP/1.1\r\n"
+"Host: www.sylar.top\r\n"
+"Content-Length: 10\r\n\r\n"
+"1234567890";
 
 
-void test()
+void test_request()
 {
-	int count = 100, base_size = 1;
-
-
-	vector<uint32_t> vec;
-	//获取多个随机数
-	for (int i = 0; i < count; ++i)
-	{
-		vec.push_back(rand());
-	}
-
-	shared_ptr<ByteArray> bytearray(new ByteArray(base_size));
-	//将所有随机数依次写入
-	for (auto& i : vec)
-	{
-		bytearray->writeUint32(i);
-	}
-
-	bytearray->setPosition(0);
-
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		log_event->getSstream() << "bytearray:" << bytearray->toHexString();
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	}
-
-
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		//读取随机数并打印
-		int32_t value = bytearray->readUint32();
-
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-
-		//value应该等于vec[i]，否则报错
-		if (value != vec[i])
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
-		}
-	}
-
-	//此时可读数据的大小应该为零（数据被读完），否则报错
-	if (bytearray->getRead_size() != 0)
-	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(event);
-	}
-
-
-
+	HttpRequestParser parser;
+	string tempstr = test_request_data;
+	size_t return_value = parser.execute(&tempstr[0], tempstr.size());
 
 	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
+
+	log_event->getSstream() << "\nexecute return_value=" << return_value
+		<< " has_error=" << parser.hasError()
+		<< " is_finished=" << parser.isFinished()
+		<< " total=" << tempstr.size()
+		<< " content_length=" << parser.getContentLength() << endl;
+	tempstr.resize(tempstr.size() - return_value);
+	log_event->getSstream() << parser.getRequest()->toString() << endl
+		<< tempstr;
+
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 }
 
-void test_file()
+const char test_response_data[] = "HTTP/1.1 200 OK\r\n"
+"Date: Tue, 04 Jun 2019 15:43:56 GMT\r\n"
+"Server: Apache\r\n"
+"Last-Modified: Tue, 12 Jan 2010 13:48:00 GMT\r\n"
+"ETag: \"51-47cf7e6ee8400\"\r\n"
+"Accept-Ranges: bytes\r\n"
+"Content-Length: 81\r\n"
+"Cache-Control: max-age=86400\r\n"
+"Expires: Wed, 05 Jun 2019 15:43:56 GMT\r\n"
+"Connection: Close\r\n"
+"Content-Type: text/html\r\n\r\n"
+"<html>\r\n"
+"<meta http-equiv=\"refresh\" content=\"0;url=http://www.baidu.com/\">\r\n"
+"</html>\r\n";
+
+void test_response()
 {
-	int count = 100, base_size = 1;
-
-
-	vector<uint64_t> vec;
-	//获取多个随机数
-	for (int i = 0; i < count; ++i)
-	{
-		vec.push_back(rand());
-	}
-	shared_ptr<ByteArray> bytearray(new ByteArray(base_size));
-	//将所有随机数依次写入
-	for (auto& i : vec)
-	{
-		bytearray->writeUint64_compressed(i);
-	}
-
-	bytearray->setPosition(0);
-
-
-	for (size_t i = 0; i < vec.size(); ++i)
-	{
-		//读取随机数
-		int32_t value = bytearray->readUint64_compressed();
-
-		//value应该等于vec[i]，否则报错
-		if (value != vec[i])
-		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
-		}
-	}
-
-	//此时可读数据的大小应该为零（数据被读完），否则报错
-	if (bytearray->getRead_size() != 0)
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
+	HttpResponseParser parser;
+	string tempstr = test_response_data;
+	size_t return_value = parser.execute(&tempstr[0], tempstr.size());
 
 	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
+
+	log_event->getSstream() << "\nexecute return_value=" << return_value
+		<< " has_error=" << parser.hasError()
+		<< " is_finished=" << parser.isFinished()
+		<< " total=" << tempstr.size()
+		<< " content_length=" << parser.getContentLength() << endl;
+	tempstr.resize(tempstr.size() - return_value);
+	log_event->getSstream() << parser.getResponse()->toString() << endl
+		<< tempstr;
+
 	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-
-
-
-
-	bytearray->setPosition(0);
-
-	if (!bytearray->writeToFile("./test_bytearray.txt"))
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
-
-	shared_ptr<ByteArray> bytearray2(new ByteArray(base_size * 2));
-
-	if (!bytearray2->readFromFile("./test_bytearray.txt"))
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
-
-	bytearray2->setPosition(0);
-
-
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		log_event->getSstream() << "bytearray:" << bytearray->toHexString();
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-		log_event->setSstream("");
-		log_event->getSstream() << "bytearray2:" << bytearray2->toHexString();
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-	}
-
-	if (bytearray->toString() != bytearray2->toString())
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
-
-	if (bytearray->getPosition() != 0)
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
-
-	if (bytearray2->getPosition() != 0)
-	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		Assert(log_event);
-	}
 }
-
 
 int main(int argc, char** argv)
 {
-	test();
-	test_file();
+	test_request();
+
+	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+	log_event->getSstream() << "--------------";
+	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+
+	test_response();
+
 	return 0;
 }
