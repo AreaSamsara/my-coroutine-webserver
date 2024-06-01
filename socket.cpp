@@ -27,7 +27,7 @@ namespace SocketSpace
 	}
 
 	//获取发送超时时间
-	int64_t Socket::getSend_timout()const
+	int64_t Socket::getSend_timeout()const
 	{
 		//通过单例文件描述符管理者根据socket文件描述符获取对应的文件描述符实体
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
@@ -44,7 +44,7 @@ namespace SocketSpace
 	}
 
 	//获取接收超时时间
-	int64_t Socket::getReceive_timout()const
+	int64_t Socket::getReceive_timeout()const
 	{
 		//通过单例文件描述符管理者根据socket文件描述符获取对应的文件描述符实体
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
@@ -61,14 +61,14 @@ namespace SocketSpace
 	}
 
 	//获取socket选项
-	bool Socket::getOption(const int level, const int option, void* result, socklen_t* len)
+	bool Socket::getOption(const int level, const int option, void* result, socklen_t* len) const
 	{
 		//获取socket选项，成功返回0
 		return getsockopt(m_socket, level, option, result, (socklen_t*)len) == 0;
 	}
 
 	//设置socket选项
-	bool Socket::setOption(const int level, const int option, const void * result, socklen_t len)
+	bool Socket::setOption(const int level, const int option, const void * result, socklen_t len) const
 	{
 		//设置socket选项，成功返回0
 		return setsockopt(m_socket, level, option, result, len) == 0;
@@ -81,7 +81,7 @@ namespace SocketSpace
 	bool Socket::bind(const shared_ptr<Address> address)
 	{
 		//如果socket无效，创建新的socket文件描述符
-		if(isValid())
+		if(!isValid())
 		{
 			newSocket();
 			//如果创建后socket仍为无效（小概率事件），返回false
@@ -115,7 +115,7 @@ namespace SocketSpace
 	}
 
 	//监听socket
-	bool Socket::listen(const int backlog = SOMAXCONN) const
+	bool Socket::listen(const int backlog) const
 	{
 		//如果socket无效（小概率事件），报错并返回false
 		if (SYLAR_UNLIKELY(!isValid()))
@@ -157,8 +157,8 @@ namespace SocketSpace
 		{
 			//获取new_socket对应的文件描述符实体（应该已经在hook版本的accept()函数中创建）
 			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(new_socket);
-			//如果该实体是socket且不处于关闭状态，则将socket对象初始化并返回
-			if (file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
+			//如果该实体存在，且是socket并不处于关闭状态，则将socket对象初始化并返回
+			if (file_descriptor_entity != nullptr && file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
 			{
 				socket->m_socket = new_socket;
 				socket->m_is_connected = true;
@@ -472,7 +472,7 @@ namespace SocketSpace
 			<< " is_connected" << m_is_connected
 			<< " family=" << m_family
 			<< " type=" << m_type
-			<< " protocol" << m_protocol;
+			<< " protocol=" << m_protocol;
 		if (m_local_address)
 		{
 			os << " local_address=" << m_local_address->toString();
@@ -486,28 +486,33 @@ namespace SocketSpace
 	}
 
 	//结算读取事件
-	bool Socket::settleRead_event()
+	bool Socket::settleRead_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::READ);
 	}
 	//结算写入事件
-	bool Socket::settleWrite_event()
+	bool Socket::settleWrite_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::WRITE);
 	}
 	//结算接收链接事件
-	bool Socket::settleAccept_event()
+	bool Socket::settleAccept_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::READ);
 	}
 	//结算所有事件
-	bool Socket::settleAllEvents()
+	bool Socket::settleAllEvents() const
 	{
 		return IOManager::GetThis()->settleAllEvents(m_socket);
 	}
 			
 
-
+	//class Socket:public friend
+	//重载<<运算符，用于将信息输出到流中
+	ostream& operator<<(ostream& os, const shared_ptr<Socket> socket)
+	{
+		return socket->dump(os);
+	}
 
 	//class Socket:private
 	//初始化socket文件描述符

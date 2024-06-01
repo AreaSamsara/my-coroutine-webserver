@@ -14,7 +14,7 @@ namespace FdManagerSpace
 		//尝试获取文件状态
 		struct stat file_descriptor_state;
 		//如果获取成功（fstat()不返回-1），根据S_ISSOCK设置其是否为socket（否则默认设置为非socket）
-		if (fstat(m_file_descriptor, &file_descriptor_state) == -1)
+		if (fstat(m_file_descriptor, &file_descriptor_state) != -1)
 		{
 			m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
 		}

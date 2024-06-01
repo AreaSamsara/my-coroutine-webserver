@@ -207,7 +207,7 @@ public:
 
     HttpMethod getMethod()const { return m_method; }
     uint8_t getVersion()const { return m_version; }
-    bool isClose() const { return m_close; }
+    bool isClose() const { return m_is_close; }
     const string& getPath()const { return m_path; }
     const string& getQuery()const { return m_query; }
     const string& getBody()const { return m_body; }
@@ -217,7 +217,7 @@ public:
 
     void setMethod(const HttpMethod method) { m_method = method; }
     void setVersion(const uint8_t version) { m_version = version; }
-    void setClose(const bool close) { m_close = close; }
+    void setClose(const bool close) { m_is_close = close; }
     void setPath(const string& path) { m_path = path; }
     void setQuery(const string& query) { m_query = query; }
     void setBody(const string& body) { m_body = body; }
@@ -280,7 +280,7 @@ public:
 private:
     HttpMethod m_method;
     uint8_t m_version;
-    bool m_close;
+    bool m_is_close;
 
     string m_path;
     string m_query;
@@ -301,14 +301,14 @@ public:
 
     HttpStatus getStatus()const { return m_status; }
     uint8_t getVersion()const { return m_version; }
-    bool isClose() const { return m_close; }
+    bool isClose() const { return m_is_close; }
     const string& getBody()const { return m_body; }
     const string& getReason()const { return m_reason; }
     map<string, string, CaseInsensitiveLess> getHeaders()const { return m_headers; }
 
     void setStatus(const HttpStatus status) { m_status = status; }
     void setVersion(const uint8_t version) { m_version = version; }
-    void setClose(const bool close) { m_close = close; }
+    void setClose(const bool close) { m_is_close = close; }
     void setBody(const string& body) { m_body = body; }
     void setReason(const string& reason) { m_reason = reason; }
     void setHeaders(const map<string, string, CaseInsensitiveLess>& headers) { m_headers = headers; }
@@ -335,7 +335,7 @@ public:
 private:
     HttpStatus m_status;
     uint8_t m_version;
-    bool m_close;
+    bool m_is_close;
     string m_body;
     string m_reason;
     map<string, string, CaseInsensitiveLess> m_headers;

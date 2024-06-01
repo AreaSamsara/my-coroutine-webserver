@@ -32,17 +32,17 @@ namespace SocketSpace
 		~Socket();
 
 		//获取发送超时时间
-		int64_t getSend_timout()const;
+		int64_t getSend_timeout()const;
 		//设置发送超时时间
 		void setSend_timeout(const int64_t send_timeout);
 
 		//获取接收超时时间
-		int64_t getReceive_timout()const;
+		int64_t getReceive_timeout()const;
 		//设置接收超时时间
 		void setReceive_timeout(const int64_t receive_timeout);
 
 		//获取socket选项
-		bool getOption(const int level, const int option, void* result, socklen_t* len);
+		bool getOption(const int level, const int option, void* result, socklen_t* len) const;
 		template<class T>
 		bool getOption(int level, int option, T& result)
 		{
@@ -51,7 +51,7 @@ namespace SocketSpace
 		}
 
 		//设置socket选项
-		bool setOption(const int level, const int option, const void * result, socklen_t len);
+		bool setOption(const int level, const int option, const void * result, socklen_t len) const;
 		template<class T>
 		bool setOption(int level, int option,const T& result)
 		{
@@ -63,7 +63,7 @@ namespace SocketSpace
 		//绑定地址（在socket无效时创建新的socket文件描述符）
 		bool bind(const shared_ptr<Address> address);
 		//监听socket
-		bool listen(const int backlog) const;
+		bool listen(const int backlog = SOMAXCONN) const;
 		//接收connect链接
 		shared_ptr<Socket> accept() const;
 
@@ -107,13 +107,16 @@ namespace SocketSpace
 		ostream& dump(ostream& os)const;
 		
 		//结算读取事件
-		bool settleRead_event();
+		bool settleRead_event() const;
 		//结算写入事件
-		bool settleWrite_event();
+		bool settleWrite_event() const;
 		//结算接收链接事件
-		bool settleAccept_event();
+		bool settleAccept_event() const;
 		//结算所有事件
-		bool settleAllEvents();
+		bool settleAllEvents() const;
+	public:
+		//重载<<运算符，用于将信息输出到流中
+		friend ostream& operator<<(ostream& os, const shared_ptr<Socket> socket);
 	private:
 		//初始化socket文件描述符
 		void initializeSocket();

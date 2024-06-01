@@ -70,7 +70,7 @@ namespace HttpSpace
 
 	//class HttpRequest:public
 	HttpRequest::HttpRequest(const uint8_t version, const bool close) 
-		:m_method(HttpMethod::GET),m_version(version),m_close(close),m_path("/")
+		:m_method(HttpMethod::GET),m_version(version),m_is_close(close),m_path("/")
     {
 
     }
@@ -177,7 +177,7 @@ namespace HttpSpace
 			<< ((uint32_t)(m_version & 0x0F))
 			<< "\r\n";
 
-		os << "connection: " << (m_close ? "close" : "keep-alive") << "\r\n";
+		os << "connection: " << (m_is_close ? "close" : "keep-alive") << "\r\n";
 
 		//ÇëÇóÍ·²¿
 		for (auto& header : m_headers)
@@ -213,7 +213,7 @@ namespace HttpSpace
 
 	//class HttpResponse:public
 	HttpResponse::HttpResponse(const uint8_t version, const bool close)
-		:m_status(HttpStatus::OK), m_version(version), m_close(close) {}
+		:m_status(HttpStatus::OK), m_version(version), m_is_close(close) {}
 
 	void HttpResponse::setHeader(const string& key, const string& header)
 	{
@@ -260,7 +260,7 @@ namespace HttpSpace
 			}
 		}
 
-		os << "connection: " << (m_close ? "close" : "keep-alive") << "\r\n";
+		os << "connection: " << (m_is_close ? "close" : "keep-alive") << "\r\n";
 
 		if (!m_body.empty())
 		{
