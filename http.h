@@ -145,7 +145,7 @@ enum class HttpStatus
 
 
 HttpMethod StringToHttpMethod(const string& method);
-HttpMethod CharsTOHttpMethod(const char* method);
+HttpMethod CharsToHttpMethod(const char* method);
 const char* HttpMethodToString(const HttpMethod& method);
 const char* HttpStatusToString(const HttpStatus& status);
 
@@ -340,10 +340,5 @@ private:
     string m_reason;
     map<string, string, CaseInsensitiveLess> m_headers;
 };
-
-
-
-
-
 
 }

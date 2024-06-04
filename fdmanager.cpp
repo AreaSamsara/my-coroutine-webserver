@@ -73,6 +73,12 @@ namespace FdManagerSpace
 	//获取文件描述符对应的实体，并在该实体不存在且auto_create为true时创建之
 	shared_ptr<FileDescriptorEntity> FileDescriptorManager::getFile_descriptor(const int file_descriptor, const bool auto_create)
 	{
+		//如果文件描述符为-1（无效），直接返回nullptr
+		if (file_descriptor == -1)
+		{
+			return nullptr;
+		}
+
 		//先加互斥锁，保护m_file_descriptor_entities
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		//如果容器大小不足

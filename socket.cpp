@@ -351,7 +351,7 @@ namespace SocketSpace
 		return m_socket != -1;
 	}
 	//·µ»ØSocket´íÎó
-	int Socket::getError()
+	int Socket::getError() const
 	{
 		int error = 0;
 		socklen_t length = sizeof(error);
@@ -469,7 +469,7 @@ namespace SocketSpace
 	ostream& Socket::dump(ostream& os)const
 	{
 		os << "[Socket socket=" << m_socket
-			<< " is_connected" << m_is_connected
+			<< " is_connected=" << m_is_connected
 			<< " family=" << m_family
 			<< " type=" << m_type
 			<< " protocol=" << m_protocol;

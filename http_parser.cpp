@@ -10,14 +10,10 @@ namespace HttpSpace
     using namespace SingletonSpace;
 
 
-    static uint64_t s_http_request_buffer_size = 4 * 1024ull;
-    static uint64_t s_http_request_max_body_size = 64 * 1024 * 1024ull;
-
-
     void on_request_method(void* data, const char* at, size_t length)
     {
         HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
-        HttpMethod method = CharsTOHttpMethod(at);
+        HttpMethod method = CharsToHttpMethod(at);
 
         //如果是非法method，直接返回并发出警告
         if (method == HttpMethod::INVALID_METHOD)
@@ -65,7 +61,7 @@ namespace HttpSpace
         else
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-            log_event->getSstream() << "invalid http request version " << string(at, length);
+            log_event->getSstream() << "invalid http request version: " << string(at, length);
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
             parser->setError(1001);
             return;
@@ -84,7 +80,7 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
             log_event->getSstream() << "invalid http request field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
-            parser->setError(1002);
+            //parser->setError(1002);   //有时宁愿不报错也不要遗落信息
             return;
         }
         parser->getRequest()->setHeader(string(field, field_length), string(value, value_length));
@@ -125,7 +121,9 @@ namespace HttpSpace
         return m_request->getHeaderAs<uint64_t>("content-length", 0);
     }
 
-
+    //class HttpRequestParser:private static variable
+    uint64_t HttpRequestParser::s_http_request_buffer_size = 4 * 1024ull;
+    uint64_t HttpRequestParser::s_http_request_max_body_size = 64 * 1024 * 1024ull;
 
 
 
@@ -183,14 +181,14 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
             log_event->getSstream() << "invalid http response field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
-            parser->setError(1002);
+            //parser->setError(1002);   //有时宁愿不报错也不要遗落信息
             return;
         }
         parser->getResponse()->setHeader(string(field, field_length), string(value, value_length));
     }
 
     //class HttpResponseParser:public
-    HttpResponseParser::HttpResponseParser()
+    HttpResponseParser::HttpResponseParser():m_error(0)
     {
         m_response.reset(new HttpResponse);
         httpclient_parser_init(&m_parser);
@@ -203,8 +201,12 @@ namespace HttpSpace
         m_parser.http_field = on_response_http_field;
         m_parser.data = this;
     }
-    size_t HttpResponseParser::execute(char* data, size_t length)
+    size_t HttpResponseParser::execute(char* data, size_t length,const bool chunk)
     {
+        if (chunk)
+        {
+            httpclient_parser_init(&m_parser);
+        }
         size_t offset = httpclient_parser_execute(&m_parser, data, length, 0);
         memmove(data, data + offset, (length - offset));
         return offset;
@@ -222,4 +224,8 @@ namespace HttpSpace
     {
         return m_response->getHeaderAs<uint64_t>("content-length", 0);
     }
+
+    //class HttpResponseParser:private static variable
+    uint64_t HttpResponseParser::s_http_response_buffer_size = 4 * 1024ull;
+    uint64_t HttpResponseParser::s_http_response_max_body_size = 64 * 1024 * 1024ull;
 }

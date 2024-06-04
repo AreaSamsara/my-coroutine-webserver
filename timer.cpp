@@ -109,9 +109,6 @@ namespace TimerSpace
 	//刷新定时器的绝对执行时间
 	bool TimerManager::refreshExecute_time(const shared_ptr<Timer> timer)
 	{
-		////先监视互斥锁，保护
-		//WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-
 		auto callback = timer->getCallback();
 		//如果定时器的回调函数为空，刷新失败，返回false
 		if (!callback)

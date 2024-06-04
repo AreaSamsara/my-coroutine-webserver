@@ -96,7 +96,7 @@ namespace SocketSpace
 		//返回socket是否有效
 		bool isValid()const;
 		//返回Socket错误
-		int getError();
+		int getError() const;
 
 		//获取远端地址，并在首次调用时从系统读取之
 		shared_ptr<Address> getRemote_address();

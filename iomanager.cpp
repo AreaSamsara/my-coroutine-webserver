@@ -499,10 +499,10 @@ namespace IOManagerSpace
 					continue;
 				}
 
-				//文件描述符语境
-				FileDescriptorEvent* file_descriptor_context =(FileDescriptorEvent*)epollevent.data.ptr;
+				//文件描述符事件
+				FileDescriptorEvent* file_descriptor_event =(FileDescriptorEvent*)epollevent.data.ptr;
 				//先监视互斥锁，保护
-				ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
+				ScopedLock<Mutex> lock(file_descriptor_event->m_mutex);
 
 				//如果epoll事件发生错误且输出缓冲区已经准备好，则将epoll事件设置为输入就绪且输出就绪
 				/*if (epollevent.events & (EPOLLERR | EPOLLOUT))
@@ -511,7 +511,7 @@ namespace IOManagerSpace
 				}*/
 				if (epollevent.events & (EPOLLERR | EPOLLHUP)) 
 				{
-					epollevent.events |= (EPOLLIN | EPOLLOUT) & file_descriptor_context->m_registered_event_types;	//???
+					epollevent.events |= (EPOLLIN | EPOLLOUT) & file_descriptor_event->m_registered_event_types;	//???
 				}
 
 				//实际要执行的事件
@@ -526,13 +526,13 @@ namespace IOManagerSpace
 				}
 
 				//如果实际要执行的事件均未被文件描述符语境注册，结束本次循环
-				if ((file_descriptor_context->m_registered_event_types & real_events) == NONE)
+				if ((file_descriptor_event->m_registered_event_types & real_events) == NONE)
 				{
 					continue;
 				}
 
 				//文件描述符语境除实际要执行的事件以外，剩余的已注册事件
-				int left_events = (file_descriptor_context->m_registered_event_types & ~real_events);
+				int left_events = (file_descriptor_event->m_registered_event_types & ~real_events);
 
 				//操作码：如果剩余已注册事件事件不为空，则执行修改事件；否则执行删除事件
 				int operation_code = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
@@ -541,12 +541,12 @@ namespace IOManagerSpace
 
 
 				//控制epoll，成功返回0，失败返回-1；创建失败则报错并结束本次循环
-				int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_context->m_file_descriptor, &epollevent);
-				if (return_value)
+				int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_event->m_file_descriptor, &epollevent);
+				if (return_value!=0)
 				{
 					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
 					log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code
-						<< "," << file_descriptor_context->m_file_descriptor << "," << epollevent.events << "):"
+						<< "," << file_descriptor_event->m_file_descriptor << "," << epollevent.events << "):"
 						<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 					continue;
@@ -555,14 +555,14 @@ namespace IOManagerSpace
 				//根据实际要执行的READ事件，触发之
 				if (real_events & READ)
 				{
-					file_descriptor_context->triggerEvent(READ);
+					file_descriptor_event->triggerEvent(READ);
 					//当前等待执行的事件数量减一
 					--m_pending_event_count;
 				}
 				//根据实际要执行的WRITE事件，触发之
 				if (real_events & WRITE)
 				{
-					file_descriptor_context->triggerEvent(WRITE);
+					file_descriptor_event->triggerEvent(WRITE);
 					//当前等待执行的事件数量减一
 					--m_pending_event_count;
 				}

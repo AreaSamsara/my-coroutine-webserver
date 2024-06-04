@@ -16,7 +16,7 @@ namespace HttpSpace
 #undef XX
 		return HttpMethod::INVALID_METHOD;
 	}
-	HttpMethod CharsTOHttpMethod(const char* method)
+	HttpMethod CharsToHttpMethod(const char* method)
 	{
 #define XX(num, name, string) \
     if(strncmp(#string, method, strlen(#string)) == 0) { \
