@@ -70,10 +70,6 @@ namespace HookSpace
 			//否则如果返回值为-1且错误类型为资源暂时不可用，则进行异步操作
 			if (return_value == -1 && errno == EAGAIN)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-				log_event->getSstream() << "do_io<" << hook_function_name << ">";
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
-
 				//获取当前线程的IO管理者
 				IOManager* iomanager = IOManager::GetThis();
 				//定时器
@@ -126,16 +122,8 @@ namespace HookSpace
 				//否则添加成功
 				else
 				{
-					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-					log_event->getSstream() << "do_io<" << hook_function_name << ">";
-					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
-
 					//挂起当前协程，等待定时器唤醒或epoll处理事件（即socket已经可用）时被唤醒
 					Fiber::YieldToHold();
-
-					log_event->setSstream("");
-					log_event->getSstream() << "do_io<" << hook_function_name << ">";
-					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
 					//如果定时器不为空，取消之
 					if (timer)

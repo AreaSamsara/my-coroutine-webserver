@@ -573,6 +573,7 @@ namespace AddressSpace
 		m_address.sin6_port = htons(port);
 	}
 
+	//获取该地址的广播地址
 	shared_ptr<IPAddress> IPv6Address::broadcastAddress(const uint32_t prefix_len)
 	{
 		//将当前地址与prefix_len位掩码取或，得到广播地址
@@ -587,6 +588,8 @@ namespace AddressSpace
 
 		return shared_ptr<IPv6Address>(new IPv6Address(broadcast_address));
 	}
+
+	//获取该地址的网段
 	shared_ptr<IPAddress> IPv6Address::networdAddress(const uint32_t prefix_len)
 	{
 		//将当前地址与子网掩码（掩码的反码）取与，得到网段
@@ -601,6 +604,8 @@ namespace AddressSpace
 
 		return shared_ptr<IPv6Address>(new IPv6Address(netword_address));
 	}
+
+	//获取子网掩码地址
 	shared_ptr<IPAddress> IPv6Address::subnetMask(const uint32_t prefix_len)
 	{
 		//prefix_len位掩码的反码即为子网掩码

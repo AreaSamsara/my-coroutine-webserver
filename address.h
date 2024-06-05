@@ -27,6 +27,7 @@ namespace AddressSpace
 	* 2.也可以使用Address类的各种Lookup()方法（静态方法）通过字符串查找地址，
 	* 查找到以后Lookup()方法内部自动调用CreateAddress()创建对应的Address类及其派生类对象（此后还应当自行设置端口号）
 	*/
+
 	class Address;			//地址类（抽象基类）
 	class IPAddress;		//IP地址类（抽象基类），公有继承自Address类
 	class IPv4Address;		//IPv4地址类，公有继承自IPAddress类

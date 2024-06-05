@@ -21,6 +21,7 @@ namespace SocketSpace
 			m_is_connected = true;
 		}
 	}
+	//析构之前关闭socket
 	Socket::~Socket()
 	{
 		close();

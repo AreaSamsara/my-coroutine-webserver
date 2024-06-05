@@ -26,6 +26,7 @@ namespace ServletSpace
 		string m_name;
 	};
 
+
 	class FunctionServlet :public Servlet
 	{
 	public:
@@ -37,6 +38,7 @@ namespace ServletSpace
 		function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response,
 			shared_ptr<HttpSession> session)> m_callback;
 	};
+
 
 	class ServletDispatch :public Servlet
 	{

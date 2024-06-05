@@ -6,12 +6,21 @@
 
 namespace SocketSpace
 {
+	/*
+	* Socket类调用方法：
+	* 先用协议族、Socket类型、协议作为参数调用构造函数创建Socket对象，
+	* （1）如果是客户端Socket，则直接调用connect()方法连接到对应地址
+	* （2）如果是服务端Socket，需要先用bind()方法绑定到对应地址，再调用listen()方法进行监听，并调用accept()方法接受客户端socket
+	* 最后再调用send()系列和receive()系列方法进行交互
+	*/
+
 	using namespace AddressSpace;
 	using namespace NoncopyableSpace;
-	using std::enable_shared_from_this;
+	//using std::enable_shared_from_this;
 
 	//socket类，禁止复制
-	class Socket :public enable_shared_from_this<Socket>, private Noncopyable
+	//class Socket :public enable_shared_from_this<Socket>, private Noncopyable
+	class Socket : private Noncopyable
 	{
 	public:
 		//表示socket类型的枚举类型
@@ -29,6 +38,7 @@ namespace SocketSpace
 		};
 	public:
 		Socket(const FamilyType family, const SocketType type, const int protocol = 0);
+		//析构之前关闭socket
 		~Socket();
 
 		//获取发送超时时间
@@ -63,9 +73,9 @@ namespace SocketSpace
 		//绑定地址（在socket无效时创建新的socket文件描述符）
 		bool bind(const shared_ptr<Address> address);
 		//监听socket
-		bool listen(const int backlog = SOMAXCONN) const;
+		bool listen(const int backlog = SOMAXCONN)const;
 		//接收connect链接
-		shared_ptr<Socket> accept() const;
+		shared_ptr<Socket> accept()const;
 
 		//连接地址（在socket无效时创建新的socket文件描述符）
 		bool connect(const shared_ptr<Address> address, const uint64_t timeout = -1);
@@ -96,7 +106,7 @@ namespace SocketSpace
 		//返回socket是否有效
 		bool isValid()const;
 		//返回Socket错误
-		int getError() const;
+		int getError()const;
 
 		//获取远端地址，并在首次调用时从系统读取之
 		shared_ptr<Address> getRemote_address();
