@@ -51,7 +51,8 @@ namespace IOManagerSpace
 				case WRITE:
 					return m_write_task;
 				default:
-					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+					//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 					Assert(log_event, "getTask");
 				}
 			}

@@ -95,7 +95,7 @@ namespace SocketSpace
 		//如果socket协议族和要绑定的地址协议族不匹配(小概率事件)，报错并返回false
 		if (SYLAR_UNLIKELY(address->getFamily() != m_family))
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "bind family error,m_family=" << m_family << ") address_family("<<address->getFamily();
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -104,7 +104,7 @@ namespace SocketSpace
 		//调用全局bind()函数（成功则返回0），调用失败则报错并返回false
 		if (::bind(m_socket, address->getAddress(), address->getAddress_length()) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "bind error,errno=" << errno << " strerr = " << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -121,7 +121,7 @@ namespace SocketSpace
 		//如果socket无效（小概率事件），报错并返回false
 		if (SYLAR_UNLIKELY(!isValid()))
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "listen error,socket invalid";
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -129,7 +129,7 @@ namespace SocketSpace
 		//调用全局listen()函数（成功则返回0），调用失败则报错并返回false
 		if (::listen(m_socket, backlog) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "listen error,errno=" << errno << " strerr = " << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -149,7 +149,7 @@ namespace SocketSpace
 		//如果接收失败，报错并返回nullptr
 		if (new_socket == -1)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "accept(" << m_socket << ") errno=" << errno << " strerr=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return nullptr;
@@ -194,7 +194,7 @@ namespace SocketSpace
 		//如果socket协议族和要绑定的地址协议族不匹配(小概率事件)，报错并返回false
 		if (SYLAR_UNLIKELY(address->getFamily() != m_family))
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "connect family error,m_family=" << m_family << ") address_family(" << address->getFamily();
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -206,7 +206,7 @@ namespace SocketSpace
 			//调用全局connect()函数（成功返回0），调用失败则报错、关闭socket并返回false
 			if (::connect(m_socket, address->getAddress(), address->getAddress_length()) != 0)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "connect error,errno=" << errno << " strerr = " << strerror(errno);
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 				close();
@@ -219,7 +219,7 @@ namespace SocketSpace
 			//调用全局connect_with_timeout()函数（成功返回0），调用失败则报错、关闭socket并返回false
 			if (connect_with_timeout(m_socket, address->getAddress(), address->getAddress_length(), timeout))
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "connect_with_timeout error,errno=" << errno << " strerr = " << strerror(errno);
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 				close();
@@ -393,7 +393,7 @@ namespace SocketSpace
 		//调用getsockname()函数获取远端地址信息（成功返回0），调用失败则报错并返回未知地址
 		if (getpeername(m_socket, remote_address->getAddress(), &length) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "getpeername error,socket =" << m_socket << " errno=" << errno << " strerr = " << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return shared_ptr<Address>(new UnknownAddress(m_family));
@@ -445,7 +445,7 @@ namespace SocketSpace
 		//调用getsockname()函数获取本地地址信息（成功返回0），调用失败则报错并返回未知地址
 		if (getsockname(m_socket, local_address->getAddress(), &length) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "getsockname error,socket =" << m_socket << " errno=" << errno << " strerr = " << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return shared_ptr<Address>(new UnknownAddress(m_family));
@@ -540,7 +540,8 @@ namespace SocketSpace
 		//否则报错
 		else
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "socket(" << m_family << ", "<<m_type << ", "<< m_protocol 
 				<< ") errno=" << errno << " strerr=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);

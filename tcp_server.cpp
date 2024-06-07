@@ -38,7 +38,8 @@ namespace TcpServerSpace
 			shared_ptr<Socket> socket(new Socket((Socket::FamilyType)address->getFamily(), Socket::SocketType::TCP, 0));
 			if (!socket->bind(address))
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "bind fail,errno=" << errno << " strerror=" << strerror(errno)
 					<< " address=[" << address->toString() << "]";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -48,7 +49,8 @@ namespace TcpServerSpace
 			}
 			if (!socket->listen())
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "listen fail,errno=" << errno << " strerror=" << strerror(errno)
 					<< " address=[" << address->toString() << "]";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -65,7 +67,8 @@ namespace TcpServerSpace
 		}
 		for (auto& socket : m_sockets)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "server bind success: " << socket;
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 		}
@@ -84,7 +87,7 @@ namespace TcpServerSpace
 			}
 			else
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "accept errno=" << errno << " strerror=" << strerror(errno);
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			}
@@ -124,7 +127,8 @@ namespace TcpServerSpace
 	//class TcpServer:protected
 	void TcpServer::handleClient(shared_ptr<Socket> client_socket)
 	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "handleClient: " << client_socket;
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 	}

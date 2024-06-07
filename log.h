@@ -72,14 +72,14 @@ namespace LogSpace
 	};
 
 
-
 	//日志事件
 	class LogEvent
 	{
 	public:
-		LogEvent(const string& filename, const int32_t line,const pid_t thread_id, 
+		/*LogEvent(const string& filename, const int32_t line,const pid_t thread_id,
 			const string& thread_name,const uint32_t fiber_id,const uint32_t elapse,
-			const uint64_t time);
+			const uint64_t time);*/
+		LogEvent(const string& filename, const int32_t line);
 
 		//设置stringstream
 		void setSstream(const string& str);

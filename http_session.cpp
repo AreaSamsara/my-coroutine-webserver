@@ -30,7 +30,7 @@ namespace HttpSessionSpace
 			int length = read(data + offset, buffer_size - offset);
 			if (length <= 0)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "length <= 0";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
@@ -42,7 +42,7 @@ namespace HttpSessionSpace
 			int parser_length = parser->execute(data, length);
 			if (parser->hasError())
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "parser->hasError()";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
@@ -54,7 +54,7 @@ namespace HttpSessionSpace
 
 			if (offset == buffer_size)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "offset == buffer_size";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 

@@ -15,8 +15,8 @@ namespace SchedulerSpace
 		//线程数应该为正数，否则报错
 		if (thread_count <= 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			Assert(log_event);
 		}
 
 		//如果使用调用者线程
@@ -46,8 +46,8 @@ namespace SchedulerSpace
 		//既然要析构调度器，那调度器应该处于停止状态，否则报错
 		if (!m_is_stopped)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			Assert(event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			Assert(log_event);
 		}
 		//如果线程的当前调度器为本调度器，将其置空
 		if (GetThis() == this)
@@ -73,7 +73,7 @@ namespace SchedulerSpace
 		//线程池在调度前应为空，否则报错
 		if (!m_threads.empty())
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -91,10 +91,10 @@ namespace SchedulerSpace
 	//停止调度器
 	void Scheduler::stop()
 	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		event->getSstream() << "stop";
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+		log_event->getSstream() << "stop";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
 		//对于线程池的每个线程都tickle()一下
 		for (size_t i = 0; i < m_thread_count; ++i)
@@ -170,10 +170,10 @@ namespace SchedulerSpace
 	//调度器分配给线程池内线程的回调函数
 	void Scheduler::run()
 	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		event->getSstream() << "run";
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+		log_event->getSstream() << "run";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
 		
 		//set_hook_enable(true);
@@ -233,8 +233,8 @@ namespace SchedulerSpace
 					//至此说明该任务由本线程负责，则该任务应包含协程对象，否则报错
 					if (!iterator->m_fiber)
 					{
-						shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-						Assert(event);
+						shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+						Assert(log_event);
 					}
 
 					//如果该任务包含的协程对象处于执行状态，则不做这个任务
@@ -300,10 +300,10 @@ namespace SchedulerSpace
 					//如果空闲协程也已经处于终止状态，则所有任务都完成了，退出循环
 					if (idle_fiber->getState() == Fiber::TERMINAL)
 					{
-						shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-						event->getSstream() << "idle_fiber terminated";
+						shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+						log_event->getSstream() << "idle_fiber terminated";
 						//使用LoggerManager单例的默认logger输出日志
-						Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+						Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
 						//如果这个线程是调用者线程，则在退出循环之前应将调度器主协程设为调用者线程的主协程，否则调用者线程的Scheduler::run()协程将无法正常返回
 						if (GetThread_id() == m_caller_thread_id)
@@ -348,10 +348,10 @@ namespace SchedulerSpace
 	//空闲协程的回调函数
 	void Scheduler::idle()
 	{
-		shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-		event->getSstream() << "idle";
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+		log_event->getSstream() << "idle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
 
 		//在竣工之前不终止空闲协程而是将其挂起
 		while (!isCompleted())
@@ -363,7 +363,7 @@ namespace SchedulerSpace
 	//通知调度器有任务了
 	void Scheduler::tickle()
 	{
-		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "tickle";
 		//使用LoggerManager单例的默认logger输出日志
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);

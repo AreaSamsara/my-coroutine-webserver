@@ -63,9 +63,9 @@ namespace UtilitySpace
 		char** strings = backtrace_symbols(array, s);
 		if (strings == NULL)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << " backtrace_symbols error ";
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << " backtrace_symbols error ";
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return;
 		}
 

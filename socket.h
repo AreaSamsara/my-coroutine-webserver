@@ -16,10 +16,8 @@ namespace SocketSpace
 
 	using namespace AddressSpace;
 	using namespace NoncopyableSpace;
-	//using std::enable_shared_from_this;
 
-	//socket类，禁止复制
-	//class Socket :public enable_shared_from_this<Socket>, private Noncopyable
+	//socket类，禁止复制e
 	class Socket : private Noncopyable
 	{
 	public:

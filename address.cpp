@@ -165,7 +165,7 @@ namespace AddressSpace
 		//如果解析失败，报错并返回false
 		if (error != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "Address::Lookup getaddrinfo(" << host << ", " << family << ", " << type
 				<< ") error=" << error << " strerror=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -225,9 +225,9 @@ namespace AddressSpace
 		ifaddrs* next=NULL,*results=NULL;
 		if (getifaddrs(&results) != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "Address::GetInterfaceAddresses getifaddrs" << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << "Address::GetInterfaceAddresses getifaddrs" << " strerror=" << strerror(errno);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
 		}
 
@@ -273,9 +273,9 @@ namespace AddressSpace
 		}
 		catch (...)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "Address::GetInterfaceAddresses exception" << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << "Address::GetInterfaceAddresses exception" << " strerror=" << strerror(errno);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 
 			freeifaddrs(results);
 			return false;
@@ -341,10 +341,10 @@ namespace AddressSpace
 		//如果解析失败，报错并返回nullptr
 		if (error != 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "IPAddress::Create(" << address << ", " << port
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << "IPAddress::Create(" << address << ", " << port
 				<< ") errno=" << errno << " strerror=" << strerror(error);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return nullptr;
 		}
 
@@ -395,10 +395,10 @@ namespace AddressSpace
 		//如果inet_pton()调用失败则报错
 		if (return_value <= 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << return_value
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << return_value
 				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 		}
 	}
 
@@ -512,10 +512,10 @@ namespace AddressSpace
 		//如果inet_pton()调用失败则报错
 		if (return_value <= 0)
 		{
-			shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
-			event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << return_value
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			log_event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << return_value
 				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 		}
 	}
 

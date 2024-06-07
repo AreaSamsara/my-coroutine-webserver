@@ -514,7 +514,7 @@ namespace ByteArraySpace
 		//如果文件打开失败，报错并返回false
 		if (!fout.is_open())
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "writeToFile name=" << filename << "error,errno=" << errno << " strerror=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;
@@ -556,7 +556,7 @@ namespace ByteArraySpace
 		//如果文件打开失败，报错并返回false
 		if (!fin.is_open())
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "readFromFile name=" << filename << "error,errno=" << errno << " strerror=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			return false;

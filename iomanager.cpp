@@ -10,7 +10,8 @@ namespace IOManagerSpace
 		//要触发的事件应为已注册事件，否则报错
 		if (!(m_registered_event_types & event_type))
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -35,7 +36,8 @@ namespace IOManagerSpace
 		//若epoll_create()创建成功，m_epoll_file_descriptor应当大于0，否则报错
 		if (m_epoll_file_descriptor <= 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -43,7 +45,8 @@ namespace IOManagerSpace
 		//pipe()创建管道，成功返回0，失败返回-1；创建失败则报错
 		if (pipe(m_pipe_file_descriptors) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -59,14 +62,16 @@ namespace IOManagerSpace
 		//将通信管道的读取端设置为非阻塞模式，成功返回0，失败返回-1；失败则报错
 		if (fcntl(m_pipe_file_descriptors[0], F_SETFL, O_NONBLOCK) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 		
 		//将通信管道的读取端的event事件添加到epoll文件描述符中，成功返回0，失败返回-1；失败则报错
 		if (epoll_ctl(m_epoll_file_descriptor, EPOLL_CTL_ADD, m_pipe_file_descriptors[0], &epollevent) != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -119,7 +124,8 @@ namespace IOManagerSpace
 		//要加入的事件不应是已被文件描述符注册的事件，否则报错
 		if (file_descriptor_event->m_registered_event_types & event_type)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			stringstream message_sstream;
 			message_sstream << "addEvent error,file_descriptor=" << file_descriptor <<
 				" event_type=" << event_type << " file_descriptor_event.m_registered_event_types=" << file_descriptor_event->m_registered_event_types;
@@ -142,7 +148,8 @@ namespace IOManagerSpace
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -171,7 +178,8 @@ namespace IOManagerSpace
 			file_descriptor_task.m_fiber = Fiber::GetThis();
 			if (file_descriptor_task.m_fiber->getState() != Fiber::EXECUTE)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				Assert(log_event);
 			}
 		}
@@ -222,7 +230,8 @@ namespace IOManagerSpace
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -292,7 +301,8 @@ namespace IOManagerSpace
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -351,7 +361,8 @@ namespace IOManagerSpace
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
@@ -376,7 +387,8 @@ namespace IOManagerSpace
 		//触发结束后已注册事件应为空，否则报错
 		if (file_descriptor_context->m_registered_event_types != 0)
 		{
-			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
@@ -408,7 +420,8 @@ namespace IOManagerSpace
 			//如果write()失败则报错
 			if (return_value != 1)
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				Assert(log_event);
 			}
 		}
@@ -433,7 +446,8 @@ namespace IOManagerSpace
 			//如果已经竣工，则退出idle协程的轮询循环，结束idle协程
 			if (isCompleted())
 			{
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "name=" << getName() << " idle exit";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 				break;
@@ -544,7 +558,8 @@ namespace IOManagerSpace
 				int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_event->m_file_descriptor, &epollevent);
 				if (return_value!=0)
 				{
-					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+					//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
+					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 					log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code
 						<< "," << file_descriptor_event->m_file_descriptor << "," << epollevent.events << "):"
 						<< return_value << " (" << errno << ") (" << strerror(errno) << ")";

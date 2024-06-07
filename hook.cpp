@@ -108,7 +108,7 @@ namespace HookSpace
 				//如果添加失败，报错并返回-1
 				if (return_value == false)
 				{
-					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 					log_event->getSstream() << hook_function_name << " addEvent(" << fd << ", " << event << ")";
 					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 
@@ -392,7 +392,7 @@ extern "C"
 					iomanager->getTimer_manager()->cancelTimer(timer);
 				}
 
-				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__, GetThread_id(), GetThread_name(), GetFiber_id(), 0, time(0)));
+				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "connect addEvent(" << sockfd << ", WRITE)";
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
 			}

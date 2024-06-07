@@ -4,6 +4,8 @@
 
 namespace LogSpace
 {
+	using namespace UtilitySpace;
+
 	//class LogLevel:static public
 	//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
 	const string LogLevel::toString(const Level level)
@@ -33,11 +35,12 @@ namespace LogSpace
 
 
 	//class LogEvent:public
-	LogEvent::LogEvent(const string& filename, const int32_t line, const pid_t thread_id,
-		const string& thread_name, const uint32_t fiber_id, const uint32_t elapse,
-		const uint64_t time)
+	/*LogEvent::LogEvent(const string& filename, const int32_t line)
 		:m_filename(filename), m_line(line), m_thread_id(thread_id),
-		m_thread_name(thread_name), m_fiber_id(fiber_id), m_elapse(elapse), m_time(time){}
+		m_thread_name(thread_name), m_fiber_id(fiber_id), m_elapse(elapse), m_time(time){}*/
+	LogEvent::LogEvent(const string& filename, const int32_t line)
+		:m_filename(filename), m_line(line), m_thread_id(GetThread_id()),m_thread_name(GetThread_name()),
+		m_fiber_id(GetFiber_id()), m_elapse(0), m_time(time(0)) {}
 
 	//设置stringstream
 	void LogEvent::setSstream(const string& str)
