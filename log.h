@@ -43,7 +43,7 @@ namespace LogSpace
 	* 1.先创建LogEvent对象并用setSstream()等方法添加日志事件内容，
 	* 2.再创建Logger、LoggerAppender对象，需要时再创建LogFormatter对象，
 	* 3.然后调用Logger对象的addAppender()方法添加LogAppender对象到Logger对象内部，
-	* （如果使用LoggerManager，第三第四步可以省略）
+	* （如果使用LoggerManager，第二、三步可以省略）
 	* 4.最后Logger对象以LogEvent对象为参数调用log()方法输出日志
 	*/
 	class LogLevel;			//日志级别
@@ -76,9 +76,6 @@ namespace LogSpace
 	class LogEvent
 	{
 	public:
-		/*LogEvent(const string& filename, const int32_t line,const pid_t thread_id,
-			const string& thread_name,const uint32_t fiber_id,const uint32_t elapse,
-			const uint64_t time);*/
 		LogEvent(const string& filename, const int32_t line);
 
 		//设置stringstream
@@ -230,7 +227,7 @@ namespace LogSpace
 		void initialize();
 
 		//输出单段被解析的日志（const string& format为花括号中的内容）
-		string write_piece(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event,const string& mode="",const string& format="");
+		string write_piece(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event, const string& mode = "", const string& format = "");
 	private:
 		string m_pattern;	//日志的模式，由Logger类初始化
 		vector<pair<string,string>> m_modes_and_formats;	//被解析的单段日志模式集合,前者为解析'%'得到的模式，后者为'{}'内的内容

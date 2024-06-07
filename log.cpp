@@ -35,9 +35,6 @@ namespace LogSpace
 
 
 	//class LogEvent:public
-	/*LogEvent::LogEvent(const string& filename, const int32_t line)
-		:m_filename(filename), m_line(line), m_thread_id(thread_id),
-		m_thread_name(thread_name), m_fiber_id(fiber_id), m_elapse(elapse), m_time(time){}*/
 	LogEvent::LogEvent(const string& filename, const int32_t line)
 		:m_filename(filename), m_line(line), m_thread_id(GetThread_id()),m_thread_name(GetThread_name()),
 		m_fiber_id(GetFiber_id()), m_elapse(0), m_time(time(0)) {}
@@ -247,7 +244,7 @@ namespace LogSpace
 	{
 		string str;
 		//将解析完毕的日志模式写入
-		for (auto x : m_modes_and_formats)	//被解析的单段日志模式集合,前者为解析'%'得到的模式，后者为'{}'内的内容
+		for (auto& x : m_modes_and_formats)	//被解析的单段日志模式集合,前者为解析'%'得到的模式，后者为'{}'内的内容
 		{
 			str += write_piece(logger_name, level, event, x.first, x.second);
 		}
@@ -301,8 +298,8 @@ namespace LogSpace
 
 					//设置初始解析阶段
 					Status format_status = WAIT_FOR_OPEN_BRACE;
-					int str_inbrace_begin = 0, mode_begin = i + 1;	//str_inbrace_begin待定，mode_begin从'%'的下一个位置开始
-					string mode("%"), str_inbrace;
+					int str_in_brace_begin = 0, mode_begin = i + 1;		//str_inbrace_begin待定，mode_begin从'%'的下一个位置开始
+					string mode("%"), str_in_brace;
 
 					//逐个解析'%'后面的字符
 					for (; i + 1 < m_pattern.size();++i)
@@ -320,7 +317,7 @@ namespace LogSpace
 							{
 								//切换状态
 								format_status = WAIT_FOR_CLOSE_BRACE;
-								str_inbrace_begin = i + 2;		//str_inbrace_begin定为'{'的下一个位置，即i+2
+								str_in_brace_begin = i + 2;		//str_inbrace_begin定为'{'的下一个位置，即i+2
 							}
 							//否则直接结束循环
 							else
@@ -334,7 +331,9 @@ namespace LogSpace
 							//遇到'}'切换状态并结束循环
 							format_status = WAIT_FOR_NOTHING;
 							//把'{}'内的字符串写入str_inbrace
-							str_inbrace = m_pattern.substr(str_inbrace_begin, i + 1 - str_inbrace_begin);	
+							str_in_brace = m_pattern.substr(str_in_brace_begin, i + 1 - str_in_brace_begin);
+							//移动一位防止'}'也被写入
+							++i;
 							break;
 						}
 					}
@@ -361,7 +360,7 @@ namespace LogSpace
 						if (!mode.empty())
 						{
 							//把mode和str_inbrace一起写入日志模式集合
-							m_modes_and_formats.push_back(make_pair(mode, str_inbrace));
+							m_modes_and_formats.push_back(make_pair(mode, str_in_brace));
 						}
 					}
 				}
@@ -488,8 +487,9 @@ namespace LogSpace
 		m_default_logger->addAppender(shared_ptr<LogAppender>(new StdoutLogAppender));
 
 		//添加默认FileLogAppender
-		shared_ptr<FileLogAppender> file_appender(new FileLogAppender);
-		m_default_logger->addAppender(file_appender);
+		/*shared_ptr<FileLogAppender> file_appender(new FileLogAppender);
+		m_default_logger->addAppender(file_appender);*/
+		m_default_logger->addAppender(shared_ptr<LogAppender>(new FileLogAppender));
 	}
 
 	//按logger_name获取logger
