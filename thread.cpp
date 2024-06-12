@@ -21,7 +21,7 @@ namespace ThreadSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "pthread_create thread fail, return_value=" << return_value << " name=" << name;
 			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 
 			throw logic_error("pthread_create error");
 		}
@@ -55,7 +55,7 @@ namespace ThreadSpace
 				log_event->getSstream() << "pthread_join thread fail, return_value=" << return_value << " name=" << m_name;
 				throw logic_error("pthread_join error");
 				//使用LoggerManager单例的默认logger输出日志
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			}
 
 			//线程已执行完毕，重置m_thread为0

@@ -24,20 +24,20 @@ namespace AddressSpace
 	using std::dynamic_pointer_cast;
 
 	//class Address:public
-	//½«µØÖ·×ª»¯Îª×Ö·û´®
+	//å°†åœ°å€è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
 	string Address::toString() const
 	{
 		stringstream ss;
-		//ÏÈ»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·£¨Êä³öÁ÷£©£¬ÔÙ½«Æä×ª»¯Îªstring¶ÔÏó
+		//å…ˆè·å–å¯è¯»æ€§è¾“å‡ºåœ°å€ï¼ˆè¾“å‡ºæµï¼‰ï¼Œå†å°†å…¶è½¬åŒ–ä¸ºstringå¯¹è±¡
 		getAddress_ostream(ss);
 		return ss.str();
 	}
 
 	bool Address::operator<(const Address& right_address)const
 	{
-		//È¡¶şÕßµÄ½ÏĞ¡³¤¶È×÷ÎªmemcmpµÄ³¤¶È
+		//å–äºŒè€…çš„è¾ƒå°é•¿åº¦ä½œä¸ºmemcmpçš„é•¿åº¦
 		socklen_t minlength = min(getAddress_length(), right_address.getAddress_length());
-		//ÏÈ±È½ÏÄÚ´æÖĞÊı¾İµÄ´óĞ¡
+		//å…ˆæ¯”è¾ƒå†…å­˜ä¸­æ•°æ®çš„å¤§å°
 		int result = memcmp(getAddress(), right_address.getAddress(), minlength);
 		if (result < 0)
 		{
@@ -47,7 +47,7 @@ namespace AddressSpace
 		{
 			return false;
 		}
-		//ÈôÄÚ´æÖĞÊı¾İµÄ´óĞ¡ÏàµÈ£¬ÔÙ±È½ÏµØÖ·³¤¶È
+		//è‹¥å†…å­˜ä¸­æ•°æ®çš„å¤§å°ç›¸ç­‰ï¼Œå†æ¯”è¾ƒåœ°å€é•¿åº¦
 		else if (getAddress_length() < right_address.getAddress_length())
 		{
 			return true;
@@ -59,7 +59,7 @@ namespace AddressSpace
 	}
 	bool Address::operator==(const Address& right_address)const
 	{
-		//µ±ÇÒ½öµ±ÄÚ´æÖĞÊı¾İµÄ´óĞ¡ÏàµÈÇÒµØÖ·³¤¶ÈÏàµÈÊ±·µ»Øtrue
+		//å½“ä¸”ä»…å½“å†…å­˜ä¸­æ•°æ®çš„å¤§å°ç›¸ç­‰ä¸”åœ°å€é•¿åº¦ç›¸ç­‰æ—¶è¿”å›true
 		return getAddress_length() == right_address.getAddress_length()
 			&& memcmp(getAddress(), right_address.getAddress(), getAddress_length()) == 0;
 	}
@@ -70,17 +70,17 @@ namespace AddressSpace
 
 
 	//class Address:public static
-	//ÓÃsockaddrÖ¸Õë´´½¨Address¶ÔÏó
+	//ç”¨sockaddræŒ‡é’ˆåˆ›å»ºAddresså¯¹è±¡
 	shared_ptr<Address> Address::CreateAddress(const sockaddr* address, socklen_t addrlen)
 	{
-		//Èç¹ûsockaddrÖ¸ÕëÎª¿Õ£¬Ö±½Ó·µ»Ønullptr
+		//å¦‚æœsockaddræŒ‡é’ˆä¸ºç©ºï¼Œç›´æ¥è¿”å›nullptr
 		if (address == nullptr)
 		{
 			return nullptr;
 		}
 
 		shared_ptr<Address> result;
-		//¸ù¾İaddressµÄĞ­Òé×åµ÷ÓÃ¶ÔÓ¦µÄ¹¹Ôìº¯Êı´´½¨Address¶ÔÏó
+		//æ ¹æ®addressçš„åè®®æ—è°ƒç”¨å¯¹åº”çš„æ„é€ å‡½æ•°åˆ›å»ºAddresså¯¹è±¡
 		switch (address->sa_family)
 		{
 		case AF_INET:
@@ -97,10 +97,10 @@ namespace AddressSpace
 	}
 
 
-	//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄËùÓĞAddress(·ÅÈë´«ÈëµÄÈİÆ÷ÖĞ)
+	//é€šè¿‡hoståœ°å€è¿”å›ç¬¦åˆæ¡ä»¶çš„æ‰€æœ‰Address(æ”¾å…¥ä¼ å…¥çš„å®¹å™¨ä¸­)
 	bool Address::Lookup(vector<shared_ptr<Address>>& addresses, const string& host, int family, int type, int protocol)
 	{
-		//ÉèÖÃËÑË÷Ìõ¼ş
+		//è®¾ç½®æœç´¢æ¡ä»¶
 		addrinfo hints;
 		hints.ai_flags = 0;
 		hints.ai_family = family;
@@ -110,49 +110,49 @@ namespace AddressSpace
 		hints.ai_canonname = NULL;
 		hints.ai_addr = NULL;
 
-		//ËÑË÷½á¹û
+		//æœç´¢ç»“æœ
 		addrinfo* results = NULL;
-		//µØÖ·×Ö·û´®£¨²»°üÀ¨ÖĞÀ¨ºÅ£©
+		//åœ°å€å­—ç¬¦ä¸²ï¼ˆä¸åŒ…æ‹¬ä¸­æ‹¬å·ï¼‰
 		string address_str;
-		//¶Ë¿ÚºÅ×Ö·ûÖ¸Õë
+		//ç«¯å£å·å­—ç¬¦æŒ‡é’ˆ
 		const char* port_char_ptr = NULL;
 
-		//Èç¹ûhostµØÖ·²»Îª¿ÕÇÒÒÔ'['¿ªÍ·£¬ËµÃ÷ÆäÎªĞ¯´øÖĞÀ¨ºÅµÄIPv6µØÖ·£¬¼ì²é¸Ãipv6µØÖ·ÊÇ·ñĞ¯´ø¶Ë¿ÚºÅ
+		//å¦‚æœhoståœ°å€ä¸ä¸ºç©ºä¸”ä»¥'['å¼€å¤´ï¼Œè¯´æ˜å…¶ä¸ºæºå¸¦ä¸­æ‹¬å·çš„IPv6åœ°å€ï¼Œæ£€æŸ¥è¯¥ipv6åœ°å€æ˜¯å¦æºå¸¦ç«¯å£å·
 		if (!host.empty() && host[0] == '[')
 		{
-			//²éÕÒhostµØÖ·×Ö·û´®ÖĞ']'µÚÒ»´Î³öÏÖµÄÎ»ÖÃ£¬¼´ÎªIPv6µØÖ·£¨²»°üº¬¶Ë¿ÚºÅ£©µÄÄ©Î²
+			//æŸ¥æ‰¾hoståœ°å€å­—ç¬¦ä¸²ä¸­']'ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½®ï¼Œå³ä¸ºIPv6åœ°å€ï¼ˆä¸åŒ…å«ç«¯å£å·ï¼‰çš„æœ«å°¾
 			const char* end_ipv6 = (const char*)memchr(host.c_str() + 1, ']', host.size() - 1);
-			//Èç¹û²éÕÒ³É¹¦
+			//å¦‚æœæŸ¥æ‰¾æˆåŠŸ
 			if (end_ipv6)
 			{
-				//Èç¹ûµØÖ·Ä©Î²µÄÏÂÒ»¸ö×Ö·ûÎª':'ËµÃ÷¸ÃhostµØÖ·Ğ¯´øÁË¶Ë¿ÚºÅ£¬¶ÁÈ¡Ö®
+				//å¦‚æœåœ°å€æœ«å°¾çš„ä¸‹ä¸€ä¸ªå­—ç¬¦ä¸º':'è¯´æ˜è¯¥hoståœ°å€æºå¸¦äº†ç«¯å£å·ï¼Œè¯»å–ä¹‹
 				if (*(end_ipv6 + 1) == ':')
 				{
 					port_char_ptr = end_ipv6 + 2;
 				}
-				//½«µØÖ·ÉèÖÃÎªÖĞÀ¨ºÅÒÔÄÚµÄ²¿·Ö
+				//å°†åœ°å€è®¾ç½®ä¸ºä¸­æ‹¬å·ä»¥å†…çš„éƒ¨åˆ†
 				address_str = host.substr(1, end_ipv6 - host.c_str() - 1);
 			}
 		}
 
-		//Èç¹ûµØÖ·×Ö·û´®ÈÔÎª¿Õ£¬ËµÃ÷Æä²»Ğ¯´øÖĞÀ¨ºÅ
+		//å¦‚æœåœ°å€å­—ç¬¦ä¸²ä»ä¸ºç©ºï¼Œè¯´æ˜å…¶ä¸æºå¸¦ä¸­æ‹¬å·
 		if (address_str.empty())
 		{
-			//²éÕÒhostµØÖ·×Ö·û´®ÖĞ':'µÚÒ»´Î³öÏÖµÄÎ»ÖÃ£¬¼´Îª¶Ë¿ÚºÅ×Ö·ûÖ¸ÕëµÄÇ°Ò»¸öÎ»ÖÃ
+			//æŸ¥æ‰¾hoståœ°å€å­—ç¬¦ä¸²ä¸­':'ç¬¬ä¸€æ¬¡å‡ºç°çš„ä½ç½®ï¼Œå³ä¸ºç«¯å£å·å­—ç¬¦æŒ‡é’ˆçš„å‰ä¸€ä¸ªä½ç½®
 			port_char_ptr = (const char*)memchr(host.c_str(), ':', host.size());
-			//Èç¹û²éÕÒ³É¹¦£¬ËµÃ÷¸ÃhostµØÖ·°üº¬¶Ë¿ÚºÅ
+			//å¦‚æœæŸ¥æ‰¾æˆåŠŸï¼Œè¯´æ˜è¯¥hoståœ°å€åŒ…å«ç«¯å£å·
 			if (port_char_ptr)
 			{
-				//Èç¹ûÔÚ½ÓÏÂÀ´µÄ²¿·ÖÖĞ²»ÔÙÓĞ':'£¬ËµÃ÷¿ÉÒÔÉèÖÃµØÖ·ºÍ¶Ë¿ÚºÅ×Ö·ûÖ¸Õë£¨£¿£¿£¿£©
+				//å¦‚æœåœ¨æ¥ä¸‹æ¥çš„éƒ¨åˆ†ä¸­ä¸å†æœ‰':'ï¼Œè¯´æ˜å¯ä»¥è®¾ç½®åœ°å€å’Œç«¯å£å·å­—ç¬¦æŒ‡é’ˆï¼ˆï¼Ÿï¼Ÿï¼Ÿï¼‰
 				if (!memchr(port_char_ptr + 1, ':', host.c_str() + host.size() - port_char_ptr - 1))
 				{
-					//½«µØÖ·ÉèÖÃÎª':'Ö®Ç°µÄ²¿·Ö
+					//å°†åœ°å€è®¾ç½®ä¸º':'ä¹‹å‰çš„éƒ¨åˆ†
 					address_str = host.substr(0, port_char_ptr - host.c_str());
-					//½«¶Ë¿ÚºÅ×Ö·ûÖ¸ÕëÒÆ¶¯Ò»Î»£¬Ê¹ÆäÖ¸ÏòÕıÈ·µÄÎ»ÖÃ
+					//å°†ç«¯å£å·å­—ç¬¦æŒ‡é’ˆç§»åŠ¨ä¸€ä½ï¼Œä½¿å…¶æŒ‡å‘æ­£ç¡®çš„ä½ç½®
 					++port_char_ptr;
 				}
 			}
-			//·ñÔòËµÃ÷¸ÃhostµØÖ·²»Ğ¯´ø¶Ë¿ÚºÅ£¬Ö±½Ó½«µØÖ·ÉèÖÃÎªhostµØÖ·£¨´ËÊ±¶Ë¿ÚºÅ×Ö·ûÖ¸ÕëÎªÄ¬ÈÏÖµNULL£¬getaddrinfo()º¯ÊıµÄËÑË÷½«²»¿¼ÂÇ¶Ë¿ÚºÅ£©
+			//å¦åˆ™è¯´æ˜è¯¥hoståœ°å€ä¸æºå¸¦ç«¯å£å·ï¼Œç›´æ¥å°†åœ°å€è®¾ç½®ä¸ºhoståœ°å€ï¼ˆæ­¤æ—¶ç«¯å£å·å­—ç¬¦æŒ‡é’ˆä¸ºé»˜è®¤å€¼NULLï¼Œgetaddrinfo()å‡½æ•°çš„æœç´¢å°†ä¸è€ƒè™‘ç«¯å£å·ï¼‰
 			else
 			{
 				address_str = host;
@@ -160,19 +160,19 @@ namespace AddressSpace
 		}
 
 
-		//µ÷ÓÃgetaddrinfo()º¯Êı³¢ÊÔ½âÎöaddressµÄĞÅÏ¢£¨³É¹¦·µ»Ø0£©
+		//è°ƒç”¨getaddrinfo()å‡½æ•°å°è¯•è§£æaddressçš„ä¿¡æ¯ï¼ˆæˆåŠŸè¿”å›0ï¼‰
 		int error = getaddrinfo(address_str.c_str(), port_char_ptr, &hints, &results);
-		//Èç¹û½âÎöÊ§°Ü£¬±¨´í²¢·µ»Øfalse
+		//å¦‚æœè§£æå¤±è´¥ï¼ŒæŠ¥é”™å¹¶è¿”å›false
 		if (error != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "Address::Lookup getaddrinfo(" << host << ", " << family << ", " << type
 				<< ") error=" << error << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
-		//ÓÃËÑË÷½á¹û´´½¨Address¶ÔÏó£¬²¢ÒÀ´Î·ÅÈëaddressesÖĞ
+		//ç”¨æœç´¢ç»“æœåˆ›å»ºAddresså¯¹è±¡ï¼Œå¹¶ä¾æ¬¡æ”¾å…¥addressesä¸­
 		addrinfo* next_result = results;
 		while (next_result)
 		{
@@ -180,29 +180,29 @@ namespace AddressSpace
 			next_result = next_result->ai_next;
 		}
 
-		//ÇåÀíµØÖ·ĞÅÏ¢½á¹¹Ìå
+		//æ¸…ç†åœ°å€ä¿¡æ¯ç»“æ„ä½“
 		freeaddrinfo(results);
 		return true;
 	}
 
-	//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄÈÎÒ»Address
+	//é€šè¿‡hoståœ°å€è¿”å›ç¬¦åˆæ¡ä»¶çš„ä»»ä¸€Address
 	shared_ptr<Address> Address::LookupAny(const string& host, int family,int type, int protocol)
 	{
 		vector<shared_ptr<Address>> addresses;
-		//µ÷ÓÃLookup()·½·¨£¬Èç¹û³É¹¦Ôò·µ»Ø»ñÈ¡µÄµÚÒ»¸öAddress
+		//è°ƒç”¨Lookup()æ–¹æ³•ï¼Œå¦‚æœæˆåŠŸåˆ™è¿”å›è·å–çš„ç¬¬ä¸€ä¸ªAddress
 		if (Lookup(addresses, host, family, type, protocol))
 		{
 			return addresses[0];
 		}
-		//·ñÔò·µ»Ønullptr
+		//å¦åˆ™è¿”å›nullptr
 		return nullptr;
 	}
 
-	//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄÈÎÒ»IPAddress
+	//é€šè¿‡hoståœ°å€è¿”å›ç¬¦åˆæ¡ä»¶çš„ä»»ä¸€IPAddress
 	shared_ptr<IPAddress> Address::LookupAnyIPAddress(const string& host, int family ,int type, int protocol)
 	{
 		vector<shared_ptr<Address>> addresses;
-		//µ÷ÓÃLookup()·½·¨£¬Èç¹û³É¹¦Ôò·µ»Ø»ñÈ¡µÄµÚÒ»¸öÄÜ¹»³É¹¦Í¨¹ıÖÇÄÜÖ¸Õë×ª»»×ª»»³ÉIPAddressµÄAddress
+		//è°ƒç”¨Lookup()æ–¹æ³•ï¼Œå¦‚æœæˆåŠŸåˆ™è¿”å›è·å–çš„ç¬¬ä¸€ä¸ªèƒ½å¤ŸæˆåŠŸé€šè¿‡æ™ºèƒ½æŒ‡é’ˆè½¬æ¢è½¬æ¢æˆIPAddressçš„Address
 		if (Lookup(addresses, host, family, type, protocol))
 		{
 			for (auto& address : addresses)
@@ -214,12 +214,12 @@ namespace AddressSpace
 				}
 			}
 		}
-		//·ñÔò·µ»Ønullptr
+		//å¦åˆ™è¿”å›nullptr
 		return nullptr;
 	}
 	
 
-	//·µ»Ø±¾»úËùÓĞÍø¿¨µÄ<Íø¿¨Ãû, µØÖ·, ×ÓÍøÑÚÂëÎ»Êı>
+	//è¿”å›æœ¬æœºæ‰€æœ‰ç½‘å¡çš„<ç½‘å¡å, åœ°å€, å­ç½‘æ©ç ä½æ•°>
 	bool Address::GetInterfaceAddresses(multimap<string, pair<shared_ptr<Address>, uint32_t>>& result, int family)
 	{
 		ifaddrs* next=NULL,*results=NULL;
@@ -227,7 +227,7 @@ namespace AddressSpace
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "Address::GetInterfaceAddresses getifaddrs" << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
@@ -275,7 +275,7 @@ namespace AddressSpace
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "Address::GetInterfaceAddresses exception" << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 
 			freeifaddrs(results);
 			return false;
@@ -285,7 +285,7 @@ namespace AddressSpace
 		return true;
 	}
 
-	//»ñÈ¡Ö¸¶¨Íø¿¨µÄµØÖ·ºÍ×ÓÍøÑÚÂëÎ»Êı
+	//è·å–æŒ‡å®šç½‘å¡çš„åœ°å€å’Œå­ç½‘æ©ç ä½æ•°
 	bool Address::GetInterfaceAddresses(vector<pair<shared_ptr<Address>,uint32_t>>& result, const string& iface, int family)
 	{
 		if (iface.empty() || iface == "*")
@@ -321,48 +321,48 @@ namespace AddressSpace
 
 
 	//class IPAddress :public static
-	//Í¨¹ıÓòÃû,IP,·şÎñÆ÷Ãû´´½¨IPAddress
+	//é€šè¿‡åŸŸå,IP,æœåŠ¡å™¨ååˆ›å»ºIPAddress
 	shared_ptr<IPAddress> IPAddress::CreateIPAddress(const char* address, const uint32_t port)
 	{
-		//ÉèÖÃËÑË÷Ìõ¼ş
+		//è®¾ç½®æœç´¢æ¡ä»¶
 		addrinfo hints;
 		memset(&hints, 0, sizeof(hints));
-		// »ñÈ¡¹æ·¶Ö÷»úÃû
+		// è·å–è§„èŒƒä¸»æœºå
 		//hints.ai_flags = AI_NUMERICHOST;
-		hints.ai_flags = AI_CANONNAME;	//¸ù¾İµ¯Ä»½¨ÒéĞŞ¸ÄµÄ
-		// Ö¸¶¨µØÖ·×åÎªÎ´Ö¸¶¨£¨ÈÃgetaddrinfo¾ö¶¨£©
+		hints.ai_flags = AI_CANONNAME;	//æ ¹æ®å¼¹å¹•å»ºè®®ä¿®æ”¹çš„
+		// æŒ‡å®šåœ°å€æ—ä¸ºæœªæŒ‡å®šï¼ˆè®©getaddrinfoå†³å®šï¼‰
 		hints.ai_family = AF_UNSPEC;
 
-		//ËÑË÷½á¹û
+		//æœç´¢ç»“æœ
 		addrinfo* results = NULL;
 
-		//µ÷ÓÃgetaddrinfo()º¯Êı³¢ÊÔ½âÎöaddressµÄĞÅÏ¢£¨³É¹¦·µ»Ø0£©
+		//è°ƒç”¨getaddrinfo()å‡½æ•°å°è¯•è§£æaddressçš„ä¿¡æ¯ï¼ˆæˆåŠŸè¿”å›0ï¼‰
 		int error = getaddrinfo(address, NULL, &hints, &results);
-		//Èç¹û½âÎöÊ§°Ü£¬±¨´í²¢·µ»Ønullptr
+		//å¦‚æœè§£æå¤±è´¥ï¼ŒæŠ¥é”™å¹¶è¿”å›nullptr
 		if (error != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "IPAddress::Create(" << address << ", " << port
 				<< ") errno=" << errno << " strerror=" << strerror(error);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return nullptr;
 		}
 
-		//³¢ÊÔÓÃÈ¡µÃµÄĞÅÏ¢´´½¨IPAddress¶ÔÏó
+		//å°è¯•ç”¨å–å¾—çš„ä¿¡æ¯åˆ›å»ºIPAddresså¯¹è±¡
 		try
 		{
-			//±£Ö¤ÖÇÄÜÖ¸Õë×ª»»µÄ°²È«
+			//ä¿è¯æ™ºèƒ½æŒ‡é’ˆè½¬æ¢çš„å®‰å…¨
 			shared_ptr<IPAddress> ip_address = dynamic_pointer_cast<IPAddress>(Address::CreateAddress(results->ai_addr, (socklen_t)results->ai_addrlen));
-			//Èç¹û´´½¨³É¹¦ÔòÉèÖÃÆä¶Ë¿Ú
+			//å¦‚æœåˆ›å»ºæˆåŠŸåˆ™è®¾ç½®å…¶ç«¯å£
 			if (ip_address)
 			{
 				ip_address->setPort(port);
 			}
-			//ÇåÀíËÑË÷½á¹û²¢·µ»Ø´´½¨µÄIPAddress¶ÔÏó
+			//æ¸…ç†æœç´¢ç»“æœå¹¶è¿”å›åˆ›å»ºçš„IPAddresså¯¹è±¡
 			freeaddrinfo(results);
 			return ip_address;
 		}
-		//Èç¹ûÖÇÄÜÖ¸Õë×ª»»³ö´í£¬ÇåÀíËÑË÷½á¹û²¢·µ»Ønullptr
+		//å¦‚æœæ™ºèƒ½æŒ‡é’ˆè½¬æ¢å‡ºé”™ï¼Œæ¸…ç†æœç´¢ç»“æœå¹¶è¿”å›nullptr
 		catch (...)
 		{
 			freeaddrinfo(results);
@@ -375,7 +375,7 @@ namespace AddressSpace
 
 
 	//class IPv4Address :public
-	//Í¨¹ıIPv4¶ş½øÖÆµØÖ·¹¹ÔìIPv4Address
+	//é€šè¿‡IPv4äºŒè¿›åˆ¶åœ°å€æ„é€ IPv4Address
 	IPv4Address::IPv4Address(const uint32_t address, const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
@@ -384,7 +384,7 @@ namespace AddressSpace
 		m_address.sin_addr.s_addr = htonl(address);
 	}
 	
-	//Ê¹ÓÃµã·ÖÊ®½øÖÆµØÖ·¹¹ÔìIPv4Address
+	//ä½¿ç”¨ç‚¹åˆ†åè¿›åˆ¶åœ°å€æ„é€ IPv4Address
 	IPv4Address::IPv4Address(const char* address, const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
@@ -392,88 +392,88 @@ namespace AddressSpace
 		m_address.sin_port = htons(port);
 
 		int return_value = inet_pton(AF_INET, address, &this->m_address.sin_addr);
-		//Èç¹ûinet_pton()µ÷ÓÃÊ§°ÜÔò±¨´í
+		//å¦‚æœinet_pton()è°ƒç”¨å¤±è´¥åˆ™æŠ¥é”™
 		if (return_value <= 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "IPv4Address::Create(" << address << ", " << port << ") return=" << return_value
 				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 		}
 	}
 
-	//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+	//è·å–å¯è¯»æ€§è¾“å‡ºåœ°å€
 	ostream& IPv4Address::getAddress_ostream(ostream& os)const
 	{
 		uint32_t address = ntohl(m_address.sin_addr.s_addr);
-		//½«IPv4µÄµã·ÖÊ®½øÖÆµØÖ·Ğ´ÈëÁ÷ÖĞ£¨&0xffÓÃÓÚ±£Áô×îµÍµÄ8Î»£©
+		//å°†IPv4çš„ç‚¹åˆ†åè¿›åˆ¶åœ°å€å†™å…¥æµä¸­ï¼ˆ&0xffç”¨äºä¿ç•™æœ€ä½çš„8ä½ï¼‰
 		os << ((address >> 24) & 0xff) << "."
 			<< ((address >> 16) & 0xff) << "."
 			<< ((address >> 8) & 0xff) << "."
 			<< (address & 0xff);
-		//½«¶Ë¿ÚºÅĞ´ÈëÁ÷ÖĞ
+		//å°†ç«¯å£å·å†™å…¥æµä¸­
 		os << ":" << ntohs(m_address.sin_port);
 		return os;
 	}
 
-	//»ñÈ¡¶Ë¿ÚºÅ
+	//è·å–ç«¯å£å·
 	uint16_t IPv4Address::getPort()const
 	{
 		return ntohs(m_address.sin_port);
 	}
-	//ÉèÖÃ¶Ë¿ÚºÅ
+	//è®¾ç½®ç«¯å£å·
 	void IPv4Address::setPort(const uint16_t port)
 	{
 		m_address.sin_port = htons(port);
 	}
 
-	//»ñÈ¡¸ÃµØÖ·µÄ¹ã²¥µØÖ·
+	//è·å–è¯¥åœ°å€çš„å¹¿æ’­åœ°å€
 	shared_ptr<IPAddress> IPv4Address::broadcastAddress(const uint32_t prefix_len)
 	{
-		//ÑÚÂëµÄÑÚ¸ÇÎ»Êı²»Ó¦¸Ã³¬¹ı32Î»£¬·ñÔò·µ»Ønullptr
+		//æ©ç çš„æ©ç›–ä½æ•°ä¸åº”è¯¥è¶…è¿‡32ä½ï¼Œå¦åˆ™è¿”å›nullptr
 		if (prefix_len > 32)
 		{
 			return nullptr;
 		}
 
-		//½«µ±Ç°µØÖ·Óëprefix_lenÎ»ÑÚÂëÈ¡»ò£¬µÃµ½¹ã²¥µØÖ·
+		//å°†å½“å‰åœ°å€ä¸prefix_lenä½æ©ç å–æˆ–ï¼Œå¾—åˆ°å¹¿æ’­åœ°å€
 		sockaddr_in broadcast_address(m_address);
 		broadcast_address.sin_addr.s_addr |= htonl(CreateMask<uint32_t>(prefix_len));
 
 		return shared_ptr<IPv4Address>(new IPv4Address(broadcast_address));
 	}
 
-	//»ñÈ¡¸ÃµØÖ·µÄÍø¶Î
+	//è·å–è¯¥åœ°å€çš„ç½‘æ®µ
 	shared_ptr<IPAddress> IPv4Address::networdAddress(const uint32_t prefix_len)
 	{
-		//ÑÚÂëµÄÑÚ¸ÇÎ»Êı²»Ó¦¸Ã³¬¹ı32Î»£¬·ñÔò·µ»Ønullptr
+		//æ©ç çš„æ©ç›–ä½æ•°ä¸åº”è¯¥è¶…è¿‡32ä½ï¼Œå¦åˆ™è¿”å›nullptr
 		if (prefix_len > 32)
 		{
 			return nullptr;
 		}
 
-		//½«µ±Ç°µØÖ·Óë×ÓÍøÑÚÂë£¨ÑÚÂëµÄ·´Âë£©È¡Óë£¬µÃµ½Íø¶Î
+		//å°†å½“å‰åœ°å€ä¸å­ç½‘æ©ç ï¼ˆæ©ç çš„åç ï¼‰å–ä¸ï¼Œå¾—åˆ°ç½‘æ®µ
 		sockaddr_in broadcast_address(m_address);
 		broadcast_address.sin_addr.s_addr &= ~htonl(CreateMask<uint32_t>(prefix_len));
 
 		return shared_ptr<IPv4Address>(new IPv4Address(broadcast_address));
 	}
 
-	//»ñÈ¡×ÓÍøÑÚÂëµØÖ·
+	//è·å–å­ç½‘æ©ç åœ°å€
 	shared_ptr<IPAddress> IPv4Address::subnetMask(const uint32_t prefix_len)
 	{
-		//ÑÚÂëµÄÑÚ¸ÇÎ»Êı²»Ó¦¸Ã³¬¹ı32Î»£¬·ñÔò·µ»Ønullptr
+		//æ©ç çš„æ©ç›–ä½æ•°ä¸åº”è¯¥è¶…è¿‡32ä½ï¼Œå¦åˆ™è¿”å›nullptr
 		if (prefix_len > 32)
 		{
 			return nullptr;
 		}
 
-		//¶Ô×ÓÍøÑÚÂë¶ÔÏóÖ»ÉèÖÃĞ­Òé×å£¬ÆäËû²»±ØÒªµÄ³ÉÔ±ÖÃ¿Õ£¬Ìá¸ßĞ§ÂÊ
+		//å¯¹å­ç½‘æ©ç å¯¹è±¡åªè®¾ç½®åè®®æ—ï¼Œå…¶ä»–ä¸å¿…è¦çš„æˆå‘˜ç½®ç©ºï¼Œæé«˜æ•ˆç‡
 		sockaddr_in subnet_mask;
 		memset(&subnet_mask, 0, sizeof(subnet_mask));
 		subnet_mask.sin_family = AF_INET;
 
-		//prefix_lenÎ»ÑÚÂëµÄ·´Âë¼´Îª×ÓÍøÑÚÂë
+		//prefix_lenä½æ©ç çš„åç å³ä¸ºå­ç½‘æ©ç 
 		subnet_mask.sin_addr.s_addr = ~htonl(CreateMask<uint32_t>(prefix_len));
 
 		return shared_ptr<IPv4Address>(new IPv4Address(subnet_mask));
@@ -493,7 +493,7 @@ namespace AddressSpace
 		memset(&m_address, 0, sizeof(m_address));
 		m_address.sin6_family = AF_INET6;
 	}
-	//Í¨¹ıIPv6¶ş½øÖÆµØÖ·¹¹ÔìIPv6Address
+	//é€šè¿‡IPv6äºŒè¿›åˆ¶åœ°å€æ„é€ IPv6Address
 	IPv6Address::IPv6Address(const uint8_t address[16], const uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
@@ -501,7 +501,7 @@ namespace AddressSpace
 		m_address.sin6_port = htons(port);
 		memcpy(&m_address.sin6_addr.s6_addr, address, 16);
 	}
-	//Í¨¹ıIPv6µØÖ·×Ö·û´®¹¹ÔìIPv6Address
+	//é€šè¿‡IPv6åœ°å€å­—ç¬¦ä¸²æ„é€ IPv6Address
 	IPv6Address::IPv6Address(const char* address, const  uint16_t port)
 	{
 		memset(&m_address, 0, sizeof(m_address));
@@ -509,50 +509,50 @@ namespace AddressSpace
 		m_address.sin6_port = htons(port);
 
 		int return_value = inet_pton(AF_INET6, address, &this->m_address.sin6_addr);
-		//Èç¹ûinet_pton()µ÷ÓÃÊ§°ÜÔò±¨´í
+		//å¦‚æœinet_pton()è°ƒç”¨å¤±è´¥åˆ™æŠ¥é”™
 		if (return_value <= 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "IPv6Address::Create(" << address << ", " << port << ") return=" << return_value
 				<< " errno=" << errno << " strerror=" << strerror(errno);
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 		}
 	}
 
-	//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+	//è·å–å¯è¯»æ€§è¾“å‡ºåœ°å€
 	ostream& IPv6Address::getAddress_ostream(ostream& os)const
 	{
 		os << "[";
 
-		//ÒÔ16Î»£¨Ã¿Á½¸öÃ°ºÅ¼äµÄ4¸ö16½øÖÆÊıÕ¼16Î»£©Îª²½³¤´¦ÀíIPv6µØÖ·£¨s6_addrÊı×é´æ´¢ÊÇ´ÓµØÖ·µÄ¸ßÎ»¿ªÊ¼µÄ£©
+		//ä»¥16ä½ï¼ˆæ¯ä¸¤ä¸ªå†’å·é—´çš„4ä¸ª16è¿›åˆ¶æ•°å 16ä½ï¼‰ä¸ºæ­¥é•¿å¤„ç†IPv6åœ°å€ï¼ˆs6_addræ•°ç»„å­˜å‚¨æ˜¯ä»åœ°å€çš„é«˜ä½å¼€å§‹çš„ï¼‰
 		uint16_t* address = (uint16_t*)m_address.sin6_addr.s6_addr;
-		//ÊÇ·ñÒÑ¾­Ê¹ÓÃ¹ıÁËÁãÑ¹Ëõ£¨Ã¿´®IPv6µØÖ·ÖĞÖ»ÔÊĞíÊ¹ÓÃÒ»´ÎÒÔ±ÜÃâÆçÒå£©
+		//æ˜¯å¦å·²ç»ä½¿ç”¨è¿‡äº†é›¶å‹ç¼©ï¼ˆæ¯ä¸²IPv6åœ°å€ä¸­åªå…è®¸ä½¿ç”¨ä¸€æ¬¡ä»¥é¿å…æ­§ä¹‰ï¼‰
 		bool used_zeros = false;
 
-		//ÒÀ´Î´¦ÀíÃ¿Ò»¶ÎµØÖ·
+		//ä¾æ¬¡å¤„ç†æ¯ä¸€æ®µåœ°å€
 		for (size_t i = 0; i < 8; ++i)
 		{
-			//Ìø¹ıÊ×´ÎÓöµ½µÄËùÓĞÁ¬ĞøµÄÁã£¬Ö±µ½±»·ÇÁã¶ÎÖĞ¶ÏÎªÖ¹
+			//è·³è¿‡é¦–æ¬¡é‡åˆ°çš„æ‰€æœ‰è¿ç»­çš„é›¶ï¼Œç›´åˆ°è¢«éé›¶æ®µä¸­æ–­ä¸ºæ­¢
 			if (address[i] == 0 && !used_zeros)
 			{
 				continue;
 			}
-			//ÔÚÊ×´ÎÓöµ½µÄÁ¬ĞøµÄÁã±»ÖĞ¶Ïºó£¬Ê¹ÓÃÁãÑ¹Ëõ£¨¶àÊä³öÒ»¸öÃ°ºÅÒÔĞÎ³ÉË«Ã°ºÅ£©
+			//åœ¨é¦–æ¬¡é‡åˆ°çš„è¿ç»­çš„é›¶è¢«ä¸­æ–­åï¼Œä½¿ç”¨é›¶å‹ç¼©ï¼ˆå¤šè¾“å‡ºä¸€ä¸ªå†’å·ä»¥å½¢æˆåŒå†’å·ï¼‰
 			if (i > 0 && address[i - 1] == 0 && !used_zeros)
 			{
 				os << ":";
 				used_zeros = true;
 			}
-			//Èç¹û´¦ÀíµÄ²»ÊÇµÚÒ»¶Î16Î»£¬ÏÈÊä³öÃ°ºÅ
+			//å¦‚æœå¤„ç†çš„ä¸æ˜¯ç¬¬ä¸€æ®µ16ä½ï¼Œå…ˆè¾“å‡ºå†’å·
 			if (i > 0)
 			{
 				os << ":";
 			}
-			//°´16½øÖÆ½«¸Ã¶ÎµØÖ·Êä³öµ½Á÷
+			//æŒ‰16è¿›åˆ¶å°†è¯¥æ®µåœ°å€è¾“å‡ºåˆ°æµ
 			os << hex << (int)ntohs(address[i]) << dec;
 		}
 		
-		//Èç¹ûÊ×´ÎÓöµ½µÄÁ¬ĞøµÄÁãÔÚÄ©Î²£¬ÔòÖ±½ÓÔÚÄ©Î²Êä³öË«Ã°ºÅ
+		//å¦‚æœé¦–æ¬¡é‡åˆ°çš„è¿ç»­çš„é›¶åœ¨æœ«å°¾ï¼Œåˆ™ç›´æ¥åœ¨æœ«å°¾è¾“å‡ºåŒå†’å·
 		if (!used_zeros && address[7] == 0)
 		{
 			os << "::";
@@ -562,25 +562,25 @@ namespace AddressSpace
 		return os;
 	}
 
-	//»ñÈ¡¶Ë¿ÚºÅ
+	//è·å–ç«¯å£å·
 	uint16_t IPv6Address::getPort()const
 	{
 		return ntohs(m_address.sin6_port);
 	}
-	//ÉèÖÃ¶Ë¿ÚºÅ
+	//è®¾ç½®ç«¯å£å·
 	void IPv6Address::setPort(const uint16_t port)
 	{
 		m_address.sin6_port = htons(port);
 	}
 
-	//»ñÈ¡¸ÃµØÖ·µÄ¹ã²¥µØÖ·
+	//è·å–è¯¥åœ°å€çš„å¹¿æ’­åœ°å€
 	shared_ptr<IPAddress> IPv6Address::broadcastAddress(const uint32_t prefix_len)
 	{
-		//½«µ±Ç°µØÖ·Óëprefix_lenÎ»ÑÚÂëÈ¡»ò£¬µÃµ½¹ã²¥µØÖ·
+		//å°†å½“å‰åœ°å€ä¸prefix_lenä½æ©ç å–æˆ–ï¼Œå¾—åˆ°å¹¿æ’­åœ°å€
 		sockaddr_in6 broadcast_address(m_address);
-		//Ö»¶ÔÁÙ½çµÄ×Ö½Ú½øĞĞ»ò²Ù×÷
+		//åªå¯¹ä¸´ç•Œçš„å­—èŠ‚è¿›è¡Œæˆ–æ“ä½œ
 		broadcast_address.sin6_addr.s6_addr[prefix_len / 8] |= CreateMask<uint8_t>(prefix_len % 8);
-		//ÁÙ½ç×Ö½ÚÒÔºóµÄ×Ö½ÚÖ±½ÓÖÃ¸ß£¨s6_addrÊı×é´æ´¢ÊÇ´ÓµØÖ·µÄ¸ßÎ»¿ªÊ¼µÄ£©
+		//ä¸´ç•Œå­—èŠ‚ä»¥åçš„å­—èŠ‚ç›´æ¥ç½®é«˜ï¼ˆs6_addræ•°ç»„å­˜å‚¨æ˜¯ä»åœ°å€çš„é«˜ä½å¼€å§‹çš„ï¼‰
 		for (size_t i = prefix_len / 8 + 1; i < 16; ++i)
 		{
 			broadcast_address.sin6_addr.s6_addr[i] = 0xff;
@@ -589,14 +589,14 @@ namespace AddressSpace
 		return shared_ptr<IPv6Address>(new IPv6Address(broadcast_address));
 	}
 
-	//»ñÈ¡¸ÃµØÖ·µÄÍø¶Î
+	//è·å–è¯¥åœ°å€çš„ç½‘æ®µ
 	shared_ptr<IPAddress> IPv6Address::networdAddress(const uint32_t prefix_len)
 	{
-		//½«µ±Ç°µØÖ·Óë×ÓÍøÑÚÂë£¨ÑÚÂëµÄ·´Âë£©È¡Óë£¬µÃµ½Íø¶Î
+		//å°†å½“å‰åœ°å€ä¸å­ç½‘æ©ç ï¼ˆæ©ç çš„åç ï¼‰å–ä¸ï¼Œå¾—åˆ°ç½‘æ®µ
 		sockaddr_in6 netword_address(m_address);
-		//Ö»¶ÔÁÙ½çµÄ×Ö½Ú½øĞĞÓë²Ù×÷
+		//åªå¯¹ä¸´ç•Œçš„å­—èŠ‚è¿›è¡Œä¸æ“ä½œ
 		netword_address.sin6_addr.s6_addr[prefix_len / 8] &= ~CreateMask<uint8_t>(prefix_len % 8);
-		//ÁÙ½ç×Ö½ÚÒÔºóµÄ×Ö½ÚÖ±½ÓÖÃµÍ£¨s6_addrÊı×é´æ´¢ÊÇ´ÓµØÖ·µÄ¸ßÎ»¿ªÊ¼µÄ£©
+		//ä¸´ç•Œå­—èŠ‚ä»¥åçš„å­—èŠ‚ç›´æ¥ç½®ä½ï¼ˆs6_addræ•°ç»„å­˜å‚¨æ˜¯ä»åœ°å€çš„é«˜ä½å¼€å§‹çš„ï¼‰
 		for (size_t i = prefix_len / 8 + 1; i < 16; ++i)
 		{
 			netword_address.sin6_addr.s6_addr[i] = 0x00;
@@ -605,18 +605,18 @@ namespace AddressSpace
 		return shared_ptr<IPv6Address>(new IPv6Address(netword_address));
 	}
 
-	//»ñÈ¡×ÓÍøÑÚÂëµØÖ·
+	//è·å–å­ç½‘æ©ç åœ°å€
 	shared_ptr<IPAddress> IPv6Address::subnetMask(const uint32_t prefix_len)
 	{
-		//prefix_lenÎ»ÑÚÂëµÄ·´Âë¼´Îª×ÓÍøÑÚÂë
+		//prefix_lenä½æ©ç çš„åç å³ä¸ºå­ç½‘æ©ç 
 		sockaddr_in6 subnet_mask;
-		//¶Ô×ÓÍøÑÚÂë¶ÔÏóÖ»ÉèÖÃĞ­Òé×å£¬ÆäËû²»±ØÒªµÄ³ÉÔ±ÖÃ¿Õ£¬Ìá¸ßĞ§ÂÊ
+		//å¯¹å­ç½‘æ©ç å¯¹è±¡åªè®¾ç½®åè®®æ—ï¼Œå…¶ä»–ä¸å¿…è¦çš„æˆå‘˜ç½®ç©ºï¼Œæé«˜æ•ˆç‡
 		memset(&subnet_mask, 0, sizeof(subnet_mask));
 		subnet_mask.sin6_family = AF_INET6;
 
-		//Ö»¶ÔÁÙ½çµÄ×Ö½Ú½øĞĞÈ¡·´²Ù×÷
+		//åªå¯¹ä¸´ç•Œçš„å­—èŠ‚è¿›è¡Œå–åæ“ä½œ
 		subnet_mask.sin6_addr.s6_addr[prefix_len / 8] = ~CreateMask<uint8_t>(prefix_len % 8);
-		//ÁÙ½ç×Ö½ÚÒÔÇ°µÄ×Ö½ÚÖ±½ÓÖÃ¸ß£¨s6_addrÊı×é´æ´¢ÊÇ´ÓµØÖ·µÄ¸ßÎ»¿ªÊ¼µÄ£©
+		//ä¸´ç•Œå­—èŠ‚ä»¥å‰çš„å­—èŠ‚ç›´æ¥ç½®é«˜ï¼ˆs6_addræ•°ç»„å­˜å‚¨æ˜¯ä»åœ°å€çš„é«˜ä½å¼€å§‹çš„ï¼‰
 		for (size_t i = 0; i < prefix_len / 8; ++i)
 		{
 			subnet_mask.sin6_addr.s6_addr[i] = 0xff;
@@ -640,7 +640,7 @@ namespace AddressSpace
 		m_length = offsetof(sockaddr_un, sun_path) + MAX_PATH_LEN;
 	}
 
-	//Í¨¹ıÂ·¾¶×Ö·û´®¹¹ÔìUnixAddress
+	//é€šè¿‡è·¯å¾„å­—ç¬¦ä¸²æ„é€ UnixAddress
 	UnixAddress::UnixAddress(const string& path)
 	{
 		memset(&m_address, 0, sizeof(m_address));
@@ -659,7 +659,7 @@ namespace AddressSpace
 		m_length += offsetof(sockaddr_un, sun_path);
 	}
 
-	//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+	//è·å–å¯è¯»æ€§è¾“å‡ºåœ°å€
 	ostream& UnixAddress::getAddress_ostream(ostream& os)const
 	{
 		if (m_length > offsetof(sockaddr_un, sun_path) && m_address.sun_path[0]=='\0')
@@ -671,7 +671,7 @@ namespace AddressSpace
 
 
 	//class UinxAddress :private variable
-	//×î´óÂ·¾¶³¤¶È
+	//æœ€å¤§è·¯å¾„é•¿åº¦
 	const size_t UnixAddress::MAX_PATH_LEN = sizeof(((sockaddr_un*)0)->sun_path) - 1;
 
 
@@ -684,7 +684,7 @@ namespace AddressSpace
 		m_address.sa_family = family;
 	}
 
-	//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+	//è·å–å¯è¯»æ€§è¾“å‡ºåœ°å€
 	ostream& UnknownAddress::getAddress_ostream(ostream& os)const
 	{
 		os << "[Unknow Address,family=" << m_address.sa_family << "]";

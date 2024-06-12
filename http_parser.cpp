@@ -20,7 +20,7 @@ namespace HttpSpace
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http request method " << string(at, length);
-            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
             parser->setError(1000);
             return;
         }
@@ -62,7 +62,7 @@ namespace HttpSpace
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http request version: " << string(at, length);
-            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
             parser->setError(1001);
             return;
         }
@@ -79,7 +79,7 @@ namespace HttpSpace
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http request field length == 0";
-            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
             //parser->setError(1002);   //有时宁愿不报错也不要遗落信息
             return;
         }
@@ -159,7 +159,7 @@ namespace HttpSpace
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http response version " << string(at, length);
-            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
             parser->setError(1001);
             return;
         }
@@ -180,7 +180,7 @@ namespace HttpSpace
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http response field length == 0";
-            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+            Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
             //parser->setError(1002);   //有时宁愿不报错也不要遗落信息
             return;
         }

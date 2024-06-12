@@ -60,11 +60,11 @@ namespace LogSpace
 	public:
 		enum Level
 		{
-			DEBUG = 1,
-			INFO = 2,
-			WARN = 3,
-			ERROR = 4,
-			FATAL = 5
+			LOG_DEBUG = 1,
+			LOG_INFO = 2,
+			LOG_WARN = 3,
+			LOG_ERROR = 4,
+			LOG_FATAL = 5
 		};
 	public:
 		//将Level共用体转化为字符串（声明为静态方法使得其可以在未创建LogLevel类对象时被调用）
@@ -149,7 +149,7 @@ namespace LogSpace
 	class LogAppender
 	{
 	public:
-		LogAppender(const LogLevel::Level level = LogLevel::DEBUG, const string& logger_name = Logger::Default_LoggerName);
+		LogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name = Logger::Default_LoggerName);
 		virtual ~LogAppender() {}		//父类的析构函数应该设置为虚函数
 		//日志输出函数，由 Logger::log调用（纯虚函数，子类必须实现）
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) = 0;
@@ -174,7 +174,7 @@ namespace LogSpace
 	class StdoutLogAppender :public LogAppender
 	{
 	public:
-		StdoutLogAppender(const LogLevel::Level level = LogLevel::DEBUG, const string& logger_name= Logger::Default_LoggerName);
+		StdoutLogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name= Logger::Default_LoggerName);
 
 		//日志输出函数，由 Logger::log调用（重写LogAppender的相应方法）
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) override;
@@ -184,7 +184,7 @@ namespace LogSpace
 	class FileLogAppender :public LogAppender
 	{
 	public:
-		FileLogAppender(const LogLevel::Level level = LogLevel::DEBUG, const string& logger_name = Logger::Default_LoggerName,const string& filename="./log.txt");	//设置默认日志地址文件名为"./log.txt"
+		FileLogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name = Logger::Default_LoggerName,const string& filename="./log.txt");	//设置默认日志地址文件名为"./log.txt"
 
 		//日志输出函数，由 Logger::log调用（重写LogAppender的相应方法）
 		virtual void log(const string& logger_name,const LogLevel::Level level, const shared_ptr<const LogEvent> event) override;

@@ -12,19 +12,19 @@ namespace LogSpace
 	{
 		switch (level)
 		{
-		case LogLevel::DEBUG:
+		case LogLevel::LOG_DEBUG:
 			return "DEBUG";
 			break;
-		case LogLevel::INFO:
+		case LogLevel::LOG_INFO:
 			return "INFO";
 			break;
-		case LogLevel::WARN:
+		case LogLevel::LOG_WARN:
 			return "WARN";
 			break;
-		case LogLevel::ERROR:
+		case LogLevel::LOG_ERROR:
 			return "ERROR";
 			break;
-		case LogLevel::FATAL:
+		case LogLevel::LOG_FATAL:
 			return "FATAL";
 			break;
 		default:
@@ -53,7 +53,7 @@ namespace LogSpace
 
 
 	//class Logger:public
-	Logger::Logger(const string& name) :m_name(name), m_level(LogLevel::DEBUG)
+	Logger::Logger(const string& name) :m_name(name), m_level(LogLevel::LOG_DEBUG)
 	{
 		//构造Logger对象时自动设置formatter为默认日志模式
 		m_formatter.reset(new LogFormatter(Default_FormatPattern));

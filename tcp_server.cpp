@@ -42,7 +42,7 @@ namespace TcpServerSpace
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "bind fail,errno=" << errno << " strerror=" << strerror(errno)
 					<< " address=[" << address->toString() << "]";
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 				return_value = false;
 				addresses_fail.push_back(address);
 				continue;
@@ -53,7 +53,7 @@ namespace TcpServerSpace
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "listen fail,errno=" << errno << " strerror=" << strerror(errno)
 					<< " address=[" << address->toString() << "]";
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 				return_value = false;
 				addresses_fail.push_back(address);
 				continue;
@@ -70,7 +70,7 @@ namespace TcpServerSpace
 			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "server bind success: " << socket;
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 		}
 		return true;
 	}
@@ -89,7 +89,7 @@ namespace TcpServerSpace
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "accept errno=" << errno << " strerror=" << strerror(errno);
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			}
 		}
 	}
@@ -130,6 +130,6 @@ namespace TcpServerSpace
 		//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "handleClient: " << client_socket;
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 	}
 }

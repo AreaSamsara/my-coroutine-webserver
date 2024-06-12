@@ -152,7 +152,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
@@ -234,7 +234,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
@@ -305,7 +305,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
@@ -365,7 +365,7 @@ namespace IOManagerSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code << "," << file_descriptor << "," << epollevent.events << "):"
 				<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
 
@@ -449,7 +449,7 @@ namespace IOManagerSpace
 				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "name=" << getName() << " idle exit";
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 				break;
 			}
 
@@ -563,7 +563,7 @@ namespace IOManagerSpace
 					log_event->getSstream() << "epoll_ctl(" << m_epoll_file_descriptor << "," << operation_code
 						<< "," << file_descriptor_event->m_file_descriptor << "," << epollevent.events << "):"
 						<< return_value << " (" << errno << ") (" << strerror(errno) << ")";
-					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 					continue;
 				}
 

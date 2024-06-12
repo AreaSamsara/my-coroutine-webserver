@@ -94,7 +94,7 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "stop";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 
 		//对于线程池的每个线程都tickle()一下
 		for (size_t i = 0; i < m_thread_count; ++i)
@@ -173,7 +173,7 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "run";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 
 		
 		//set_hook_enable(true);
@@ -303,7 +303,7 @@ namespace SchedulerSpace
 						shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 						log_event->getSstream() << "idle_fiber terminated";
 						//使用LoggerManager单例的默认logger输出日志
-						Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+						Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 
 						//如果这个线程是调用者线程，则在退出循环之前应将调度器主协程设为调用者线程的主协程，否则调用者线程的Scheduler::run()协程将无法正常返回
 						if (GetThread_id() == m_caller_thread_id)
@@ -351,7 +351,7 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "idle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 
 		//在竣工之前不终止空闲协程而是将其挂起
 		while (!isCompleted())
@@ -366,7 +366,7 @@ namespace SchedulerSpace
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "tickle";
 		//使用LoggerManager单例的默认logger输出日志
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 	}
 
 	//返回是否竣工

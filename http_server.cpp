@@ -19,7 +19,7 @@ namespace HttpServerSpace
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "handleClient: " << client_socket;
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 
 		shared_ptr<HttpSession> session(new HttpSession(client_socket));
 		do
@@ -30,7 +30,7 @@ namespace HttpServerSpace
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "receive http request fail,errno= " << errno
 					<< " strerror=" << strerror(errno) << " client_socket=" << client_socket << " keep_alive=" << m_is_keep_alive;
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::WARN, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
 				break;
 			}
 

@@ -43,7 +43,7 @@ namespace FiberSpace
 
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "Fiber::Fiber id=" << m_id;
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event); 
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event); 
 	}
 
 	Fiber::~Fiber()
@@ -85,7 +85,7 @@ namespace FiberSpace
 		//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "Fiber::~Fiber id=" << m_id;
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 	}
 
 	//重置协程函数和状态，用于免去内存的再分配，在空闲的已分配内存上直接创建新协程
@@ -257,7 +257,7 @@ namespace FiberSpace
 			log_event->getSstream() << "Fiber Except: " << ex.what() << " fiber_id=" << current->getId()
 				<< "\nbacktrace:\n" << BacktraceToString();
 			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 		}
 		catch (...)
 		{
@@ -267,7 +267,7 @@ namespace FiberSpace
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "Fiber Except";
 			//使用LoggerManager单例的默认logger输出日志
-			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 		}
 
 		//在切换到后台之前将智能指针切换为裸指针，防止shared_ptr的计数错误导致析构函数不被调用
@@ -310,7 +310,7 @@ namespace FiberSpace
 		//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 		log_event->getSstream() << "Fiber::Fiber";
-		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::DEBUG, log_event);
+		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 	}
 
 

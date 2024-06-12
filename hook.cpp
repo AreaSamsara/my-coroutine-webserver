@@ -110,7 +110,7 @@ namespace HookSpace
 				{
 					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 					log_event->getSstream() << hook_function_name << " addEvent(" << fd << ", " << event << ")";
-					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 
 					//如果定时器不为空，取消之
 					if (timer)
@@ -394,7 +394,7 @@ extern "C"
 
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "connect addEvent(" << sockfd << ", WRITE)";
-				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::ERROR, log_event);
+				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			}
 
 
