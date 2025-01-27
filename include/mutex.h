@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <atomic>
+#include <pthread.h>
 
 #include "noncopyable.h"
 
