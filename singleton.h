@@ -12,7 +12,8 @@ namespace SingletonSpace
      *          N 同一个Tag创造多个实例索引
      */
     template<class T, class X = void, int N = 0>
-    class Singleton {
+    class Singleton 
+    {
     public:
         //返回单例裸指针
         static T* GetInstance_normal_ptr() 

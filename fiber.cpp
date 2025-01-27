@@ -94,7 +94,6 @@ namespace FiberSpace
 		//要重置的协程栈不应为空（即该协程不应该为主协程），且必须处于终止、初始化或异常的状态中，否则报错
 		if (!m_stack || (m_state != TERMINAL && m_state != INITIALIZE && m_state != EXCEPT))
 		{
-			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
@@ -130,7 +129,6 @@ namespace FiberSpace
 		//协程状态不应该为执行状态，否则报错
 		if (m_state == EXECUTE)
 		{
-			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
@@ -141,7 +139,6 @@ namespace FiberSpace
 		//保存调度器的主协程语境，切换到本协程语境，成功返回0，否则报错
 		if (swapcontext(&Scheduler::t_scheduler_fiber->m_context, &m_context) != 0)
 		{
-			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event, "swapcontext");
 		}
@@ -156,7 +153,6 @@ namespace FiberSpace
 		//保存本协程语境，切换到主协程语境，成功返回0，否则报错
 		if (swapcontext(&m_context, &Scheduler::t_scheduler_fiber->m_context) != 0)
 		{
-			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event, "swapcontext");
 		}	
@@ -179,7 +175,6 @@ namespace FiberSpace
 			//主协程创建后，当前协程应当在私有的默认构造函数内被设置为主协程，否则报错
 			if (t_fiber != main_fiber.get())
 			{
-				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				Assert(log_event);
 			}
@@ -233,7 +228,6 @@ namespace FiberSpace
 		//当前协程应该为子协程，而不应当为空指针，否则报错
 		if (current == nullptr)
 		{
-			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}

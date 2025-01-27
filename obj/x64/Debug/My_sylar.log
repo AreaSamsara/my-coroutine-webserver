@@ -1,0 +1,568 @@
+﻿  正在验证源
+  正在将源远程复制到“192.168.83.128”
+  正在验证体系结构
+  正在验证体系结构
+  正在启动远程生成
+  正在编译源:
+  address.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(359,29): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘uint32_t {aka unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(359,29): warning :      ip_address->setPort(port);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(359,29): warning :                              ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(582,55): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(582,55): warning :    broadcast_address.sin6_addr.s6_addr[prefix_len / 8] |= CreateMask<uint8_t>(prefix_len % 8);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(582,55): warning :                                                        ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(598,53): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(598,53): warning :    netword_address.sin6_addr.s6_addr[prefix_len / 8] &= ~CreateMask<uint8_t>(prefix_len % 8);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(598,53): warning :                                                      ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(618,49): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(618,49): warning :    subnet_mask.sin6_addr.s6_addr[prefix_len / 8] = ~CreateMask<uint8_t>(prefix_len % 8);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(618,49): warning :                                                  ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(640,46): warning : conversion to ‘socklen_t {aka unsigned int}’ from ‘long unsigned int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(640,46): warning :    m_length = offsetof(sockaddr_un, sun_path) + MAX_PATH_LEN;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(640,46): warning :                                               ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(648,26): warning : conversion to ‘socklen_t {aka unsigned int}’ from ‘std::basic_string<char>::size_type {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(648,26): warning :    m_length = path.size() + 1;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(648,26): warning :                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(659,12): warning : conversion to ‘socklen_t {aka unsigned int}’ from ‘long unsigned int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(659,12): warning :    m_length += offsetof(sockaddr_un, sun_path);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(659,12): warning :             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(684,23): warning : conversion to ‘sa_family_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(684,23): warning :    m_address.sa_family = family;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.cpp(684,23): warning :                        ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(91,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(91,11): warning :      value &= value - 1;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(91,11): warning :            ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(120,43): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(120,43): warning :     return (1 << (sizeof(T) * 8 - bits)) - 1;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\address.h(120,43): warning :                                            ^
+  bytearray.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(95,33): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘uint32_t {aka unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(95,33): warning :     buffer[i++] = (value & 0x7F) | 0x80;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(95,33): warning :                                  ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(101,15): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘uint32_t {aka unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(101,15): warning :    buffer[i++] = value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(101,15): warning :                ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(118,33): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(118,33): warning :     buffer[i++] = (value & 0x7F) | 0x80;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(118,33): warning :                                  ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(124,15): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(124,15): warning :    buffer[i++] = value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(124,15): warning :                ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(144,26): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘std::basic_string<char>::size_type {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(144,26): warning :    writeUint16(value.size());
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(144,26): warning :                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(150,26): warning : conversion to ‘uint32_t {aka unsigned int}’ from ‘std::basic_string<char>::size_type {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(150,26): warning :    writeUint32(value.size());
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(150,26): warning :                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(531,37): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(531,37): warning :     int position_in_block = position % m_block_size;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(531,37): warning :                                      ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bytearray.cpp(534,73): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+  config.cpp
+  example_echo_server.cpp
+  fdmanager.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.h(52,7): warning : ‘FdManagerSpace::FileDescriptorEntity::m_file_descriptor’ will be initialized after [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.h(52,7): warning :    int m_file_descriptor;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.h(52,7): warning :        ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.h(44,22): warning : ‘bool FdManagerSpace::FileDescriptorEntity::m_is_socket’ [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(10,2): warning : when initialized here [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(85,44): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(85,44): warning :    if (m_file_descriptor_entities.size() <= file_descriptor)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(85,44): warning :                                             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(101,43): warning : conversion to ‘std::vector<std::shared_ptr<FdManagerSpace::FileDescriptorEntity> >::size_type {aka long unsigned int}’ from ‘double’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(101,43): warning :      m_file_descriptor_entities.resize(1.5 * file_descriptor);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(101,43): warning :                                            ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(140,43): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(140,43): warning :    if (m_file_descriptor_entities.size() > file_descriptor)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fdmanager.cpp(140,43): warning :                                            ^
+  fiber.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\fiber.cpp(20,71): warning : conversion to ‘uint32_t {aka unsigned int}’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+  hook.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\hook.cpp(245,39): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\hook.cpp(245,39): warning :    int timeout_ms = req->tv_sec * 1000 + req->tv_nsec / 1000 / 1000;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\hook.cpp(245,39): warning :                                        ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\hook.cpp(431,102): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+  http.cpp
+  http11_parser.rl.cc
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(104,63): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+http11_parser.rl(104,63): warning :          parser->content_len = fpc - buffer - parser->body_start + 1;
+http11_parser.rl(104,63): warning :                                                                ^
+http11_parser.rl(104,63): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+http11_parser.rl(104,63): warning :          parser->content_len = fpc - buffer - parser->body_start + 1;
+http11_parser.rl(104,63): warning :                                                                ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(104,63): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+http11_parser.rl(104,63): warning :          parser->content_len = fpc - buffer - parser->body_start + 1;
+http11_parser.rl(104,63): warning :                                                                ^
+http11_parser.rl(104,63): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+http11_parser.rl(104,63): warning :          parser->content_len = fpc - buffer - parser->body_start + 1;
+http11_parser.rl(104,63): warning :                                                                ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+http11_parser.rl(129,32): warning : conversion to ‘short int’ from ‘int’ may alter its value [-Wconversion]
+http11_parser.rl(129,32): warning :    more_delims   = ( "{" | "}" | "^" ) when { parser->uri_relaxed } ;
+http11_parser.rl(129,32): warning :                                 ^
+  httpclient_parser.rl.cc
+httpclient_parser.rl(97,60): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(97,60): warning :          parser->content_len = strtol(PTR_TO(mark), NULL, 16);
+httpclient_parser.rl(97,60): warning :                                                             ^
+httpclient_parser.rl(97,60): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(97,60): warning :          parser->content_len = strtol(PTR_TO(mark), NULL, 16);
+httpclient_parser.rl(97,60): warning :                                                             ^
+httpclient_parser.rl(97,60): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(97,60): warning :          parser->content_len = strtol(PTR_TO(mark), NULL, 16);
+httpclient_parser.rl(97,60): warning :                                                             ^
+httpclient_parser.rl(84,55): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(84,55): warning :          parser->status = strtol(PTR_TO(mark), NULL, 10);
+httpclient_parser.rl(84,55): warning :                                                        ^
+httpclient_parser.rl(65,60): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(65,60): warning :          parser->content_len = strtol(PTR_TO(mark), NULL, 10);
+httpclient_parser.rl(65,60): warning :                                                             ^
+httpclient_parser.rl(65,60): warning : conversion to ‘int’ from ‘long int’ may alter its value [-Wconversion]
+httpclient_parser.rl(65,60): warning :          parser->content_len = strtol(PTR_TO(mark), NULL, 10);
+httpclient_parser.rl(65,60): warning :                                                             ^
+httpclient_parser.rl(219,25): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+httpclient_parser.rl(219,25): warning :      return(parser->nread);
+httpclient_parser.rl(219,25): warning :                          ^
+  http_connection.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(64,58): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(64,58): warning :     int parser_length = parser->execute(data, length,false);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(64,58): warning :                                                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(77,18): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(77,18): warning :     if (offset == buffer_size)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(77,18): warning :                   ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(118,13): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(118,13): warning :       length -= length_parsed;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(118,13): warning :              ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(120,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(120,20): warning :       if (length == buffer_size)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(120,20): warning :                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(141,44): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(165,27): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(165,27): warning :      if (content_length >= offset)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(165,27): warning :                            ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(173,13): warning : conversion to ‘int’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(173,13): warning :       length = content_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(173,13): warning :              ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(377,39): warning : conversion to ‘std::__atomic_base<int>::__int_type {aka int}’ from ‘std::vector<HttpConnectionSpace::HttpConnection*>::size_type {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(377,39): warning :    m_total -= invalid_connections.size();
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(377,39): warning :                                        ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(390,27): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘uint32_t {aka unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(390,27): warning :     address->setPort(m_port);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_connection.cpp(390,27): warning :                            ^
+  http_parser.cpp
+  http_server.cpp
+  http_session.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(42,52): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(42,52): warning :     int parser_length = parser->execute(data, length);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(42,52): warning :                                                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(55,18): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(55,18): warning :     if (offset == buffer_size)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(55,18): warning :                   ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(77,26): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(77,26): warning :     if (content_length >= offset)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(77,26): warning :                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(85,12): warning : conversion to ‘int’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(85,12): warning :      length = content_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\http_session.cpp(85,12): warning :             ^
+  servlet.cpp
+  socket.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(262,64): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(273,42): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(281,109): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(294,42): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(304,64): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(315,42): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(326,90): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\socket.cpp(342,42): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+  socket_stream.cpp
+  stream.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(15,12): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(15,12): warning :      return return_value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(15,12): warning :             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(20,10): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(20,10): warning :    return read_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(20,10): warning :           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(31,12): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(31,12): warning :      return return_value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(31,12): warning :             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(35,10): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(35,10): warning :    return read_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(35,10): warning :           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(48,12): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(48,12): warning :      return return_value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(48,12): warning :             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(53,10): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(53,10): warning :    return write_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(53,10): warning :           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(64,12): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(64,12): warning :      return return_value;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(64,12): warning :             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(68,10): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(68,10): warning :    return write_length;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\stream.cpp(68,10): warning :           ^
+  tcp_server.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\tcp_server.cpp(35,8): warning : variable ‘return_value’ set but not used [-Wunused-but-set-variable]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\tcp_server.cpp(35,8): warning :    bool return_value = true;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\tcp_server.cpp(35,8): warning :         ^
+  test_address.cpp
+  test_bytearray.cpp
+  test_fiber.cpp
+  iomanager.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(104,42): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(104,42): warning :    if (m_file_descriptor_events.size() <= file_descriptor)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(104,42): warning :                                           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(109,49): warning : conversion to ‘size_t {aka long unsigned int}’ from ‘double’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(109,49): warning :     resizeFile_descriptor_events(file_descriptor * 1.5);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(109,49): warning :                                                  ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(225,81): warning : suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(225,81): warning :    epollevent.events = EPOLLET | file_descriptor_event->m_registered_event_types & ~event_type;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(225,81): warning :                                                                                  ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(296,83): warning : suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(296,83): warning :    epollevent.events = EPOLLET | file_descriptor_context->m_registered_event_types & ~event_type;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(296,83): warning :                                                                                    ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(419,63): warning : conversion to ‘int’ from ‘ssize_t {aka long int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(419,63): warning :     int return_value = write(m_pipe_file_descriptors[1], "T", 1);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(419,63): warning :                                                                ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(480,92): warning : conversion to ‘int’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(480,92): warning :      epollevent_count = epoll_wait(m_epoll_file_descriptor, epollevents, 64, epoll_wait_time);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(480,92): warning :                                                                                             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(502,27): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(502,27): warning :     for (size_t i = 0; i < epollevent_count; ++i)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(502,27): warning :                            ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(611,52): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(611,52): warning :      m_file_descriptor_events[i]->m_file_descriptor = i;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.cpp(611,52): warning :                                                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.h(58,4): warning : control reaches end of non-void function [-Wreturn-type]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.h(58,4): warning :     }
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\iomanager.h(58,4): warning :     ^
+  log.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.h(167,19): warning : ‘LogSpace::LogAppender::m_level’ will be initialized after [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.h(166,10): warning : ‘std::string LogSpace::LogAppender::m_logger_name’ [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.h(166,10): warning :    string m_logger_name;  //��־����
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.h(166,10): warning :           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(156,2): warning : when initialized here [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(273,38): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(273,38): warning :    for (int i = 0; i < m_pattern.size(); ++i)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(273,38): warning :                                       ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(280,36): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(280,36): warning :     else if (i + 1 < m_pattern.size())
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(280,36): warning :                                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(305,36): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(305,36): warning :       for (; i + 1 < m_pattern.size();++i)
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(305,36): warning :                                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(301,34): warning : unused variable ‘mode_begin’ [-Wunused-variable]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(301,34): warning :       int str_in_brace_begin = 0, mode_begin = i + 1;  //str_inbrace_begin������mode_begin��'%'����һ��λ�ÿ�ʼ
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\log.cpp(301,34): warning :                                   ^
+  test_hook.cpp
+  test_http.cpp
+  test_http_connection.cpp
+  test_http_parser.cpp
+  test_http_server.cpp
+  test_iomanager_timer.cpp
+  test_log.cpp
+  main.cpp
+  mutex.cpp
+  scheduler.cpp
+  test_scheduler.cpp
+  test_socket.cpp
+  test_tcp_server.cpp
+  test_uri.cpp
+  thread.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.cpp(1,9): warning : #pragma once in main file [enabled by default]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.cpp(1,9): warning :  #pragma once
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.cpp(1,9): warning :          ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(56,20): warning : ‘ThreadSpace::Thread::m_callback’ will be initialized after [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(56,20): warning :    function<void()> m_callback; //�̻߳ص�����
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(56,20): warning :                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(54,10): warning : ‘std::string ThreadSpace::Thread::m_name’ [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(54,10): warning :    string m_name;    //�߳�����
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.h(54,10): warning :           ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\thread.cpp(7,2): warning : when initialized here [-Wreorder]
+  test_thread_mutex.cpp
+  timer.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(54,20): warning : ‘TimerSpace::Timer::m_callback’ will be initialized after [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(54,20): warning :    function<void()> m_callback;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(54,20): warning :                     ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(48,25): warning : ‘bool TimerSpace::Timer::m_is_recurring’ [-Wreorder]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(48,25): warning :    bool m_is_recurring = false;
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.h(48,25): warning :                          ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\timer.cpp(9,2): warning : when initialized here [-Wreorder]
+  uri.rl.cc
+uri.rl(211,31): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int32_t {aka int}’ may alter its value [-Wconversion]
+uri.rl(211,31): warning :          addr->setPort(getPort());
+uri.rl(211,31): warning :                                ^
+  utility.cpp
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(23,28): warning : conversion to ‘pid_t {aka int}’ from ‘long int’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(23,28): warning :    return syscall(SYS_gettid);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(23,28): warning :                             ^
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(40,41): warning : conversion to ‘uint32_t {aka unsigned int}’ from ‘uint64_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(63,46): warning : conversion to ‘int’ from ‘size_t {aka long unsigned int}’ may alter its value [-Wconversion]
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(63,46): warning :    char** strings = backtrace_symbols(array, s);
+E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\utility.cpp(63,46): warning :                                               ^
+  正在链接对象
+  My_sylar.vcxproj -> E:\Study\cs\Visual Studio Program\C++ program\Linux_Program\My_sylar\My_sylar\bin\x64\Debug\My_sylar.out
