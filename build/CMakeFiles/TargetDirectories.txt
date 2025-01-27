@@ -1,3 +1,0 @@
-/home/as/project/cpp-project/my-coroutine-webserver/build/CMakeFiles/main.dir
-/home/as/project/cpp-project/my-coroutine-webserver/build/CMakeFiles/edit_cache.dir
-/home/as/project/cpp-project/my-coroutine-webserver/build/CMakeFiles/rebuild_cache.dir
