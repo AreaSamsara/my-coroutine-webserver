@@ -33,7 +33,7 @@ namespace ServletSpace
 
 	void ServletDispatch::addServlet(const string& uri, shared_ptr<Servlet> servlet)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas[uri] = servlet;
 	}
@@ -41,14 +41,14 @@ namespace ServletSpace
 	void ServletDispatch::addServlet(const string& uri, function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response,
 		shared_ptr<HttpSession> session)> callback)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas[uri].reset(new FunctionServlet(callback));
 	}
 
 	void ServletDispatch::addGlobServlet(const string& uri, shared_ptr<Servlet> servlet)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		for (auto iterator = m_globs.begin();iterator!=m_globs.end();++iterator)
 		{
@@ -69,14 +69,14 @@ namespace ServletSpace
 
 	void ServletDispatch::deleteServlet(const string& uri)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas.erase(uri);
 	}
 
 	void ServletDispatch::deleteGlobServlet(const string& uri)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
@@ -91,7 +91,7 @@ namespace ServletSpace
 	
 	shared_ptr<Servlet> ServletDispatch::getServlet(const string& uri)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		auto iterator = m_datas.find(uri);
 		return iterator == m_datas.end() ? nullptr : iterator->second;
@@ -99,7 +99,7 @@ namespace ServletSpace
 
 	shared_ptr<Servlet> ServletDispatch::getGlobServlet(const string& uri)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
@@ -113,7 +113,7 @@ namespace ServletSpace
 
 	shared_ptr<Servlet> ServletDispatch::getMatched_servlet(const string& uri)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		auto iterator = m_datas.find(uri);
 		if (iterator != m_datas.end())
@@ -123,7 +123,7 @@ namespace ServletSpace
 
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
-			//Èç¹û³É¹¦Æ¥Åä£¨·µ»Ø0£©
+			//ï¿½ï¿½ï¿½ï¿½É¹ï¿½Æ¥ï¿½ä£¨ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½
 			if (fnmatch(iterator->first.c_str(), uri.c_str(), 0) == 0)
 			{
 				return iterator->second;

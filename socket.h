@@ -7,27 +7,27 @@
 namespace SocketSpace
 {
 	/*
-	* SocketÀàµ÷ÓÃ·½·¨£º
-	* ÏÈÓÃĞ­Òé×å¡¢SocketÀàĞÍ¡¢Ğ­Òé×÷Îª²ÎÊıµ÷ÓÃ¹¹Ôìº¯Êı´´½¨Socket¶ÔÏó£¬
-	* £¨1£©Èç¹ûÊÇ¿Í»§¶ËSocket£¬ÔòÖ±½Óµ÷ÓÃconnect()·½·¨Á¬½Óµ½¶ÔÓ¦µØÖ·
-	* £¨2£©Èç¹ûÊÇ·şÎñ¶ËSocket£¬ĞèÒªÏÈÓÃbind()·½·¨°ó¶¨µ½¶ÔÓ¦µØÖ·£¬ÔÙµ÷ÓÃlisten()·½·¨½øĞĞ¼àÌı£¬²¢µ÷ÓÃaccept()·½·¨½ÓÊÜ¿Í»§¶Ësocket
-	* ×îºóÔÙµ÷ÓÃsend()ÏµÁĞºÍreceive()ÏµÁĞ·½·¨½øĞĞ½»»¥
+	* Socketï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½ï¿½å¡¢Socketï¿½ï¿½ï¿½Í¡ï¿½Ğ­ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Socketï¿½ï¿½ï¿½ï¿½
+	* ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿Í»ï¿½ï¿½ï¿½Socketï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½connect()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö·
+	* ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Socketï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½bind()ï¿½ï¿½ï¿½ï¿½ï¿½ó¶¨µï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ùµï¿½ï¿½ï¿½listen()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½accept()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿Í»ï¿½ï¿½ï¿½socket
+	* ï¿½ï¿½ï¿½ï¿½Ùµï¿½ï¿½ï¿½send()Ïµï¿½Ğºï¿½receive()Ïµï¿½Ğ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ½ï¿½ï¿½ï¿½
 	*/
 
 	using namespace AddressSpace;
 	using namespace NoncopyableSpace;
 
-	//socketÀà£¬½ûÖ¹¸´ÖÆe
+	//socketï¿½à£¬ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½e
 	class Socket : private Noncopyable
 	{
 	public:
-		//±íÊ¾socketÀàĞÍµÄÃ¶¾ÙÀàĞÍ
+		//ï¿½ï¿½Ê¾socketï¿½ï¿½ï¿½Íµï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		enum SocketType
 		{
 			TCP=SOCK_STREAM,
 			UDP=SOCK_DGRAM
 		};
-		//±íÊ¾socketĞ­Òé×åµÄÃ¶¾ÙÀàĞÍ
+		//ï¿½ï¿½Ê¾socketĞ­ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		enum FamilyType
 		{
 			IPv4=AF_INET,
@@ -36,20 +36,20 @@ namespace SocketSpace
 		};
 	public:
 		Socket(const FamilyType family, const SocketType type, const int protocol = 0);
-		//Îö¹¹Ö®Ç°¹Ø±Õsocket
+		//ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½Ø±ï¿½socket
 		~Socket();
 
-		//»ñÈ¡·¢ËÍ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Í³ï¿½Ê±Ê±ï¿½ï¿½
 		int64_t getSend_timeout()const;
-		//ÉèÖÃ·¢ËÍ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Í³ï¿½Ê±Ê±ï¿½ï¿½
 		void setSend_timeout(const int64_t send_timeout);
 
-		//»ñÈ¡½ÓÊÕ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Õ³ï¿½Ê±Ê±ï¿½ï¿½
 		int64_t getReceive_timeout()const;
-		//ÉèÖÃ½ÓÊÕ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½Õ³ï¿½Ê±Ê±ï¿½ï¿½
 		void setReceive_timeout(const int64_t receive_timeout);
 
-		//»ñÈ¡socketÑ¡Ïî
+		//ï¿½ï¿½È¡socketÑ¡ï¿½ï¿½
 		bool getOption(const int level, const int option, void* result, socklen_t* len) const;
 		template<class T>
 		bool getOption(int level, int option, T& result)
@@ -58,7 +58,7 @@ namespace SocketSpace
 			return getOption(level, option, &result, &length);
 		}
 
-		//ÉèÖÃsocketÑ¡Ïî
+		//ï¿½ï¿½ï¿½ï¿½socketÑ¡ï¿½ï¿½
 		bool setOption(const int level, const int option, const void * result, socklen_t len) const;
 		template<class T>
 		bool setOption(int level, int option,const T& result)
@@ -68,83 +68,83 @@ namespace SocketSpace
 
 		
 
-		//°ó¶¨µØÖ·£¨ÔÚsocketÎŞĞ§Ê±´´½¨ĞÂµÄsocketÎÄ¼şÃèÊö·û£©
+		//ï¿½ó¶¨µï¿½Ö·ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ğ§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool bind(const shared_ptr<Address> address);
-		//¼àÌısocket
+		//ï¿½ï¿½ï¿½ï¿½socket
 		bool listen(const int backlog = SOMAXCONN)const;
-		//½ÓÊÕconnectÁ´½Ó
+		//ï¿½ï¿½ï¿½ï¿½connectï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Socket> accept()const;
 
-		//Á¬½ÓµØÖ·£¨ÔÚsocketÎŞĞ§Ê±´´½¨ĞÂµÄsocketÎÄ¼şÃèÊö·û£©
+		//ï¿½ï¿½ï¿½Óµï¿½Ö·ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ğ§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool connect(const shared_ptr<Address> address, const uint64_t timeout = -1);
 
-		//¹Ø±Õsocket
+		//ï¿½Ø±ï¿½socket
 		void close();
 
-		//·¢ËÍÊı¾İ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int send(const void* buffer, const size_t length, const int flags = 0) const;
 		int send(const iovec* buffer, const size_t length, const int flags = 0) const;
 		int sendto(const void* buffer, const size_t length, const shared_ptr<Address> to, const int flags = 0) const;
 		int sendto(const iovec* buffer, const size_t length, const shared_ptr<Address> to, const int flags = 0) const;
 
-		//½ÓÊÕÊı¾İ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int recv(void* buffer, const size_t length, const int flags = 0) const;
 		int recv(iovec* buffer, const size_t length, const int flags = 0) const;
 		int recvfrom(void* buffer, const size_t length, const shared_ptr<Address> from, const int flags = 0) const;
 		int recvfrom(iovec* buffer, const size_t length, const shared_ptr<Address> from, const int flags = 0) const;
 
 		
-		//·µ»ØË½ÓĞ³ÉÔ±
+		//ï¿½ï¿½ï¿½ï¿½Ë½ï¿½Ğ³ï¿½Ô±
 		int getSocket()const { return m_socket; }
 		int getFamily()const { return m_family; }
 		int getType()const { return m_type; }
 		int getProtocol()const { return m_protocol; }
 		bool isConnected()const { return m_is_connected; }
 
-		//·µ»ØsocketÊÇ·ñÓĞĞ§
+		//ï¿½ï¿½ï¿½ï¿½socketï¿½Ç·ï¿½ï¿½ï¿½Ğ§
 		bool isValid()const;
-		//·µ»ØSocket´íÎó
+		//ï¿½ï¿½ï¿½ï¿½Socketï¿½ï¿½ï¿½ï¿½
 		int getError()const;
 
-		//»ñÈ¡Ô¶¶ËµØÖ·£¬²¢ÔÚÊ×´Îµ÷ÓÃÊ±´ÓÏµÍ³¶ÁÈ¡Ö®
+		//ï¿½ï¿½È¡Ô¶ï¿½Ëµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡Ö®
 		shared_ptr<Address> getRemote_address();
-		//»ñÈ¡±¾µØµØÖ·£¬²¢ÔÚÊ×´Îµ÷ÓÃÊ±´ÓÏµÍ³¶ÁÈ¡Ö®
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡Ö®
 		shared_ptr<Address> getLocal_address();
 
-		//Êä³öĞÅÏ¢µ½Á÷ÖĞ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ostream& dump(ostream& os)const;
 		
-		//½áËã¶ÁÈ¡ÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Â¼ï¿½
 		bool settleRead_event() const;
-		//½áËãĞ´ÈëÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½Â¼ï¿½
 		bool settleWrite_event() const;
-		//½áËã½ÓÊÕÁ´½ÓÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		bool settleAccept_event() const;
-		//½áËãËùÓĞÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		bool settleAllEvents() const;
 	public:
-		//ÖØÔØ<<ÔËËã·û£¬ÓÃÓÚ½«ĞÅÏ¢Êä³öµ½Á÷ÖĞ
+		//ï¿½ï¿½ï¿½ï¿½<<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		friend ostream& operator<<(ostream& os, const shared_ptr<Socket> socket);
 	private:
-		//³õÊ¼»¯socketÎÄ¼şÃèÊö·û
+		//ï¿½ï¿½Ê¼ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void initializeSocket();
-		//ÎªSocket¶ÔÏó´´½¨socketÎÄ¼şÃèÊö·û£¨ÑÓ³Ù³õÊ¼»¯£©
+		//ÎªSocketï¿½ï¿½ï¿½ó´´½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³Ù³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 		void newSocket();
 	private:
-		//socketÎÄ¼şÃèÊö·û
+		//socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int m_socket;
-		//Ğ­Òé´Ø
+		//Ğ­ï¿½ï¿½ï¿½
 		int m_family;
-		//socketÀàĞÍ
+		//socketï¿½ï¿½ï¿½ï¿½
 		int m_type;
-		//Ğ­Òé
+		//Ğ­ï¿½ï¿½
 		int m_protocol;
-		//ÊÇ·ñÒÑÁ¬½Ó
+		//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool m_is_connected;
 
-		//Ô¶¶ËµØÖ·
+		//Ô¶ï¿½Ëµï¿½Ö·
 		shared_ptr<Address> m_remote_address;
-		//±¾µØµØÖ·
+		//ï¿½ï¿½ï¿½Øµï¿½Ö·
 		shared_ptr<Address> m_local_address;
 	};
 }

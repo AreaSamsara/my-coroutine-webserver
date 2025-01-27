@@ -15,7 +15,7 @@
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 //
 //	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
-//	//½«server_socketÉèÖÃÎª·Ç×èÈû×´Ì¬
+//	//ï¿½ï¿½server_socketï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 //	fcntl(server_socket, F_SETFL, O_NONBLOCK);
 //
 //	sockaddr_in server_addr;
@@ -24,12 +24,12 @@
 //	server_addr.sin_port = htons(80);
 //	inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr.s_addr);
 //
-//	//Èç¹û³É¹¦Á¬½Ó
+//	//ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½
 //	if (connect(server_socket, (const sockaddr*)(&server_addr), sizeof(server_addr)) == 0)
 //	{
 //
 //	}
-//	//Èç¹ûconnect()º¯ÊýÕýÔÚ½øÐÐµ«»¹Î´Íê³É
+//	//ï¿½ï¿½ï¿½connect()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½
 //	else if (errno == EINPROGRESS)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -55,7 +55,7 @@
 //			}
 //		);
 //	}
-//	//·ñÔòËµÃ÷³öÏÖÁËÆäËû´íÎó
+//	//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	else
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));

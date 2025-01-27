@@ -24,7 +24,7 @@ namespace HttpSpace
     private:
         http_parser m_parser;
         shared_ptr<HttpRequest> m_request;
-        /// ´íÎóÂë
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// 1000: invalid method
         /// 1001: invalid version
         /// 1002: invalid field
@@ -38,7 +38,7 @@ namespace HttpSpace
     {
     public:
         HttpResponseParser();
-        //chunk±íÊ¾ÏìÓ¦ÊÇ·ñ·Ö¶Î
+        //chunkï¿½ï¿½Ê¾ï¿½ï¿½Ó¦ï¿½Ç·ï¿½Ö¶ï¿½
         size_t execute(char* data, size_t length,const bool chunk);
         int isFinished();
         int hasError();
@@ -54,7 +54,7 @@ namespace HttpSpace
     private:
         httpclient_parser  m_parser;
         shared_ptr<HttpResponse> m_response;
-        /// ´íÎóÂë
+        /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         /// 1001: invalid version
         /// 1002: invalid field
         int m_error;

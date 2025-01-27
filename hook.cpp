@@ -6,140 +6,140 @@
 #include "fdmanager.h"
 
 
-//Ç§Íò²»Òª°Ñ°üº¬º¯Êý¶¨ÒåµÄextern "C"Ä£¿é·ÅÈënamespace HookSpace£¬·ñÔò±¾ÎÄ¼þÄËÖÁËùÓÐÐÂÎÄ¼þµÄÓï·¨¼ì²é¹¦ÄÜ½«Ö±½ÓÍ£°Ú£¨Ô­ÒòÎ´Öª£©
+//Ç§ï¿½ï¿½Òªï¿½Ñ°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½extern "C"Ä£ï¿½ï¿½ï¿½ï¿½ï¿½namespace HookSpaceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï·¨ï¿½ï¿½é¹¦ï¿½Ü½ï¿½Ö±ï¿½ï¿½Í£ï¿½Ú£ï¿½Ô­ï¿½ï¿½Î´Öªï¿½ï¿½
 namespace HookSpace
 {
 	using namespace IOManagerSpace;
 	using namespace FdManagerSpace;
 	using std::forward;
 
-	//tcpÁ¬½Ó³¬Ê±Ê±¼ä
+	//tcpï¿½ï¿½ï¿½Ó³ï¿½Ê±Ê±ï¿½ï¿½
 	uint64_t s_tcp_connect_timeout = 5000;
-	//Ïß³Ì×¨Êô¾²Ì¬±äÁ¿£¬±íÊ¾µ±Ç°Ïß³ÌÊÇ·ñhook×¡£¨ÊÇ·ñÆôÓÃhook£©
+	//ï¿½ß³ï¿½×¨ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ç°ï¿½ß³ï¿½ï¿½Ç·ï¿½hook×¡ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½hookï¿½ï¿½
 	thread_local bool t_hook_enable = false;
 
-	//½øÐÐhook°æ±¾IO²Ù×÷µÄÍ¨ÓÃº¯Êý
+	//ï¿½ï¿½ï¿½ï¿½hookï¿½æ±¾IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãºï¿½ï¿½ï¿½
 	template<typename OriginFunction, typename ... Args>
 	static ssize_t do_io(int fd, OriginFunction function_origin, const char* hook_function_name, uint32_t event, int timeout_type, Args&&...args)
 	{
-		//Èç¹ûÃ»ÓÐ±»hook×¡£¬Ö±½ÓÖ´ÐÐÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½Ð±ï¿½hook×¡ï¿½ï¿½Ö±ï¿½ï¿½Ö´ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return function_origin(fd, forward<Args>(args)...);
 		}
 
-		//»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+		//ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		//shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_shared_ptr()->getFile_descriptor(fd);
-		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(fd);	//´Ë´¦ÓÐ²»¿ÉÑÔ×´µÄbug£¬ÔÚmainº¯Êý½áÊøÊ±»áµ÷ÓÃÁ½´Îwriteº¯Êý£¬»áµ¼ÖÂshared_ptr¼ÆÊý³ö´í£¬¹ÊÓ¦¸ÃÊ¹ÓÃÂãÖ¸Õë
+		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(fd);	//ï¿½Ë´ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½bugï¿½ï¿½ï¿½ï¿½mainï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½writeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½áµ¼ï¿½ï¿½shared_ptrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
 
-		//Èç¹ûÎÄ¼þÃèÊö·ûÊµÌå²»´æÔÚ£¬ËµÃ÷¿Ï¶¨²»ÊÇsocketÎÄ¼þÃèÊö·û£¬Ö±½ÓÖ´ÐÐÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å²»ï¿½ï¿½ï¿½Ú£ï¿½Ëµï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ö´ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!file_descriptor_entity)
 		{
 			return function_origin(fd, forward<Args>(args)...);
 		}
-		//Èç¹ûÎÄ¼þÃèÊö·ûÒÑ¾­±»¹Ø±Õ£¬½«´íÎó´úÂëÉèÖÃÎª"bad file descriptor"£¬²¢·µ»Ø-1
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ø±Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª"bad file descriptor"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-1
 		else if (file_descriptor_entity->isClose())
 		{
 			errno = EBADF;
 			return -1;
 		}
-		//Èç¹ûÎÄ¼þÃèÊö·û²»ÊÇsocket,»òÕßÓÃ»§ÒÑ¾­Ö÷¶¯½«ÆäÉèÖÃÎª·Ç×èÈû£¬Ö±½ÓÖ´ÐÐÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socket,ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ö´ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		else if (!file_descriptor_entity->isSocket() || file_descriptor_entity->isUserNonblock())
 		{
 			return function_origin(fd, forward<Args>(args)...);
 		}
 
 
-		//³¬Ê±Ê±¼ä
+		//ï¿½ï¿½Ê±Ê±ï¿½ï¿½
 		uint64_t timeout = file_descriptor_entity->getTimeout(timeout_type);
-		//±êÖ¾¶¨Ê±Æ÷ÊÇ·ñÈ¡ÏûµÄshared_ptr
+		//ï¿½ï¿½Ö¾ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ï¿½È¡ï¿½ï¿½ï¿½ï¿½shared_ptr
 		shared_ptr<int> timer_cancelled(new int);
-		//½«timer_cancelled³õÊ¼»¯Îª0£¬±íÊ¾Î´È¡Ïû
+		//ï¿½ï¿½timer_cancelledï¿½ï¿½Ê¼ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ê¾Î´È¡ï¿½ï¿½
 		*timer_cancelled = 0;
 
-		//²Ù×÷Ö´ÐÐÑ­»·
+		//ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ñ­ï¿½ï¿½
 		while (true)
 		{
-			//³¢ÊÔÖ±½ÓÖ´ÐÐÔ­Ê¼µÄ¿â·½·¨
+			//ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ö´ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 			ssize_t return_value = function_origin(fd, forward<Args>(args)...);
-			//Èç¹û·µ»ØÖµÎª-1ÇÒ´íÎóÀàÐÍÎªÖÐ¶Ï£¬Ôò²»¶Ï³¢ÊÔ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎª-1ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ð¶Ï£ï¿½ï¿½ò²»¶Ï³ï¿½ï¿½ï¿½
 			while (return_value == -1 && errno == EINTR)
 			{
 				return_value = function_origin(fd, forward<Args>(args)...);
 			}
-			//·ñÔòÈç¹û·µ»ØÖµÎª-1ÇÒ´íÎóÀàÐÍÎª×ÊÔ´ÔÝÊ±²»¿ÉÓÃ£¬Ôò½øÐÐÒì²½²Ù×÷
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎª-1ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ô´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì²½ï¿½ï¿½ï¿½ï¿½
 			if (return_value == -1 && errno == EAGAIN)
 			{
-				//»ñÈ¡µ±Ç°Ïß³ÌµÄIO¹ÜÀíÕß
+				//ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ß³Ìµï¿½IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				IOManager* iomanager = IOManager::GetThis();
-				//¶¨Ê±Æ÷
+				//ï¿½ï¿½Ê±ï¿½ï¿½
 				shared_ptr<Timer> timer;
-				//±êÖ¾¶¨Ê±Æ÷ÊÇ·ñÈ¡ÏûµÄweak_ptr£¬¼´¶¨Ê±Æ÷³¬Ê±µÄÌõ¼þ
+				//ï¿½ï¿½Ö¾ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ï¿½È¡ï¿½ï¿½ï¿½ï¿½weak_ptrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				weak_ptr<int> timer_cancelled_weak(timer_cancelled);
 
-				//Èç¹û³¬Ê±Ê±¼ä²»µÈÓÚ-1£¬ËµÃ÷ÉèÖÃÁË³¬Ê±Ê±¼ä
+				//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ä²»ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½Ê±Ê±ï¿½ï¿½
 				if (timeout != (uint64_t)-1)
 				{
-					//ÉèÖÃ¶¨Ê±Æ÷£¬Èç¹ûµ½Ê±¼äÊ±Ìõ¼þÎ´Ê§Ð§£¬Ôò½áËãÊÂ¼þ
+					//ï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Î´Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 					timer.reset(new Timer(timeout, [timer_cancelled_weak, fd, iomanager, event]()
 						{
 							auto condition = timer_cancelled_weak.lock();
-							//Èç¹ûÌõ¼þÒÑ¾­Ê§Ð§£¨do_ioÒÑÒò±»epollÏµÍ³´¦Àí¶ø·µ»Ø£©£¬Ö±½Ó·µ»Ø
+							//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½Ê§Ð§ï¿½ï¿½do_ioï¿½ï¿½ï¿½ï¿½epollÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
 							if (!condition)
 							{
 								return;
 							}
-							//·ñÔòÉèÖÃ´íÎóÂë²¢½áËãÐ­³ÌÊÂ¼þ£¬»½ÐÑdo_ioµÄµ±Ç°Ð­³Ì
+							//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½do_ioï¿½Äµï¿½Ç°Ð­ï¿½ï¿½
 							else
 							{
-								//ÉèÖÃ²Ù×÷³¬Ê±´íÎóÂë£¬±íÊ¾ÔÚsocket¿ÉÓÃÖ®Ç°ÊÂ¼þÒÑ³¬Ê±
+								//ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½Ê¾ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½Â¼ï¿½ï¿½Ñ³ï¿½Ê±
 								*condition = ETIMEDOUT;
-								//½áËã¸ÃsocketµÄÊÂ¼þ£¨¼´Îª½«do_ioµ±Ç°Ð­³Ì»½ÐÑ£¬¼ûºóÎÄ£©
+								//ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½do_ioï¿½ï¿½Ç°Ð­ï¿½Ì»ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½
 								iomanager->settleEvent(fd, IOManager::EventType(event));
 							}
 						}
 					, timer_cancelled_weak));
-					//Ìí¼Ó¶¨Ê±Æ÷
+					//ï¿½ï¿½ï¿½Ó¶ï¿½Ê±ï¿½ï¿½
 					iomanager->addTimer(timer);
 				}
 
-				//²»ÎªÊÂ¼þÉèÖÃ»Øµ÷º¯Êý£¬Ä¬ÈÏÊ¹ÓÃµ±Ç°Ð­³ÌÎª»Øµ÷²ÎÊý
+				//ï¿½ï¿½Îªï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Ê¹ï¿½Ãµï¿½Ç°Ð­ï¿½ï¿½Îªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 				bool return_value = iomanager->addEvent(fd, IOManager::EventType(event), nullptr);
-				//Èç¹ûÌí¼ÓÊ§°Ü£¬±¨´í²¢·µ»Ø-1
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-1
 				if (return_value == false)
 				{
 					shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 					log_event->getSstream() << hook_function_name << " addEvent(" << fd << ", " << event << ")";
 					Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 
-					//Èç¹û¶¨Ê±Æ÷²»Îª¿Õ£¬È¡ÏûÖ®
+					//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½È¡ï¿½ï¿½Ö®
 					if (timer)
 					{
 						iomanager->getTimer_manager()->cancelTimer(timer);
 					}
 					return -1;
 				}
-				//·ñÔòÌí¼Ó³É¹¦
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½
 				else
 				{
-					//¹ÒÆðµ±Ç°Ð­³Ì£¬µÈ´ý¶¨Ê±Æ÷»½ÐÑ»òepoll´¦ÀíÊÂ¼þ£¨¼´socketÒÑ¾­¿ÉÓÃ£©Ê±±»»½ÐÑ
+					//ï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì£ï¿½ï¿½È´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ñ»ï¿½epollï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ã£ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					Fiber::YieldToHold();
 
-					//Èç¹û¶¨Ê±Æ÷²»Îª¿Õ£¬È¡ÏûÖ®
+					//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½È¡ï¿½ï¿½Ö®
 					if (timer)
 					{
 						iomanager->getTimer_manager()->cancelTimer(timer);
 					}
-					//Èç¹ûÊÇÍ¨¹ý¶¨Ê±Æ÷ÈÎÎñ»½ÐÑµÄ£¬ÉèÖÃ´íÎó´úÂë²¢·µ»Ø-1
+					//ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÑµÄ£ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½-1
 					if (*timer_cancelled!=0)
 					{
 						errno = *timer_cancelled;
 						return -1;
 					}
-					//·ñÔòËµÃ÷µ±Ç°Ð­³Ì²»ÊÇÒòÎª³¬Ê±¶øÊÇÒòÎªsocket¿ÉÓÃ±»»½ÐÑ£¬ÖØÐÂ³¢ÊÔÖ´ÐÐÑ­»·
+					//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªsocketï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½Â³ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ñ­ï¿½ï¿½
 				}
 			}
-			//Èç¹û³öÏÖÆäËû´íÎó»òÕß·µ»ØÖµ²»Îª-1£¬Ôòdo_io()·µ»Ø¸Ã·µ»ØÖµ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½Öµï¿½ï¿½Îª-1ï¿½ï¿½ï¿½ï¿½do_io()ï¿½ï¿½ï¿½Ø¸Ã·ï¿½ï¿½ï¿½Öµ
 			else
 			{
 				return return_value;
@@ -148,30 +148,30 @@ namespace HookSpace
 	}
 }
 
-//°´ÕÕC·ç¸ñ±àÒë,ÉùÃ÷Ô­Ê¼¿âº¯Êý£¬²¢ÖØÐ´Æähook°æ±¾
+//ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½hookï¿½æ±¾
 extern "C"
 {
 	using namespace HookSpace;
 
-	//sleepÏà¹Ø
+	//sleepï¿½ï¿½ï¿½
 	unsigned int (*sleep_origin)(unsigned int) = (unsigned int (*)(unsigned int))dlsym(RTLD_NEXT, "sleep");
 	int (*usleep_origin)(useconds_t usec) = (int (*)(useconds_t))dlsym(RTLD_NEXT, "usleep");
 	int (*nanosleep_origin)(const struct timespec* req, struct timespec* rem) = (int (*)(const struct timespec* req, struct timespec* rem))dlsym(RTLD_NEXT, "nanosleep");
 
-	//socketÏà¹Ø
+	//socketï¿½ï¿½ï¿½
 	int (*socket_origin)(int domain, int type, int protocol) = (int (*)(int domain, int type, int protocol))dlsym(RTLD_NEXT, "socket");
 
 	int (*connect_origin)(int sockfd, const struct sockaddr* addr, socklen_t addrlen) = (int (*)(int sockfd, const struct sockaddr* addr, socklen_t addrlen))dlsym(RTLD_NEXT, "connect");
 	int (*accept_origin)(int s, struct sockaddr* addr, socklen_t* addrlen) = (int (*)(int s, struct sockaddr* addr, socklen_t * addrlen))dlsym(RTLD_NEXT, "accept");
 
-	//readÏà¹Ø
+	//readï¿½ï¿½ï¿½
 	ssize_t(*read_origin)(int fd, void* buf, size_t count) = (ssize_t(*)(int fd, void* buf, size_t count))dlsym(RTLD_NEXT, "read");
 	ssize_t(*readv_origin)(int fd, const struct iovec* iov, int iovcnt) = (ssize_t(*)(int fd, const struct iovec* iov, int iovcnt))dlsym(RTLD_NEXT, "readv");
 	ssize_t(*recv_origin)(int sockfd, void* buf, size_t len, int flags) = (ssize_t(*)(int sockfd, void* buf, size_t len, int flags))dlsym(RTLD_NEXT, "recv");
 	ssize_t(*recvfrom_origin)(int sockfd, void* buf, size_t len, int flags, struct sockaddr* src_addr, socklen_t* addrlen) = (ssize_t(*)(int sockfd, void* buf, size_t len, int flags, struct sockaddr* src_addr, socklen_t * addrlen))dlsym(RTLD_NEXT, "recvfrom");
 	ssize_t(*recvmsg_origin)(int sockfd, struct msghdr* msg, int flags) = (ssize_t(*)(int sockfd, struct msghdr* msg, int flags))dlsym(RTLD_NEXT, "recvmsg");
 
-	//writeÏà¹Ø
+	//writeï¿½ï¿½ï¿½
 	ssize_t(*write_origin)(int fd, const void* buf, size_t count) = (ssize_t(*)(int fd, const void* buf, size_t count))dlsym(RTLD_NEXT, "write");
 	ssize_t(*writev_origin)(int fd, const struct iovec* iov, int iovcnt) = (ssize_t(*)(int fd, const struct iovec* iov, int iovcnt))dlsym(RTLD_NEXT, "writev");
 	ssize_t(*send_origin)(int s, const void* msg, size_t len, int flags) = (ssize_t(*)(int s, const void* msg, size_t len, int flags))dlsym(RTLD_NEXT, "send");
@@ -189,204 +189,204 @@ extern "C"
 
 
 
-	//sleepÏà¹Ø
+	//sleepï¿½ï¿½ï¿½
 	unsigned int sleep(unsigned int seconds)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return sleep_origin(seconds);
 		}
 
-		//»ñÈ¡µ±Ç°Ð­³ÌºÍµ±Ç°IO¹ÜÀíÕß
+		//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ð­ï¿½ÌºÍµï¿½Ç°IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Fiber> fiber = Fiber::GetThis();
 		IOManager* iomanager = IOManager::GetThis();
 
-		//bind()×îÖÕµÃµ½µÄÊÇ¼Ì³Ð×ÔSchedulerÀàµÄIOManager::schedule
+		//bind()ï¿½ï¿½ï¿½ÕµÃµï¿½ï¿½ï¿½ï¿½Ç¼Ì³ï¿½ï¿½ï¿½Schedulerï¿½ï¿½ï¿½IOManager::schedule
 		shared_ptr<Timer> timer(new Timer(seconds * 1000, bind((void(Scheduler::*)
 			(shared_ptr<Fiber>, int thread)) & IOManager::schedule, iomanager, fiber, -1)));
 		//shared_ptr<Timer> timer(new Timer(seconds * 1000, [iomanager, fiber]() {iomanager->schedule(fiber); }));
 		iomanager->addTimer(timer);
 
-		//½«µ±Ç°Ð­³Ì·ÅÈë¶¨Ê±Æ÷ºóÇÐ»»µ½ºóÌ¨£¬µÈµ½¶¨Ê±Æ÷±»»½ÐÑºóÔÙÇÐ»»»ØÀ´
+		//ï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì·ï¿½ï¿½ë¶¨Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
 		Fiber::YieldToHold();
 		return 0;
 	}
 	int usleep(useconds_t usec)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return usleep_origin(usec);
 		}
 
-		//»ñÈ¡µ±Ç°Ð­³ÌºÍµ±Ç°IO¹ÜÀíÕß
+		//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ð­ï¿½ÌºÍµï¿½Ç°IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Fiber> fiber = Fiber::GetThis();
 		IOManager* iomanager = IOManager::GetThis();
 
-		//bind()×îÖÕµÃµ½µÄÊÇ¼Ì³Ð×ÔSchedulerÀàµÄIOManager::schedule
+		//bind()ï¿½ï¿½ï¿½ÕµÃµï¿½ï¿½ï¿½ï¿½Ç¼Ì³ï¿½ï¿½ï¿½Schedulerï¿½ï¿½ï¿½IOManager::schedule
 		shared_ptr<Timer> timer(new Timer(usec / 1000, bind((void(Scheduler::*)
 			(shared_ptr<Fiber>, int thread)) & IOManager::schedule, iomanager, fiber, -1)));
 		//shared_ptr<Timer> timer(new Timer(usec / 1000, [iomanager, fiber]() {iomanager->schedule(fiber); }));
 		iomanager->addTimer(timer);
 
-		//½«µ±Ç°Ð­³Ì·ÅÈë¶¨Ê±Æ÷ºóÇÐ»»µ½ºóÌ¨£¬µÈµ½¶¨Ê±Æ÷±»»½ÐÑºóÔÙÇÐ»»»ØÀ´
+		//ï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì·ï¿½ï¿½ë¶¨Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
 		Fiber::YieldToHold();
 		return 0;
 	}
 	int nanosleep(const struct timespec* req, struct timespec* rem)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return nanosleep_origin(req, rem);
 		}
 
 		int timeout_ms = req->tv_sec * 1000 + req->tv_nsec / 1000 / 1000;
-		//»ñÈ¡µ±Ç°Ð­³ÌºÍµ±Ç°IO¹ÜÀíÕß
+		//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ð­ï¿½ÌºÍµï¿½Ç°IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Fiber> fiber = Fiber::GetThis();
 		IOManager* iomanager = IOManager::GetThis();
 
-		//bind()×îÖÕµÃµ½µÄÊÇ¼Ì³Ð×ÔSchedulerÀàµÄIOManager::schedule
+		//bind()ï¿½ï¿½ï¿½ÕµÃµï¿½ï¿½ï¿½ï¿½Ç¼Ì³ï¿½ï¿½ï¿½Schedulerï¿½ï¿½ï¿½IOManager::schedule
 		shared_ptr<Timer> timer(new Timer(timeout_ms, bind((void(Scheduler::*)
 			(shared_ptr<Fiber>, int thread)) & IOManager::schedule, iomanager, fiber, -1)));
 		//shared_ptr<Timer> timer(new Timer(timeout_ms, [iomanager, fiber]() {iomanager->schedule(fiber); }));
 		iomanager->addTimer(timer);
 
-		//½«µ±Ç°Ð­³Ì·ÅÈë¶¨Ê±Æ÷ºóÇÐ»»µ½ºóÌ¨£¬µÈµ½¶¨Ê±Æ÷±»»½ÐÑºóÔÙÇÐ»»»ØÀ´
+		//ï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì·ï¿½ï¿½ë¶¨Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
 		Fiber::YieldToHold();
 		return 0;
 	}
 
 
-	//socketÏà¹Ø
+	//socketï¿½ï¿½ï¿½
 	int socket(int domain, int type, int protocol)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return socket_origin(domain, type, protocol);
 		}
 
-		//µ÷ÓÃÔ­Ê¼µÄ¿â·½·¨´´½¨socket
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socket
 		int file_descriptor = socket_origin(domain, type, protocol);
 
-		//Èç¹û´´½¨Ê§°Ü£¬·µ»Ø-1£¨±£³ÖºÍÔ­Ê¼µÄ¿â·½·¨ÏàÍ¬µÄÐÐÎª£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½Öºï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 		if (file_descriptor == -1)
 		{
 			return file_descriptor;
 		}
-		//·ñÔò´´½¨³É¹¦
+		//ï¿½ï¿½ï¿½ò´´½ï¿½ï¿½É¹ï¿½
 		else
 		{
-			//µ÷ÓÃµ¥ÀýÎÄ¼þÃèÊö·û¹ÜÀíÕß´´½¨¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+			//ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(file_descriptor, true);
-			//·µ»ØÎÄ¼þÃèÊö·û
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			return file_descriptor;
 		}
 	}
-	//°´ÕÕÖ¸¶¨µÄ³¬Ê±Ê±¼ä³¢ÊÔÁ¬½Ó
+	//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä³ï¿½Ê±Ê±ï¿½ä³¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int connect_with_timeout(int sockfd, const struct sockaddr* addr, socklen_t addrlen, uint64_t timeout_ms)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return connect_origin(sockfd, addr, addrlen);
 		}
 
-		//»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+		//ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(sockfd);
-		//Èç¹ûµÃµ½µÄÎÄ¼þÃèÊö·ûÊµÌåÎª¿Õ»ò´¦ÓÚ¹Ø±Õ×´Ì¬
+		//ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Îªï¿½Õ»ï¿½ï¿½Ú¹Ø±ï¿½×´Ì¬
 		if (!file_descriptor_entity || file_descriptor_entity->isClose())
 		{
-			//ÉèÖÃ´íÎóÂëÎª¡°bad file descriptor¡±
+			//ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½bad file descriptorï¿½ï¿½
 			errno = EBADF;
-			//·µ»Ø-1£¨±£³ÖºÍÔ­Ê¼µÄ¿â·½·¨ÏàÍ¬µÄÐÐÎª£©
+			//ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½Öºï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 			return -1;
 		}
-		//Èç¹ûµÃµ½µÄÎÄ¼þÃèÊö·ûÊµÌå²»ÊÇsocket»ò±»ÓÃ»§Ö÷¶¯ÉèÖÃÎª·Ç×èÈû£¬Ö±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å²»ï¿½ï¿½socketï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!file_descriptor_entity->isSocket() || file_descriptor_entity->isUserNonblock())
 		{
 			return connect_origin(sockfd, addr, addrlen);
 		}
 
-		//µ÷ÓÃÔ­Ê¼µÄ¿â·½·¨³¢ÊÔÁ¬½Ó
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int return_value = connect_origin(sockfd, addr, addrlen);
-		//Èç¹û·µ»Ø0ËµÃ÷Á¬½Ó³É¹¦£¬Ö±½Ó·µ»Ø0
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0Ëµï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½0
 		if (return_value == 0)
 		{
 			return 0;
 		}
-		//Èç¹û·µ»ØÖµ²»ÊÇ-1£¨ÕâºÃÏñ²»Ì«¿ÉÄÜ£©»ò·¢ÉúÁË³ý²Ù×÷Î´Á¢¼´Íê³ÉÒÔÍâµÄ´íÎó£¬Ö±½Ó·µ»ØÔ­Ê¼¿â·½·¨µÄ·µ»ØÖµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ô­Ê¼ï¿½â·½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½Öµ
 		else if (return_value != -1 || errno != EINPROGRESS)
 		{
 			return return_value;
 		}
-		//·ñÔòËµÃ÷²Ù×÷Î´Á¢¼´Íê³É£¬½øÐÐÒì²½Á¬½Ó
+		//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì²½ï¿½ï¿½ï¿½ï¿½
 		else
 		{
-			//»ñÈ¡µ±Ç°IO¹ÜÀíÕß
+			//ï¿½ï¿½È¡ï¿½ï¿½Ç°IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			IOManager* iomanager = IOManager::GetThis();
 
 			shared_ptr<Timer> timer;
-			//±êÖ¾¶¨Ê±Æ÷ÊÇ·ñÈ¡ÏûµÄshared_ptr
+			//ï¿½ï¿½Ö¾ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ï¿½È¡ï¿½ï¿½ï¿½ï¿½shared_ptr
 			shared_ptr<int> timer_cancelled(new int);
-			//½«timer_cancelled³õÊ¼»¯Îª0£¬±íÊ¾Î´È¡Ïû
+			//ï¿½ï¿½timer_cancelledï¿½ï¿½Ê¼ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ê¾Î´È¡ï¿½ï¿½
 			*timer_cancelled = 0;
-			//±êÖ¾¶¨Ê±Æ÷ÊÇ·ñÈ¡ÏûµÄweak_ptr£¬¼´¶¨Ê±Æ÷³¬Ê±µÄÌõ¼þ
+			//ï¿½ï¿½Ö¾ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ï¿½È¡ï¿½ï¿½ï¿½ï¿½weak_ptrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			weak_ptr<int> timer_cancelled_weak(timer_cancelled);
 
-			//Èç¹ûÉèÖÃÁË³¬Ê±Ê±¼ä£¨³¬Ê±Ê±¼ä²»Îª-1£©
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½Ê±Ê±ï¿½ä£¨ï¿½ï¿½Ê±Ê±ï¿½ä²»Îª-1ï¿½ï¿½
 			if (timeout_ms != (uint64_t)-1)
 			{
-				//ÉèÖÃ¶¨Ê±Æ÷£¬Èç¹ûµ½Ê±¼äÊ±Ìõ¼þÎ´Ê§Ð§£¬Ôò½áËãÊÂ¼þ
+				//ï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Î´Ê§Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 				timer.reset(new Timer(timeout_ms, [timer_cancelled_weak, sockfd, iomanager]()
 					{
-						//½âËøÌõ¼þµÄweak_ptr
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½weak_ptr
 						auto condition = timer_cancelled_weak.lock();
-						//Èç¹ûÌõ¼þÒÑ¾­Ê§Ð§£¨connect_with_timeoutÒÑÒò±»epollÏµÍ³´¦Àí¶ø·µ»Ø£©£¬Ö±½Ó·µ»Ø
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½Ê§Ð§ï¿½ï¿½connect_with_timeoutï¿½ï¿½ï¿½ï¿½epollÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
 						if (!condition)
 						{
 							return;
 						}
-						//·ñÔòÉèÖÃ´íÎóÂë²¢½áËãÐ­³ÌÊÂ¼þ£¬»½ÐÑconnect_with_timeoutµÄµ±Ç°Ð­³Ì
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½connect_with_timeoutï¿½Äµï¿½Ç°Ð­ï¿½ï¿½
 						else
 						{
-							//ÉèÖÃ²Ù×÷³¬Ê±´íÎóÂë£¬±íÊ¾ÔÚsocket¿ÉÐ´Ö®Ç°ÊÂ¼þÒÑ³¬Ê±
+							//ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½Ê¾ï¿½ï¿½socketï¿½ï¿½Ð´Ö®Ç°ï¿½Â¼ï¿½ï¿½Ñ³ï¿½Ê±
 							*condition = ETIMEDOUT;
-							//½áËã¸ÃsocketµÄÐ´ÈëÊÂ¼þ£¨¼´Îª½«connect_with_timeoutµÄµ±Ç°Ð­³Ì»½ÐÑ£¬¼ûºóÎÄ£©
+							//ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð´ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½connect_with_timeoutï¿½Äµï¿½Ç°Ð­ï¿½Ì»ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½
 							iomanager->settleEvent(sockfd, IOManager::WRITE);
 						}
 					}
 				, timer_cancelled_weak));
-				//Ìí¼ÓÉèÖÃºÃµÄ¶¨Ê±Æ÷µ½¶¨Ê±Æ÷¹ÜÀíÕßÖÐ
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃºÃµÄ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				iomanager->addTimer(timer);
 			}
 
-			//³¢ÊÔ½«µ±Ç°Ð­³Ì×÷ÎªÐ´ÈëÊÂ¼þÌí¼Óµ½IO¹ÜÀíÕßÖÐ£¨²»ÎªÊÂ¼þÉèÖÃ»Øµ÷º¯Êý£¬Ä¬ÈÏÊ¹ÓÃµ±Ç°Ð­³ÌÎª»Øµ÷²ÎÊý£©
+			//ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½Ç°Ð­ï¿½ï¿½ï¿½ï¿½ÎªÐ´ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Óµï¿½IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Îªï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Ê¹ï¿½Ãµï¿½Ç°Ð­ï¿½ï¿½Îªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			bool return_value = iomanager->addEvent(sockfd, IOManager::WRITE, nullptr);
-			//Èç¹ûÌí¼Ó³É¹¦
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½
 			if (return_value == true)
 			{
-				//¹ÒÆðµ±Ç°Ð­³Ì£¬µÈ´ý¶¨Ê±Æ÷»½ÐÑ»òepoll´¦ÀíÐ´ÈëÊÂ¼þ£¨¼´socketÒÑ¾­¿ÉÐ´£©Ê±±»»½ÐÑ
+				//ï¿½ï¿½ï¿½ï¿½Ç°Ð­ï¿½Ì£ï¿½ï¿½È´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ñ»ï¿½epollï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½Ñ¾ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				Fiber::YieldToHold();
 
-				//µ±Ç°Ð­³Ì±»»½ÐÑºó£¬Èç¹û¶¨Ê±Æ÷²»Îª¿Õ£¬È¡ÏûÖ®
+				//ï¿½ï¿½Ç°Ð­ï¿½Ì±ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½È¡ï¿½ï¿½Ö®
 				if (timer)
 				{
 					iomanager->getTimer_manager()->cancelTimer(timer);
 				}
-				//Èç¹ûÔÚsocket¿ÉÐ´Ö®Ç°ÊÂ¼þÒÑ³¬Ê±£¬ËµÃ÷Ð­³Ì±»»½ÐÑµÄÔ­ÒòÊÇ¶¨Ê±Æ÷³¬Ê±£¬ÉèÖÃ´íÎóÂë²¢·µ»Ø-1
+				//ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð´Ö®Ç°ï¿½Â¼ï¿½ï¿½Ñ³ï¿½Ê±ï¿½ï¿½Ëµï¿½ï¿½Ð­ï¿½Ì±ï¿½ï¿½ï¿½ï¿½Ñµï¿½Ô­ï¿½ï¿½ï¿½Ç¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½-1
 				if (*timer_cancelled!=0)
 				{
 					errno = *timer_cancelled;
 					return -1;
 				}
 			}
-			//·ñÔòÌí¼ÓÊ§°Ü£¬È¡Ïû¶¨Ê±Æ÷²¢±¨´í
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			else
 			{
-				//Èç¹û¶¨Ê±Æ÷²»Îª¿Õ£¬È¡ÏûÖ®
+				//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½È¡ï¿½ï¿½Ö®
 				if (timer)
 				{
 					iomanager->getTimer_manager()->cancelTimer(timer);
@@ -399,20 +399,20 @@ extern "C"
 
 
 
-			//²éÑ¯socketÁ¬½Ó½á¹û
+			//ï¿½ï¿½Ñ¯socketï¿½ï¿½ï¿½Ó½ï¿½ï¿½
 			int error = 0;
 			socklen_t len = sizeof(int);
-			//Èç¹ûÁ¬½ÓÊ§°ÜÔò·µ»Ø-1
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 			if (-1 == getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &error, &len))
 			{
 				return -1;
 			}
-			//Èç¹ûÁ¬½Ó³É¹¦ÇÒÃ»ÓÐ³ö´í£¬Ôò·µ»Ø0
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½ï¿½ï¿½Ã»ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½0
 			else if (!error)
 			{
 				return 0;
 			}
-			//Èç¹ûÁ¬½Ó³É¹¦µ«³ö´í£¬ÉèÖÃ´íÎóÂë²¢·µ»Ø-1
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ë²¢ï¿½ï¿½ï¿½ï¿½-1
 			else
 			{
 				errno = error;
@@ -420,25 +420,25 @@ extern "C"
 			}
 		}
 	}
-	//°´ÕÕÄ¬ÈÏµÄtcpÁ¬½Ó³¬Ê±Ê±¼ä³¢ÊÔÁ¬½Ó
+	//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ïµï¿½tcpï¿½ï¿½ï¿½Ó³ï¿½Ê±Ê±ï¿½ä³¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int connect(int sockfd, const struct sockaddr* addr, socklen_t addrlen)
 	{
-		//°´ÕÕÔ­Ê¼Ãû³Æµ÷ÓÃµÄconnectº¯Êý²ÉÓÃÄ¬ÈÏµÄTCPÁ¬½Ó³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½Æµï¿½ï¿½Ãµï¿½connectï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ïµï¿½TCPï¿½ï¿½ï¿½Ó³ï¿½Ê±Ê±ï¿½ï¿½
 		return connect_with_timeout(sockfd, addr, addrlen, s_tcp_connect_timeout);
 	}
 	int accept(int s, struct sockaddr* addr, socklen_t* addrlen)
 	{
 		int file_descriptor = do_io(s, accept_origin, "accept", IOManager::READ, SO_RCVTIMEO, addr, addrlen);
-		//Èç¹ûÔ­Ê¼¿âº¯Êýaccept()Ö´ÐÐ³É¹¦
+		//ï¿½ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½accept()Ö´ï¿½Ð³É¹ï¿½
 		if (file_descriptor >= 0)
 		{
-			//µ÷ÓÃµ¥ÀýÎÄ¼þÃèÊö·û¹ÜÀíÕß´´½¨¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+			//ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(file_descriptor, true);
 		}
 		return file_descriptor;
 	}
 
-	//readÏà¹Ø
+	//readï¿½ï¿½ï¿½
 	ssize_t read(int fd, void* buf, size_t count)
 	{
 		return do_io(fd, read_origin, "read", IOManager::READ, SO_RCVTIMEO, buf, count);
@@ -460,7 +460,7 @@ extern "C"
 		return do_io(sockfd, recvmsg_origin, "recvmsg", IOManager::READ, SO_RCVTIMEO, msg, flags);
 	}
 
-	//writeÏà¹Ø
+	//writeï¿½ï¿½ï¿½
 	ssize_t write(int fd, const void* buf, size_t count)
 	{
 		return do_io(fd, write_origin, "write", IOManager::WRITE, SO_SNDTIMEO, buf, count);
@@ -482,30 +482,30 @@ extern "C"
 		return do_io(s, sendmsg_origin, "sendmsg", IOManager::WRITE, SO_SNDTIMEO, msg, flags);
 	}
 
-	//fdÏà¹Ø
+	//fdï¿½ï¿½ï¿½
 	int close(int fd)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return close_origin(fd);
 		}
 		
-		//»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+		//ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(fd);
-		//Èç¹ûÊµÌå²»Îª¿Õ£¬½áËãsocketÉÏÃæµÄËùÓÐÊÂ¼þ²¢É¾³ý¸ÃÊµÌå
+		//ï¿½ï¿½ï¿½Êµï¿½å²»Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		if (file_descriptor_entity)
 		{
 			auto iomanager = IOManager::GetThis();
 			if (iomanager)
 			{
-				//½áËãsocketÉÏÃæµÄËùÓÐÊÂ¼þ
+				//ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 				iomanager->settleAllEvents(fd);
 			}
-			//É¾³ýsocket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+			//É¾ï¿½ï¿½socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->deleteFile_descriptor(fd);
 		}
-		//µ÷ÓÃÔ­Ê¼µÄ¿â·½·¨¹Ø±Õsocket
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½ï¿½Ø±ï¿½socket
 		return close_origin(fd);
 	}
 	int fcntl(int fd, int cmd, .../* arg */)
@@ -610,49 +610,49 @@ extern "C"
 		void* arg = va_arg(va, void*);
 		va_end(va);
 
-		//Èç¹ûrequestÊÇFIONBIO
+		//ï¿½ï¿½ï¿½requestï¿½ï¿½FIONBIO
 		if (FIONBIO == request)
 		{
 			bool user_nonblock = !!*(int*)arg;
-			//»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+			//ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(d);
-			//Èç¹ûÊµÌåÎª¿Õ£¬»òÊµÌåÒÑ¹Ø±Õ£¬»òÊµÌå²»ÊÇsocket£¬Ö±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+			//ï¿½ï¿½ï¿½Êµï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Ñ¹Ø±Õ£ï¿½ï¿½ï¿½Êµï¿½å²»ï¿½ï¿½socketï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 			if (!file_descriptor_entity || file_descriptor_entity->isClose() || !file_descriptor_entity->isSocket())
 			{
 				return ioctl_origin(d, request, arg);
 			}
-			//·ñÔò½«ÓÃ»§Ö÷¶¯ÉèÖÃ·Ç×èÈûµÄÖµÉèÎªarg
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Îªarg
 			file_descriptor_entity->setUserNonblock(user_nonblock);
 		}
-		//µ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		return ioctl_origin(d, request, arg);
 	}
 	int getsockopt(int sockfd, int level, int optname, void* optval, socklen_t* optlen)
 	{
-		//Ö±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		return getsockopt_origin(sockfd, level, optname, optval, optlen);
 	}
 	int setsockopt(int sockfd, int level, int optname, const void* optval, socklen_t optlen)
 	{
-		//Èç¹ûÃ»ÓÐhook×¡£¬ÔòÖ±½Óµ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½hook×¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óµï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		if (!t_hook_enable)
 		{
 			return setsockopt_origin(sockfd, level, optname, optval, optlen);
 		}
 
-		//Èç¹ûÎªÍ¨ÓÃsocket´úÂëÇÒ¿ÉÑ¡ÏîÎª½ÓÊÕ³¬Ê±»ò·¢ËÍ³¬Ê±£¬»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå²¢ÉèÖÃ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ÎªÍ¨ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½Ò¿ï¿½Ñ¡ï¿½ï¿½Îªï¿½ï¿½ï¿½Õ³ï¿½Ê±ï¿½ï¿½ï¿½Í³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å²¢ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½
 		if (level == SOL_SOCKET && (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
 		{
-			//»ñÈ¡socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+			//ï¿½ï¿½È¡socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(sockfd);
-			//Èç¹û´´½¨µÄÎÄ¼þÃèÊö·ûÊµÌå²»Îª¿Õ£¬ÎªÆäÉèÖÃ³¬Ê±Ê±¼ä
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å²»Îªï¿½Õ£ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½
 			if (file_descriptor_entity)
 			{
 				const timeval* tv = (const timeval*)optval;
 				file_descriptor_entity->setTimeout(optname, tv->tv_sec * 1000 + tv->tv_usec / 1000);
 			}
 		}
-		//µ÷ÓÃÔ­Ê¼µÄ¿â·½·¨
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿â·½ï¿½ï¿½
 		return setsockopt_origin(sockfd, level, optname, optval, optlen);
 	}
 }

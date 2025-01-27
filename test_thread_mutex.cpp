@@ -48,11 +48,11 @@
 //
 //int main(int argc, char** argv)
 //{
-//	//ÉèÖÃÈÕÖ¾ÊÂ¼þ
-//	//__FILE__·µ»Øµ±Ç°ÎÄ¼þµÄÎÄ¼þÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëÐÐÊý;elapseÎª²âÊÔÖµ
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+//	//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 //	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //	event->getSstream() << "thread test begin";
-//	//Ê¹ÓÃLoggerManagerµ¥ÀýµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+//	//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //

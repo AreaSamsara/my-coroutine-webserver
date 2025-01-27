@@ -18,58 +18,58 @@ namespace MutexSpace
 	using std::memory_order_release;
 
 	/*
-	* Àà¹ØÏµ£º
-	* ScopedLock,ReadScopedLock,WriteScopedLockÎª¼àÊÓÕßÏµÁÐ£¬ÓÃÓÚ¹ÜÀí»¥³âËøÏµÁÐ
-	* ÊÂÏÈ´´½¨»¥³âËø¶ÔÏó£¬ÔÚÐèÒªËø¶¨Ê±ÔÙÓÃÆä´´½¨¼àÊÓÕß¶ÔÏó²Ù×Ý»¥³âËø£¬¼àÊÓÕß¶ÔÏóÉúÃüÖÜÆÚ½áÊøÊ±×Ô¶¯½âËø
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* ScopedLock,ReadScopedLock,WriteScopedLockÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Ð£ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ä´´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ê±ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	*/
 	/*
-	* »¥³âËøÏµÍ³µ÷ÓÃ·½·¨£º
-	* 1.´Ó»¥³âËøÏµÁÐºÍ¼àÊÓÕßÏµÁÐÖÐ·Ö±ðÑ¡ÔñºÏÊÊµÄÀà£¬ÊÂÏÈ´´½¨»¥³âËø¶ÔÏó
-	* 2.ÔÙ½«»¥³âËøÀà×÷Îª¼àÊÓÕßÀàµÄÄ£°å²ÎÊý£¬ÓÃ»¥³âËø¶ÔÏó´´½¨¼àÊÓÕß¶ÔÏó
-	* 3.¼àÊÓÕß¶ÔÏóÒ»¾­´´½¨±ãÖ´ÐÐËø¶¨¹¦ÄÜ£¬Ö±µ½ÉúÃüÖÜÆÚ½áÊøÊ±×Ô¶¯½âËø
+	* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ÐºÍ¼ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½Ð·Ö±ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½à£¬ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 2.ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó´´½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½
+	* 3.ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ê±ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	*/
 	/*
-	* ÐÅºÅÁ¿µ÷ÓÃ·½·¨£º
-	* 1.ÊÂÏÈ´´½¨ÐÅºÅÁ¿¶ÔÏó
-	* 2.ÐèÒª×èÈû½ø³ÌÊ±ÁîÐÅºÅÁ¿¶ÔÏóµ÷ÓÃwait()·½·¨
-	* 3.ÐèÒª¼ÌÐøÔËÐÐÊ±ÁîÐÅºÅÁ¿¶ÔÏóµ÷ÓÃnotify()·½·¨
+	* ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 2.ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wait()ï¿½ï¿½ï¿½ï¿½
+	* 3.ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½notify()ï¿½ï¿½ï¿½ï¿½
 	*/
 	
-	//»¥³âËøÏµÁÐ
-	class Mutex;		//Í¨ÓÃ»¥³âËø
-	class NullMutex;	//¿Õ»¥³âËø£¬ÓÃÓÚµ÷ÊÔ
-	class Mutex_Read_Write;		//¶Á/Ð´»¥³âËø
-	class NullMutex_Read_Write;	//¿Õ¶Á/Ð´»¥³âËø£¬ÓÃÓÚµ÷ÊÔ
-	class SpinLock;				//×ÔÐýËø£¬Ìæ»»½ÏµÍËÙµÄMutex
-	class CASLock;				//Ô­×ÓËø
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	class Mutex;		//Í¨ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+	class NullMutex;	//ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½
+	class Mutex_Read_Write;		//ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	class NullMutex_Read_Write;	//ï¿½Õ¶ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½
+	class SpinLock;				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ»»ï¿½Ïµï¿½ï¿½Ùµï¿½Mutex
+	class CASLock;				//Ô­ï¿½ï¿½ï¿½ï¿½
 
-	class Semaphore;			//ÐÅºÅÁ¿Àà
+	class Semaphore;			//ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½
 	
 
-	//¼àÊÓÕßÏµÁÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
 
-	//±»¼àÊÓµÄÍ¨ÓÃ»¥³âËø
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½Í¨ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
 	template<class T>
 	class ScopedLock
 	{
 	public:
-		//´´½¨ScopedLock¶ÔÏó²¢½«»¥³âËøËø¶¨
+		//ï¿½ï¿½ï¿½ï¿½ScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScopedLock(T& mutex) :m_mutex(mutex)
 		{
 			m_mutex.lock();
 			m_is_locked = true;
 		}
 
-		//Îö¹¹ScopedLock¶ÔÏó²¢½«»¥³âËø½âËø
+		//ï¿½ï¿½ï¿½ï¿½ScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		~ScopedLock()
 		{
 			unlock();
 		}
 
-		//Ëø¶¨
+		//ï¿½ï¿½ï¿½ï¿½
 		void lock()
 		{
-			//Èç¹û»¥³âËøÎ´Ëø¶¨£¬ÔòËø¶¨
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (!m_is_locked)
 			{
 				m_mutex.lock();
@@ -77,10 +77,10 @@ namespace MutexSpace
 			}
 		}
 
-		//½âËø
+		//ï¿½ï¿½ï¿½ï¿½
 		void unlock()
 		{
-			//Èç¹û»¥³âËøÒÑËø¶¨£¬Ôò½âËø
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (m_is_locked)
 			{
 				m_mutex.unlock();
@@ -88,32 +88,32 @@ namespace MutexSpace
 			}
 		}
 	private:
-		T& m_mutex;			//»¥³âËø
-		bool m_is_locked;	//Ëø¶¨×´Ì¬
+		T& m_mutex;			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		bool m_is_locked;	//ï¿½ï¿½ï¿½ï¿½×´Ì¬
 	};
 
-	//±»¼àÊÓµÄ¶ÁÈ¡Ëø
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¶ï¿½È¡ï¿½ï¿½
 	template<class T>
 	class ReadScopedLock
 	{
 	public:
-		//´´½¨ReadScopedLock¶ÔÏó²¢½«¶ÁÈ¡ËøËø¶¨
+		//ï¿½ï¿½ï¿½ï¿½ReadScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ReadScopedLock(T& mutex) :m_mutex(mutex)
 		{
 			m_mutex.read_lock();
 			m_locked = true;
 		}
 
-		//Îö¹¹ReadScopedLock¶ÔÏó²¢½«¶ÁÈ¡Ëø½âËø
+		//ï¿½ï¿½ï¿½ï¿½ReadScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		~ReadScopedLock()
 		{
 			unlock();
 		}
 
-		//Ëø¶¨
+		//ï¿½ï¿½ï¿½ï¿½
 		void lock()
 		{
-			//Èç¹û¶ÁÈ¡ËøÎ´Ëø¶¨£¬ÔòËø¶¨
+			//ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (!m_locked)
 			{
 				m_mutex.read_lock();
@@ -121,10 +121,10 @@ namespace MutexSpace
 			}
 		}
 
-		//½âËø
+		//ï¿½ï¿½ï¿½ï¿½
 		void unlock()
 		{
-			//Èç¹û¶ÁÈ¡ËøÒÑËø¶¨£¬Ôò½âËø
+			//ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (m_locked)
 			{
 				m_mutex.unlock();
@@ -132,32 +132,32 @@ namespace MutexSpace
 			}
 		}
 	private:
-		T& m_mutex;		//¶ÁÈ¡Ëø
-		bool m_locked;	//Ëø¶¨×´Ì¬
+		T& m_mutex;		//ï¿½ï¿½È¡ï¿½ï¿½
+		bool m_locked;	//ï¿½ï¿½ï¿½ï¿½×´Ì¬
 	};
 
-	//±»¼àÊÓµÄÐ´ÈëËø
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 	template<class T>
 	class WriteScopedLock
 	{
 	public:
-		//´´½¨WriteScopedLock¶ÔÏó²¢½«Ð´ÈëËøËø¶¨
+		//ï¿½ï¿½ï¿½ï¿½WriteScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		WriteScopedLock(T& mutex) :m_mutex(mutex)
 		{
 			m_mutex.write_lock();
 			m_locked = true;
 		}
 
-		//Îö¹¹WriteScopedLock¶ÔÏó²¢½«Ð´ÈëËø½âËø
+		//ï¿½ï¿½ï¿½ï¿½WriteScopedLockï¿½ï¿½ï¿½ó²¢½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		~WriteScopedLock()
 		{
 			unlock();
 		}
 
-		//Ëø¶¨
+		//ï¿½ï¿½ï¿½ï¿½
 		void lock()
 		{
-			//Èç¹ûÐ´ÈëËøÎ´Ëø¶¨£¬ÔòËø¶¨
+			//ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (!m_locked)
 			{
 				m_mutex.write_lock();
@@ -165,10 +165,10 @@ namespace MutexSpace
 			}
 		}
 
-		//½âËø
+		//ï¿½ï¿½ï¿½ï¿½
 		void unlock()
 		{
-			//Èç¹ûÐ´ÈëËøÒÑËø¶¨£¬Ôò½âËø
+			//ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (m_locked)
 			{
 				m_mutex.unlock();
@@ -176,114 +176,114 @@ namespace MutexSpace
 			}
 		}
 	private:
-		T& m_mutex;		//Ð´ÈëËø
-		bool m_locked;	//Ëø¶¨×´Ì¬
+		T& m_mutex;		//Ð´ï¿½ï¿½ï¿½ï¿½
+		bool m_locked;	//ï¿½ï¿½ï¿½ï¿½×´Ì¬
 	};
 
 	
 
 
 
-	//»¥³âËøÏµÁÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
 
-	//Í¨ÓÃ»¥³âËø£¬½ûÖ¹¸´ÖÆ
+	//Í¨ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
 	class Mutex	: private Noncopyable
 	{
 	public:
-		//´´½¨Mutex_Read_Write¶ÔÏó²¢³õÊ¼»¯¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½Mutex_Read_Writeï¿½ï¿½ï¿½ó²¢³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½
 		Mutex()
 		{
 			pthread_mutex_init(&m_mutex, nullptr);
 		}
 
-		//Îö¹¹Mutex_Read_Write¶ÔÏó²¢Ïú»Ù¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½Mutex_Read_Writeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½/Ð´ï¿½ï¿½
 		~Mutex()
 		{
 			pthread_mutex_destroy(&m_mutex);
 		}
 
-		//Ëø¶¨»¥³âËø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void lock()
 		{
 			pthread_mutex_lock(&m_mutex);
 		}
 
-		//Ëø¶¨»¥³âËø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void unlock()
 		{
 			pthread_mutex_unlock(&m_mutex);
 		}
 	private:
-		pthread_mutex_t m_mutex;	//»¥³âËø
+		pthread_mutex_t m_mutex;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	};
-	//¿Õ»¥³âËø£¬½ûÖ¹¸´ÖÆ£¬ÓÃÓÚµ÷ÊÔ
+	//ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½
 	class NullMutex :private Noncopyable
 	{
 	public:
-		//Ê²Ã´¶¼²»×ö
+		//Ê²Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		NullMutex() {}
 		~NullMutex() {}
-		//Ëø¶¨»¥³âËø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void lock() {}
-		//Ëø¶¨»¥³âËø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void unlock() {}
 	};
 
 
-	//¶Á/Ð´»¥³âËø£¬½ûÖ¹¸´ÖÆ
+	//ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
 	class Mutex_Read_Write :private Noncopyable
 	{
 	public:
-		//´´½¨Mutex_Read_Write¶ÔÏó²¢³õÊ¼»¯¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½Mutex_Read_Writeï¿½ï¿½ï¿½ó²¢³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½
 		Mutex_Read_Write()
 		{
 			pthread_rwlock_init(&m_lock, nullptr);
 		}
 
-		//Îö¹¹Mutex_Read_Write¶ÔÏó²¢Ïú»Ù¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½Mutex_Read_Writeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½/Ð´ï¿½ï¿½
 		~Mutex_Read_Write()
 		{
 			pthread_rwlock_destroy(&m_lock);
 		}
 
-		//Ëø¶¨¶ÁÈ¡Ëø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 		void read_lock()
 		{
 			pthread_rwlock_rdlock(&m_lock);
 		}
 
-		//Ëø¶¨Ð´ÈëËø
+		//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 		void write_lock()
 		{
 			pthread_rwlock_wrlock(&m_lock);
 		}
 
-		//Ëø¶¨¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½
 		void unlock()
 		{
 			pthread_rwlock_unlock(&m_lock);
 		}
 
 	private:
-		pthread_rwlock_t m_lock;	//¶Á/Ð´»¥³âËø
+		pthread_rwlock_t m_lock;	//ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	};
-	//¿Õ¶Á/Ð´»¥³âËø£¬½ûÖ¹¸´ÖÆ,ÓÃÓÚµ÷ÊÔ
+	//ï¿½Õ¶ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½
 	class NullMutex_Read_Write :private Noncopyable
 	{
 	public:
-		//Ê²Ã´¶¼²»×ö
+		//Ê²Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		NullMutex_Read_Write() {}
 		~NullMutex_Read_Write() {}
-		//Ëø¶¨¶ÁÈ¡Ëø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 		void read_lock() {}
-		//Ëø¶¨Ð´ÈëËø
+		//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 		void write_lock() {}
-		//Ëø¶¨¶Á/Ð´Ëø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½
 		void unlock() {}
 	};
 
 
-	//×ÔÐýËø£¬½ûÖ¹¸´ÖÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
 	class SpinLock :private Noncopyable
 	{
 	public:
@@ -309,7 +309,7 @@ namespace MutexSpace
 		pthread_spinlock_t m_mutex;
 	};
 
-	//Ô­×ÓËø£¬½ûÖ¹¸´ÖÆ
+	//Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
 	class CASLock :private Noncopyable
 	{
 	public:
@@ -339,20 +339,20 @@ namespace MutexSpace
 	};
 
 
-	//ÐÅºÅÁ¿Àà£¬½ûÖ¹¸´ÖÆ
+	//ï¿½Åºï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
 	class Semaphore : private Noncopyable
 	{
 	public:
-		//´´½¨Semaphore¶ÔÏó²¢³õÊ¼»¯ÐÅºÅÁ¿,countÎªÐÅºÅÁ¿³õÊ¼Öµ
+		//ï¿½ï¿½ï¿½ï¿½Semaphoreï¿½ï¿½ï¿½ó²¢³ï¿½Ê¼ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½,countÎªï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Öµ
 		Semaphore(const uint32_t count = 0);
-		//Îö¹¹Semaphore¶ÔÏó²¢Ïú»ÙÐÅºÅÁ¿
+		//ï¿½ï¿½ï¿½ï¿½Semaphoreï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½
 		~Semaphore();
 
-		//×èÈûÏß³ÌÖ±µ½ÐÅºÅÁ¿´óÓÚ0£¬²¢½«Æä¼õÒ»
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½Ö±ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 		void wait();
-		//½«ÐÅºÅÁ¿¼ÓÒ»
+		//ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 		void notify();
 	private:
-		sem_t m_semaphore;		//ÐÅºÅÁ¿
+		sem_t m_semaphore;		//ï¿½Åºï¿½ï¿½ï¿½
 	};
 }

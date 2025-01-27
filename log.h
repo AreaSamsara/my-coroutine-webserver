@@ -32,29 +32,29 @@ namespace LogSpace
 	using std::endl;
 
 	/*
-	* Àà¹ØÏµ£º
-	* ÏÈ´´½¨LogEventÌí¼ÓÈÕÖ¾ÊÂ¼şÄÚÈİ£¬
-	* LoggerÀà£¨°üº¬¶à¸öLogAppender£©µ÷ÓÃËùÓĞLogAppender¶ÔÏó£¬
-	* LogAppenderµ÷ÓÃLogFormatter½âÎöÈÕÖ¾¸ñÊ½²¢Êä³öLogEvent
-	* LoggerManagerÊÇ×°ÓĞ¶à¸öLoggerµÄÈİÆ÷£¬ÇÒÔÚ´´½¨µ¥ÀıÊ±×Ô´øÄ¬ÈÏLogger£¬·½±ãÊ¹ÓÃ
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* ï¿½È´ï¿½ï¿½ï¿½LogEventï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½ï¿½ï¿½ï¿½İ£ï¿½
+	* Loggerï¿½à£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½ï¿½ï¿½
+	* LogAppenderï¿½ï¿½ï¿½ï¿½LogFormatterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½LogEvent
+	* LoggerManagerï¿½ï¿½×°ï¿½Ğ¶ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ô´ï¿½Ä¬ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
 	*/
 	/*
-	* ÈÕÖ¾ÏµÍ³µ÷ÓÃ·½·¨£º
-	* 1.ÏÈ´´½¨LogEvent¶ÔÏó²¢ÓÃsetSstream()µÈ·½·¨Ìí¼ÓÈÕÖ¾ÊÂ¼şÄÚÈİ£¬
-	* 2.ÔÙ´´½¨Logger¡¢LoggerAppender¶ÔÏó£¬ĞèÒªÊ±ÔÙ´´½¨LogFormatter¶ÔÏó£¬
-	* 3.È»ºóµ÷ÓÃLogger¶ÔÏóµÄaddAppender()·½·¨Ìí¼ÓLogAppender¶ÔÏóµ½Logger¶ÔÏóÄÚ²¿£¬
-	* £¨Èç¹ûÊ¹ÓÃLoggerManager£¬µÚ¶ş¡¢Èı²½¿ÉÒÔÊ¡ÂÔ£©
-	* 4.×îºóLogger¶ÔÏóÒÔLogEvent¶ÔÏóÎª²ÎÊıµ÷ÓÃlog()·½·¨Êä³öÈÕÖ¾
+	* ï¿½ï¿½Ö¾ÏµÍ³ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½È´ï¿½ï¿½ï¿½LogEventï¿½ï¿½ï¿½ï¿½ï¿½ï¿½setSstream()ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½ï¿½ï¿½ï¿½İ£ï¿½
+	* 2.ï¿½Ù´ï¿½ï¿½ï¿½Loggerï¿½ï¿½LoggerAppenderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ±ï¿½Ù´ï¿½ï¿½ï¿½LogFormatterï¿½ï¿½ï¿½ï¿½
+	* 3.È»ï¿½ï¿½ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½addAppender()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½
+	* ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¡ï¿½Ô£ï¿½
+	* 4.ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LogEventï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½log()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 	*/
-	class LogLevel;			//ÈÕÖ¾¼¶±ğ
-	class LogEvent;			//ÈÕÖ¾ÊÂ¼ş
-	class LogAppender;		//ÈÕÖ¾Êä³öµØÖ·
-	class LogFormatter;		//ÈÕÖ¾¸ñÊ½Æ÷
-	class LoggerManager;	//ÈÕÖ¾Êä³öÆ÷¹ÜÀíÕß
+	class LogLevel;			//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+	class LogEvent;			//ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+	class LogAppender;		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
+	class LogFormatter;		//ï¿½ï¿½Ö¾ï¿½ï¿½Ê½ï¿½ï¿½
+	class LoggerManager;	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
-	//ÈÕÖ¾¼¶±ğ
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
 	class LogLevel
 	{
 	public:
@@ -67,21 +67,21 @@ namespace LogSpace
 			LOG_FATAL = 5
 		};
 	public:
-		//½«Level¹²ÓÃÌå×ª»¯Îª×Ö·û´®£¨ÉùÃ÷Îª¾²Ì¬·½·¨Ê¹µÃÆä¿ÉÒÔÔÚÎ´´´½¨LogLevelÀà¶ÔÏóÊ±±»µ÷ÓÃ£©
+		//ï¿½ï¿½Levelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½LogLevelï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½
 		static const string toString(const Level level);
 	};
 
 
-	//ÈÕÖ¾ÊÂ¼ş
+	//ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
 	class LogEvent
 	{
 	public:
 		LogEvent(const string& filename, const int32_t line);
 
-		//ÉèÖÃstringstream
+		//ï¿½ï¿½ï¿½ï¿½stringstream
 		void setSstream(const string& str);
 
-		//»ñÈ¡Ë½ÓĞ±äÁ¿
+		//ï¿½ï¿½È¡Ë½ï¿½Ğ±ï¿½ï¿½ï¿½
 		const string getFilename()const { return m_filename; }
 		int32_t getLine()const { return m_line; }
 		pid_t getThread_id()const { return m_thread_id; }
@@ -92,164 +92,164 @@ namespace LogSpace
 		const string getContent()const { return m_sstream.str(); }
 		stringstream& getSstream() { return m_sstream; }
 	private:
-		const string m_filename;			//ÎÄ¼şÃû£¨×Ô´øÂ·¾¶£©
-		int32_t m_line = 0;					//ĞĞºÅ
-		pid_t m_thread_id = 0;				//Ïß³Ìid
-		string m_thread_name;				//Ïß³ÌÃû³Æ
-		uint32_t m_fiber_id = 0;			//Ğ­³Ìid
-		uint32_t m_elapse = 0;				//³ÌĞòÆô¶¯ÖÁ½ñµÄºÁÃëÊı
-		uint64_t m_time;					//Ê±¼ä´Á
-		stringstream m_sstream;				//ÊÂ¼şÄÚÈİµÄstringstream
+		const string m_filename;			//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½
+		int32_t m_line = 0;					//ï¿½Ğºï¿½
+		pid_t m_thread_id = 0;				//ï¿½ß³ï¿½id
+		string m_thread_name;				//ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
+		uint32_t m_fiber_id = 0;			//Ğ­ï¿½ï¿½id
+		uint32_t m_elapse = 0;				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½
+		uint64_t m_time;					//Ê±ï¿½ï¿½ï¿½
+		stringstream m_sstream;				//ï¿½Â¼ï¿½ï¿½ï¿½ï¿½İµï¿½stringstream
 	};
 
 
 
-	//ÈÕÖ¾Êä³öÆ÷
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	class Logger
 	{
 	public:
-		Logger(const string& name = Default_LoggerName);	//ÉèÖÃÄ¬ÈÏÈÕÖ¾Ãû³ÆDefault_LoggerName£¬ÒÔ¼°Ä¬ÈÏÈÕÖ¾Ä£Ê½Default_FormatPattern
+		Logger(const string& name = Default_LoggerName);	//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Default_LoggerNameï¿½ï¿½ï¿½Ô¼ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½Default_FormatPattern
 
-		//ÈÕÖ¾Êä³öº¯Êı
+		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void log(const LogLevel::Level level,const shared_ptr<const LogEvent> event);
 
-		//Ìí¼Ó»òÉ¾³ıAppender
-		void addAppender(const shared_ptr<LogAppender> appender);	//ÄÚº¬¶ÔappenderµÄformatterµÄÉèÖÃ£¬¹ÊLogAppender²»ÉùÃ÷Îªconst
+		//ï¿½ï¿½ï¿½Ó»ï¿½É¾ï¿½ï¿½Appender
+		void addAppender(const shared_ptr<LogAppender> appender);	//ï¿½Úºï¿½ï¿½ï¿½appenderï¿½ï¿½formatterï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªconst
 		void deleteAppender(const shared_ptr<const LogAppender> appender);
 
-		//ĞŞ¸Äformatter
-		void setFormatter(const shared_ptr<LogFormatter> formatter);	//´«µİµÄÊÇshared_ptrÇÒÊ¹ÓÃÁË»¥³âËø£¬¹ÊLogFormatter²»ÄÜÉùÃ÷const
+		//ï¿½Ş¸ï¿½formatter
+		void setFormatter(const shared_ptr<LogFormatter> formatter);	//ï¿½ï¿½ï¿½İµï¿½ï¿½ï¿½shared_ptrï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Ë»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LogFormatterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½const
 		void setFormatter(const string& str);	
 
-		//¶ÁÈ¡»òĞŞ¸ÄÈÕÖ¾µÈ¼¶
-		LogLevel::Level getlevel();		//Ê¹ÓÃÁË»¥³âËø£¬¹Êgetlevel()²»ÄÜÉùÃ÷const
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½
+		LogLevel::Level getlevel();		//Ê¹ï¿½ï¿½ï¿½Ë»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½getlevel()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½const
 		void setLevel(const LogLevel::Level level);
 
-		//¶ÁÈ¡loggerÃû³Æ
+		//ï¿½ï¿½È¡loggerï¿½ï¿½ï¿½ï¿½
 		const string& getName()const { return m_name; }
 	public:
-		//Ä¬ÈÏÈÕÖ¾¸ñÊ½Ä£Ê½
+		//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½Ä£Ê½
 		const static string Default_FormatPattern;
-		//Ä¬ÈÏÈÕÖ¾Ãû³Æ
+		//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
 		const static string Default_LoggerName;
-		//Ä¬ÈÏÈÕÖ¾Ê±¼äÄ£Ê½
+		//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾Ê±ï¿½ï¿½Ä£Ê½
 		const static string Default_DataTimePattern;
 	private:
-		string m_name;		//loggerÃû³Æ
-		LogLevel::Level m_level;	//Âú×ã¸ÃÈÕÖ¾¼¶±ğ²ÅÊä³öÈÕÖ¾
-		list<shared_ptr<LogAppender>> m_appenders;	//appender¼¯ºÏ
-		shared_ptr<LogFormatter> m_formatter;		//ÈÕÖ¾¸ñÊ½Æ÷
+		string m_name;		//loggerï¿½ï¿½ï¿½ï¿½
+		LogLevel::Level m_level;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
+		list<shared_ptr<LogAppender>> m_appenders;	//appenderï¿½ï¿½ï¿½ï¿½
+		shared_ptr<LogFormatter> m_formatter;		//ï¿½ï¿½Ö¾ï¿½ï¿½Ê½ï¿½ï¿½
 
-		SpinLock m_mutex;		//»¥³âËø£¨×ÔĞıËø£©
+		SpinLock m_mutex;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	};
 
 
 
-	//ÈÕÖ¾Êä³öµØÖ·
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 	class LogAppender
 	{
 	public:
 		LogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name = Logger::Default_LoggerName);
-		virtual ~LogAppender() {}		//¸¸ÀàµÄÎö¹¹º¯ÊıÓ¦¸ÃÉèÖÃÎªĞéº¯Êı
-		//ÈÕÖ¾Êä³öº¯Êı£¬ÓÉ Logger::logµ÷ÓÃ£¨´¿Ğéº¯Êı£¬×ÓÀà±ØĞëÊµÏÖ£©
+		virtual ~LogAppender() {}		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½éº¯ï¿½ï¿½
+		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logger::logï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½éº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö£ï¿½
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) = 0;
 
-		//¶ÁÈ¡»òĞŞ¸ÄLogLevel
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ş¸ï¿½LogLevel
 		LogLevel::Level getLevel();
 		void setLevel(const LogLevel::Level level);
 
-		//¶ÁÈ¡formatter
-		shared_ptr<LogFormatter> getFormatter();	//Ê¹ÓÃ»¥³âËø£¬¹Ê²»¼Óconst
-		//ĞŞ¸Äformatter
-		void setFormatter(const shared_ptr<LogFormatter> formatter);	//´«µİµÄÊÇshared_ptr£¬¹Ê²»ÄÜÉùÃ÷const
+		//ï¿½ï¿½È¡formatter
+		shared_ptr<LogFormatter> getFormatter();	//Ê¹ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½const
+		//ï¿½Ş¸ï¿½formatter
+		void setFormatter(const shared_ptr<LogFormatter> formatter);	//ï¿½ï¿½ï¿½İµï¿½ï¿½ï¿½shared_ptrï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½const
 	protected:
-		string m_logger_name;		//ÈÕÖ¾Ãû³Æ
-		LogLevel::Level m_level;	//ÈÕÖ¾¼¶±ğ
-		shared_ptr<LogFormatter> m_formatter;	//ÈÕÖ¾¸ñÊ½Æ÷
+		string m_logger_name;		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+		LogLevel::Level m_level;	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+		shared_ptr<LogFormatter> m_formatter;	//ï¿½ï¿½Ö¾ï¿½ï¿½Ê½ï¿½ï¿½
 
-		SpinLock m_mutex;		//»¥³âËø£¨×ÔĞıËø£©
+		SpinLock m_mutex;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	};
 
-	//Êä³öµ½¿ØÖÆÌ¨µÄAppender£¨¹«ÓĞ¼Ì³Ğ×ÔLogAppender£©
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½
 	class StdoutLogAppender :public LogAppender
 	{
 	public:
 		StdoutLogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name= Logger::Default_LoggerName);
 
-		//ÈÕÖ¾Êä³öº¯Êı£¬ÓÉ Logger::logµ÷ÓÃ£¨ÖØĞ´LogAppenderµÄÏàÓ¦·½·¨£©
+		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logger::logï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ğ´LogAppenderï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		virtual void log(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event) override;
 	};
 
-	//Êä³öµ½ÎÄ¼şµÄAppender£¨¹«ÓĞ¼Ì³Ğ×ÔLogAppender£©
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½LogAppenderï¿½ï¿½
 	class FileLogAppender :public LogAppender
 	{
 	public:
-		FileLogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name = Logger::Default_LoggerName,const string& filename="./log.txt");	//ÉèÖÃÄ¬ÈÏÈÕÖ¾µØÖ·ÎÄ¼şÃûÎª"./log.txt"
+		FileLogAppender(const LogLevel::Level level = LogLevel::LOG_DEBUG, const string& logger_name = Logger::Default_LoggerName,const string& filename="./log.txt");	//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ö·ï¿½Ä¼ï¿½ï¿½ï¿½Îª"./log.txt"
 
-		//ÈÕÖ¾Êä³öº¯Êı£¬ÓÉ Logger::logµ÷ÓÃ£¨ÖØĞ´LogAppenderµÄÏàÓ¦·½·¨£©
+		//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logger::logï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ğ´LogAppenderï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		virtual void log(const string& logger_name,const LogLevel::Level level, const shared_ptr<const LogEvent> event) override;
 
-		//ÖØĞÂ´ò¿ªÎÄ¼ş£¬ÎÄ¼ş´ò¿ª³É¹¦·µ»Øtrue
+		//ï¿½ï¿½ï¿½Â´ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ò¿ª³É¹ï¿½ï¿½ï¿½ï¿½ï¿½true
 		bool reopen();
 	private:
-		string m_filename;		//ÈÕÖ¾µØÖ·ÎÄ¼şÃû
-		ofstream m_filestream;	//ÈÕÖ¾µØÖ·ÎÄ¼şÁ÷
+		string m_filename;		//ï¿½ï¿½Ö¾ï¿½ï¿½Ö·ï¿½Ä¼ï¿½ï¿½ï¿½
+		ofstream m_filestream;	//ï¿½ï¿½Ö¾ï¿½ï¿½Ö·ï¿½Ä¼ï¿½ï¿½ï¿½
 	};
 
 
 
-	//ÈÕÖ¾¸ñÊ½Æ÷
+	//ï¿½ï¿½Ö¾ï¿½ï¿½Ê½ï¿½ï¿½
 	class LogFormatter
 	{
-		//½âÎö¹æÔò£º
-		//%m ÏûÏ¢Ìå
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%m ï¿½ï¿½Ï¢ï¿½ï¿½
 		//%p level
-		//%r Æô¶¯ºóÊ±¼ä
-		//%c ÈÕÖ¾Ãû³Æ
-		//%t Ïß³Ìid
-		//%n »Ø³µ»»ĞĞ
-		//%d Ê±¼ä
-		//%f ÎÄ¼şÃû£¨º¬Â·¾¶£©
-		//%l ĞĞºÅ
+		//%r ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		//%c ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+		//%t ï¿½ß³ï¿½id
+		//%n ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%d Ê±ï¿½ï¿½
+		//%f ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
+		//%l ï¿½Ğºï¿½
 		//%T tab
-		//%N Ïß³ÌÃû³Æ
-		//%X Ğ­³Ìid
-		// ³£ÓÃÄ£Ê½Ê¾Àı£º
+		//%N ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%X Ğ­ï¿½ï¿½id
+		// ï¿½ï¿½ï¿½ï¿½Ä£Ê½Ê¾ï¿½ï¿½ï¿½ï¿½
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 	public:
 		LogFormatter(const string& pattern);
 
-		//formatterÖ÷º¯Êı£¬ÓÉAppenderµ÷ÓÃ
+		//formatterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½
 		string format(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event);
 	private:
-		//°´ÕÕÈÕÖ¾Ä£Ê½£¨pattern£©³õÊ¼»¯ÈÕÖ¾¸ñÊ½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½patternï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½
 		void initialize();
 
-		//Êä³öµ¥¶Î±»½âÎöµÄÈÕÖ¾£¨const string& formatÎª»¨À¨ºÅÖĞµÄÄÚÈİ£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½const string& formatÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½ï¿½İ£ï¿½
 		string write_piece(const string& logger_name, const LogLevel::Level level, const shared_ptr<const LogEvent> event, const string& mode = "", const string& format = "");
 	private:
-		string m_pattern;	//ÈÕÖ¾µÄÄ£Ê½£¬ÓÉLoggerÀà³õÊ¼»¯
-		vector<pair<string,string>> m_modes_and_formats;	//±»½âÎöµÄµ¥¶ÎÈÕÖ¾Ä£Ê½¼¯ºÏ,Ç°ÕßÎª½âÎö'%'µÃµ½µÄÄ£Ê½£¬ºóÕßÎª'{}'ÄÚµÄÄÚÈİ
+		string m_pattern;	//ï¿½ï¿½Ö¾ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+		vector<pair<string,string>> m_modes_and_formats;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½,Ç°ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½'%'ï¿½Ãµï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª'{}'ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½
 	};
 
 
 
-	//ÈÕÖ¾Êä³öÆ÷¹ÜÀíÕß
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	class LoggerManager
 	{
 	public:
-		LoggerManager();	//³õÊ¼»¯Ä¬ÈÏlogger
+		LoggerManager();	//ï¿½ï¿½Ê¼ï¿½ï¿½Ä¬ï¿½ï¿½logger
 
-		//°´logger_name»ñÈ¡logger£¬ÈôÎ´²éÑ¯µ½Ôò´´½¨Ö®
+		//ï¿½ï¿½logger_nameï¿½ï¿½È¡loggerï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ò´´½ï¿½Ö®
 		shared_ptr<Logger> getLogger(const string& logger_name);
-		//»ñÈ¡Ä¬ÈÏlogger
+		//ï¿½ï¿½È¡Ä¬ï¿½ï¿½logger
 		shared_ptr<Logger> getDefault_logger();
 	private:
-		map<string, shared_ptr<Logger>> m_loggers;	//Ê¹ÓÃlogger_nameÎª¼ü½øĞĞ²éÕÒµÄlogger¼¯ºÏ
-		shared_ptr<Logger> m_default_logger;	//Ä¬ÈÏlogger
+		map<string, shared_ptr<Logger>> m_loggers;	//Ê¹ï¿½ï¿½logger_nameÎªï¿½ï¿½ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½Òµï¿½loggerï¿½ï¿½ï¿½ï¿½
+		shared_ptr<Logger> m_default_logger;	//Ä¬ï¿½ï¿½logger
 
-		SpinLock m_mutex;		//»¥³âËø£¨×ÔĞıËø£©
+		SpinLock m_mutex;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	};
 }
 

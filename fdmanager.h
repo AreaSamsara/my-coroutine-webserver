@@ -8,68 +8,68 @@ namespace FdManagerSpace
 	using namespace IOManagerSpace;
 
 	/*
-	* Àà¹ØÏµ£º
-	* FileDescriptorEntity°üº¬ÎÄ¼şÃèÊö·û¼°ÆäÏà¹ØĞÅÏ¢ÒÔ¼°ÉèÖÃ³¬Ê±Ê±¼äµÄ·½·¨
-	* FileDescriptorManagerÄÚº¬×°ÓĞ¶à¸öFileDescriptorEntityµÄÈİÆ÷£¬¶ÔFileDescriptorEntity½øĞĞ¹ÜÀí
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* FileDescriptorEntityï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+	* FileDescriptorManagerï¿½Úºï¿½×°ï¿½Ğ¶ï¿½ï¿½FileDescriptorEntityï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½FileDescriptorEntityï¿½ï¿½ï¿½Ğ¹ï¿½ï¿½ï¿½
 	*/
 	/*
-	* ÎÄ¼şÃèÊö·û¹ÜÀíÏµÍ³µ÷ÓÃ·½·¨£º
-	* ±¾ÏµÍ³ÓÃÓÚ·â×°ÎÄ¼şÃèÊö·û£¬ÒÔ¸¨ÖúÆäËûÏµÍ³£¨ÈçhookÏµÍ³¡¢socketÏµÍ³£©¶ÔÎÄ¼şÃèÊö·û½øĞĞ¹ÜÀí
+	* ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ú·ï¿½×°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½hookÏµÍ³ï¿½ï¿½socketÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¹ï¿½ï¿½ï¿½
 	*/
 
-	//ÎÄ¼şÃèÊö·ûÊµÌåÀà
+	//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½
 	class FileDescriptorEntity
 	{
 	public:
 		FileDescriptorEntity(const int file_descriptor);
 		~FileDescriptorEntity() {}
 
-		//»ñÈ¡Ë½ÓĞ³ÉÔ±
+		//ï¿½ï¿½È¡Ë½ï¿½Ğ³ï¿½Ô±
 		bool isSocket()const { return m_is_socket; }
 		bool isSystemNonblock()const { return m_is_systemNonblock; }
 		bool isUserNonblock()const { return m_is_userNonblock; }
 		bool isClose()const { return m_is_close; }
 
-		//ĞŞ¸ÄË½ÓĞ³ÉÔ±
+		//ï¿½Ş¸ï¿½Ë½ï¿½Ğ³ï¿½Ô±
 		void setSystemNonblock(const bool value) { m_is_systemNonblock = value; }
 		void setUserNonblock(const bool value) { m_is_userNonblock = value; }
 
-		//¸ù¾İÀàĞÍ»ñÈ¡¶ÔÓ¦µÄ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½È¡ï¿½ï¿½Ó¦ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 		uint64_t getTimeout(const int type)const;
-		//¸ù¾İÀàĞÍÉèÖÃ¶ÔÓ¦µÄ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ó¦ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 		void setTimeout(const int type, const uint64_t timeout);
 	private:
-		//½«boolÖµ°´Ö»Õ¼1Î»µÄÎ»×Ö¶Î´ò°ü£¬½ÚÊ¡ÄÚ´æ£¨Î»×Ö¶Î²»¿ÉÔÚ¶¨ÒåµÄÍ¬Ê±³õÊ¼»¯£¬¹ÊÔÚ³õÊ¼»¯ÁĞ±í½øĞĞ¸³Öµ£©
-		//ÊÇ·ñsocket
+		//ï¿½ï¿½boolÖµï¿½ï¿½Ö»Õ¼1Î»ï¿½ï¿½Î»ï¿½Ö¶Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¡ï¿½Ú´æ£¨Î»ï¿½Ö¶Î²ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½Ğ¸ï¿½Öµï¿½ï¿½
+		//ï¿½Ç·ï¿½socket
 		bool m_is_socket : 1;
-		//ÊÇ·ñhook·Ç×èÈû
+		//ï¿½Ç·ï¿½hookï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool m_is_systemNonblock : 1;
-		//ÊÇ·ñÓÃ»§Ö÷¶¯ÉèÖÃÎª·Ç×èÈû
+		//ï¿½Ç·ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool m_is_userNonblock : 1;
-		//ÊÇ·ñ´¦ÓÚ¹Ø±Õ×´Ì¬
+		//ï¿½Ç·ï¿½ï¿½Ú¹Ø±ï¿½×´Ì¬
 		bool m_is_close : 1;
-		//ÎÄ¼şÃèÊö·û
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int m_file_descriptor;
-		//¶ÁÈ¡µÄ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½È¡ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 		uint64_t m_recv_timeout = -1;
-		//Ğ´ÈëµÄ³¬Ê±Ê±¼ä
+		//Ğ´ï¿½ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 		uint64_t m_send_timeout = -1;
 	};
 
-	//ÎÄ¼şÃèÊö·û¹ÜÀíÕß
+	//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	class FileDescriptorManager
 	{
 	public:
 		FileDescriptorManager();
 
-		//»ñÈ¡ÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊµÌå£¬²¢ÔÚ¸ÃÊµÌå²»´æÔÚÇÒauto_createÎªtrueÊ±´´½¨Ö®
+		//ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½å£¬ï¿½ï¿½ï¿½Ú¸ï¿½Êµï¿½å²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½auto_createÎªtrueÊ±ï¿½ï¿½ï¿½ï¿½Ö®
 		shared_ptr<FileDescriptorEntity> getFile_descriptor(const int file_descriptor, const bool auto_create = false);
-		//É¾³ıÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊµÌå
+		//É¾ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½ï¿½
 		void deleteFile_descriptor(const int file_descriptor);
 	private:
-		//»¥³âËø£¨¶Á/Ğ´Ëø£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ğ´ï¿½ï¿½ï¿½ï¿½
 		Mutex_Read_Write m_mutex;
-		//ÎÄ¼şÃèÊö·ûÊµÌåÈİÆ÷
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		vector<shared_ptr<FileDescriptorEntity>> m_file_descriptor_entities;
 	};
 }

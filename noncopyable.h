@@ -2,17 +2,17 @@
 
 namespace NoncopyableSpace
 {
-	//²»¿É¸´ÖÆÀà£¬×÷Îª»ùÀà±»¼Ì³Ð
+	//ï¿½ï¿½ï¿½É¸ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½Îªï¿½ï¿½ï¿½à±»ï¿½Ì³ï¿½
 	class Noncopyable
 	{
 	public:
-		//ÏÔÊ½ÉùÃ÷Ä¬ÈÏ¹¹Ôìº¯Êý
+		//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï¹ï¿½ï¿½ìº¯ï¿½ï¿½
 		Noncopyable() = default;
-		//ÏÔÊ½ÉùÃ÷Ä¬ÈÏÎö¹¹º¯Êý
+		//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		~Noncopyable() = default;
-		//¸´ÖÆ¹¹Ôìº¯Êý£¨½ûÓÃ£©
+		//ï¿½ï¿½ï¿½Æ¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½
 		Noncopyable(const Noncopyable&) = delete;
-		//¸³ÖµÔËËã·û£¨½ûÓÃ£©
+		//ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½
 		Noncopyable& operator=(const Noncopyable&) = delete;
 	};
 }

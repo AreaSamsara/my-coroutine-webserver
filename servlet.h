@@ -66,12 +66,12 @@ namespace ServletSpace
 		int32_t handle(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response,
 			shared_ptr<HttpSession> session)override;
 	private:
-		//uri(/test/xxx) -> servlet	¾«×¼Æ¥Åä
+		//uri(/test/xxx) -> servlet	ï¿½ï¿½×¼Æ¥ï¿½ï¿½
 		unordered_map<string, shared_ptr<Servlet>> m_datas;
-		//uri(/test/*) -> servlet	Ä£ºýÆ¥Åä
+		//uri(/test/*) -> servlet	Ä£ï¿½ï¿½Æ¥ï¿½ï¿½
 		vector<pair<string, shared_ptr<Servlet>>> m_globs;
 		shared_ptr<Servlet> m_default_servlet;
-		//»¥³âËø£¨¶Á/Ð´Ëø£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½
 		Mutex_Read_Write m_mutex;
 	};
 

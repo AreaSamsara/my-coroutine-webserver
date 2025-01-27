@@ -37,7 +37,7 @@
 //void run()
 //{
 //	shared_ptr<Address> address = Address::LookupAnyIPAddress("www.baidu.com:80");
-//	//Èç¹û²éÕÒµØÖ·Ê§°Ü£¬±¨´í
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½Ö·Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½
 //	if (!address)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -47,7 +47,7 @@
 //
 //	shared_ptr<Socket> socket(new Socket(Socket::FamilyType(address->getFamily()), Socket::SocketType::TCP, 0));
 //	bool return_value = socket->connect(address);
-//	//Èç¹ûsocketÁ¬½ÓÊ§°Ü£¬±¨´í
+//	//ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½
 //	if (!return_value)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -69,7 +69,7 @@
 //
 //
 //	auto response = connection->receiveResponse();
-//	//Èç¹ûÃ»ÓÐ½ÓÊÕµ½ÏìÓ¦£¬±¨´í²¢·µ»Ø
+//	//ï¿½ï¿½ï¿½Ã»ï¿½Ð½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	if (!response)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));

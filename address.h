@@ -17,71 +17,71 @@ namespace AddressSpace
 	using std::pair;
 
 	/*
-	* Àà¹ØÏµ£º
-	* AddressÀàºÍIPAddressÀà¶¼ÊÇ³éÏó»ùÀà£¬ºóÕß¹«ÓĞ¼Ì³Ğ×ÔÇ°Õß£¬¶şÕßÄÚ²¿ÓĞ¿ÉÓÃÓÚ´´½¨ÅÉÉúÀà¶ÔÏóµÄ¾²Ì¬¹«ÓĞ·½·¨
-	* IPv4AddressÀàºÍIPv6AddressÀà¹«ÓĞ¼Ì³Ğ×ÔIPAddressÀà£¬ UnixAddressÀàºÍUnknownAddressÀàÖ±½Ó¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* Addressï¿½ï¿½ï¿½IPAddressï¿½à¶¼ï¿½Ç³ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½ß¹ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Ç°ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ğ¿ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½Ì¬ï¿½ï¿½ï¿½Ğ·ï¿½ï¿½ï¿½
+	* IPv4Addressï¿½ï¿½ï¿½IPv6Addressï¿½à¹«ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½IPAddressï¿½à£¬ UnixAddressï¿½ï¿½ï¿½UnknownAddressï¿½ï¿½Ö±ï¿½Ó¹ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
 	*/
 	/*
-	* µØÖ·ÏµÍ³µ÷ÓÃ·½·¨£º
-	* 1.¿ÉÒÔÍ¨¹ı¶ş½øÖÆµØÖ·¡¢µØÖ·×Ö·û´®¡¢¶Ë¿ÚºÅ¡¢µØÖ·½á¹¹ÌåµÈĞÅÏ¢Ö±½Óµ÷ÓÃ¶ÔÓ¦ÀàµÄ¹¹Ôìº¯Êı´´½¨µØÖ·¶ÔÏó£¬
-	* 2.Ò²¿ÉÒÔÊ¹ÓÃAddressÀàµÄ¸÷ÖÖLookup()·½·¨£¨¾²Ì¬·½·¨£©Í¨¹ı×Ö·û´®²éÕÒµØÖ·£¬
-	* ²éÕÒµ½ÒÔºóLookup()·½·¨ÄÚ²¿×Ô¶¯µ÷ÓÃCreateAddress()´´½¨¶ÔÓ¦µÄAddressÀà¼°ÆäÅÉÉúÀà¶ÔÏó£¨´Ëºó»¹Ó¦µ±×ÔĞĞÉèÖÃ¶Ë¿ÚºÅ£©
+	* ï¿½ï¿½Ö·ÏµÍ³ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ÚºÅ¡ï¿½ï¿½ï¿½Ö·ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ö±ï¿½Óµï¿½ï¿½Ã¶ï¿½Ó¦ï¿½ï¿½Ä¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
+	* 2.Ò²ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Addressï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Lookup()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½Ö·ï¿½ï¿½
+	* ï¿½ï¿½ï¿½Òµï¿½ï¿½Ôºï¿½Lookup()ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½CreateAddress()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Addressï¿½à¼°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¨´Ëºï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶Ë¿ÚºÅ£ï¿½
 	*/
 
-	class Address;			//µØÖ·Àà£¨³éÏó»ùÀà£©
-	class IPAddress;		//IPµØÖ·Àà£¨³éÏó»ùÀà£©£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
-	class IPv4Address;		//IPv4µØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔIPAddressÀà
-	class IPv6Address;		//IPv6µØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔIPAddressÀà
-	class UnixAddress;		//UnixµØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
-	class UnknownAddress;	//Î´ÖªµØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
+	class Address;			//ï¿½ï¿½Ö·ï¿½à£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£©
+	class IPAddress;		//IPï¿½ï¿½Ö·ï¿½à£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£©ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
+	class IPv4Address;		//IPv4ï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½IPAddressï¿½ï¿½
+	class IPv6Address;		//IPv6ï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½IPAddressï¿½ï¿½
+	class UnixAddress;		//Unixï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
+	class UnknownAddress;	//Î´Öªï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
 
 
-	//µØÖ·Àà£¨³éÏó»ùÀà£©
+	//ï¿½ï¿½Ö·ï¿½à£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£©
 	class Address
 	{
 	public:
 		virtual ~Address() {}
 
-		//»ñÈ¡Ö»¶Á°æµØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual const sockaddr* getAddress()const = 0;
-		//»ñÈ¡µØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual sockaddr* getAddress() = 0;
-		//»ñÈ¡µØÖ·µÄ³¤¶È
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·ï¿½Ä³ï¿½ï¿½ï¿½
 		virtual socklen_t getAddress_length()const = 0;
-		//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+		//ï¿½ï¿½È¡ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual	ostream& getAddress_ostream(ostream& os)const = 0;
 
-		//·µ»ØĞ­Òé×å
+		//ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½ï¿½ï¿½
 		int getFamily()const { return getAddress()->sa_family; }
-		//½«µØÖ·×ª»¯Îª×Ö·û´®
+		//ï¿½ï¿½ï¿½ï¿½Ö·×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½
 		string toString() const;
 
-		//ÖØÔØ±È½ÏÔËËã·û
+		//ï¿½ï¿½ï¿½Ø±È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool operator<(const Address& right_address)const;
 		bool operator==(const Address& right_address)const;
 		bool operator!=(const Address& right_address)const;
 	public:
-		//ÓÃsockaddrÖ¸Õë´´½¨Address¶ÔÏó
+		//ï¿½ï¿½sockaddrÖ¸ï¿½ë´´ï¿½ï¿½Addressï¿½ï¿½ï¿½ï¿½
 		static shared_ptr<Address> CreateAddress(const sockaddr* address, socklen_t addrlen);
 
-		//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄËùÓĞAddress(·ÅÈë´«ÈëµÄÈİÆ÷ÖĞ)
+		//Í¨ï¿½ï¿½hostï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Address(ï¿½ï¿½ï¿½ë´«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 		static bool Lookup(vector<shared_ptr<Address>>& addresses, const string& host,
-			int family = AF_INET, int type = 0, int protocol = 0);		//Ä¬ÈÏ·µ»ØIPv4µÄµØÖ·£¬ÒòÎªÆäÍ¨ÓÃÇÒËÙ¶È¿ìÓÚIPv6
-		//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄÈÎÒ»Address
+			int family = AF_INET, int type = 0, int protocol = 0);		//Ä¬ï¿½Ï·ï¿½ï¿½ï¿½IPv4ï¿½Äµï¿½Ö·ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¿ï¿½ï¿½ï¿½IPv6
+		//Í¨ï¿½ï¿½hostï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Address
 		static shared_ptr<Address> LookupAny(const string& host, int family = AF_INET,
 			int type = 0, int protocol = 0);
-		//Í¨¹ıhostµØÖ··µ»Ø·ûºÏÌõ¼şµÄÈÎÒ»IPAddress
+		//Í¨ï¿½ï¿½hostï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»IPAddress
 		static shared_ptr<IPAddress> LookupAnyIPAddress(const string& host, int family = AF_INET,
 			int type = 0, int protocol = 0);
 
-		//·µ»Ø±¾»úËùÓĞÍø¿¨µÄ<Íø¿¨Ãû, µØÖ·, ×ÓÍøÑÚÂëÎ»Êı>
+		//ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½Ö·, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½>
 		static bool GetInterfaceAddresses(multimap<string, pair<shared_ptr<Address>, uint32_t>>& result,
 			int family = AF_INET);
-		//»ñÈ¡Ö¸¶¨Íø¿¨µÄµØÖ·ºÍ×ÓÍøÑÚÂëÎ»Êı
+		//ï¿½ï¿½È¡Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 		static bool GetInterfaceAddresses(vector<pair<shared_ptr<Address>, uint32_t>>& result,
 			const string& iface, int family = AF_INET);
 	private:
-		//¼ÆËã²ÎÊı¶ş½øÖÆ±í´ïÖĞ1µÄÎ»Êı
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Î»ï¿½ï¿½
 		template<class T>
 		static uint32_t CountBytes(T value)
 		{
@@ -94,26 +94,26 @@ namespace AddressSpace
 		}
 	};
 
-	//IPµØÖ·Àà£¨³éÏó»ùÀà£©£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
+	//IPï¿½ï¿½Ö·ï¿½à£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£©ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
 	class IPAddress :public Address
 	{
 	public:
-		//»ñÈ¡¸ÃµØÖ·µÄ¹ã²¥µØÖ·
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½Ä¹ã²¥ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) = 0;
-		//»ñÈ¡¸ÃµØÖ·µÄÍø¶Î
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) = 0;
-		//»ñÈ¡×ÓÍøÑÚÂëµØÖ·
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) = 0;
 
-		//»ñÈ¡¶Ë¿ÚºÅ
+		//ï¿½ï¿½È¡ï¿½Ë¿Úºï¿½
 		virtual uint16_t getPort()const = 0;
-		//ÉèÖÃ¶Ë¿ÚºÅ
+		//ï¿½ï¿½ï¿½Ã¶Ë¿Úºï¿½
 		virtual void setPort(const uint16_t port) = 0;
 	public:
-		//Í¨¹ıÓòÃû,IP,·şÎñÆ÷Ãû´´½¨IPAddress
+		//Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,IP,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IPAddress
 		static shared_ptr<IPAddress> CreateIPAddress(const char* address, const uint32_t port = 0);
 	protected:
-		//Éú³ÉÑÚÂë£¨×îµÍµÄbitsÎ»Îª1£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¨ï¿½ï¿½Íµï¿½bitsÎ»Îª1ï¿½ï¿½
 		template<class T>
 		static T CreateMask(const uint32_t bits)
 		{
@@ -121,126 +121,126 @@ namespace AddressSpace
 		}
 	};
 
-	//IPv4µØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔIPAddressÀà
+	//IPv4ï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½IPAddressï¿½ï¿½
 	class IPv4Address :public IPAddress
 	{
 	public:
-		//Í¨¹ıIPv4¶ş½øÖÆµØÖ·¹¹ÔìIPv4Address
+		//Í¨ï¿½ï¿½IPv4ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ö·ï¿½ï¿½ï¿½ï¿½IPv4Address
 		IPv4Address(const uint32_t address = INADDR_ANY, const uint16_t port = 0);
-		//Í¨¹ısockaddr_in¹¹ÔìIPv4Address
+		//Í¨ï¿½ï¿½sockaddr_inï¿½ï¿½ï¿½ï¿½IPv4Address
 		IPv4Address(const sockaddr_in& address) { m_address = address; }
-		//Ê¹ÓÃµã·ÖÊ®½øÖÆµØÖ·¹¹ÔìIPv4Address
+		//Ê¹ï¿½Ãµï¿½ï¿½Ê®ï¿½ï¿½ï¿½Æµï¿½Ö·ï¿½ï¿½ï¿½ï¿½IPv4Address
 		IPv4Address(const char* address, const uint16_t port);
 
-		//»ñÈ¡Ö»¶Á°æµØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual sockaddr* getAddress()override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·µÄ³¤¶È
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·ï¿½Ä³ï¿½ï¿½ï¿½
 		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
-		//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+		//ï¿½ï¿½È¡ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
-		//»ñÈ¡¶Ë¿ÚºÅ
+		//ï¿½ï¿½È¡ï¿½Ë¿Úºï¿½
 		virtual uint16_t getPort()const override;
-		//ÉèÖÃ¶Ë¿ÚºÅ
+		//ï¿½ï¿½ï¿½Ã¶Ë¿Úºï¿½
 		virtual void setPort(const uint16_t port) override;
 
-		//»ñÈ¡¸ÃµØÖ·µÄ¹ã²¥µØÖ·
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½Ä¹ã²¥ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
-		//»ñÈ¡¸ÃµØÖ·µÄÍø¶Î
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
-		//»ñÈ¡×ÓÍøÑÚÂëµØÖ·
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 	private:
-		//IPv4µØÖ·½á¹¹Ìå
+		//IPv4ï¿½ï¿½Ö·ï¿½á¹¹ï¿½ï¿½
 		sockaddr_in m_address;
 	};
 
-	//IPv6µØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔIPAddressÀà
+	//IPv6ï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½IPAddressï¿½ï¿½
 	class IPv6Address : public IPAddress
 	{
 	public:
 		IPv6Address();
-		//Í¨¹ıIPv6¶ş½øÖÆµØÖ·¹¹ÔìIPv6Address
+		//Í¨ï¿½ï¿½IPv6ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Ö·ï¿½ï¿½ï¿½ï¿½IPv6Address
 		IPv6Address(const uint8_t address[16], const uint16_t port = 0);
-		//Í¨¹ısockaddr_in6¹¹ÔìIPv6Address
+		//Í¨ï¿½ï¿½sockaddr_in6ï¿½ï¿½ï¿½ï¿½IPv6Address
 		IPv6Address(const sockaddr_in6& address) { m_address = address; }
-		//Í¨¹ıIPv6µØÖ·×Ö·û´®¹¹ÔìIPv6Address
+		//Í¨ï¿½ï¿½IPv6ï¿½ï¿½Ö·ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IPv6Address
 		IPv6Address(const char* address, uint16_t port);
 
-		//»ñÈ¡Ö»¶Á°æµØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual sockaddr* getAddress() override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·µÄ³¤¶È
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·ï¿½Ä³ï¿½ï¿½ï¿½
 		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
-		//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+		//ï¿½ï¿½È¡ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
-		//»ñÈ¡¶Ë¿ÚºÅ
+		//ï¿½ï¿½È¡ï¿½Ë¿Úºï¿½
 		virtual uint16_t getPort()const override;
-		//ÉèÖÃ¶Ë¿ÚºÅ
+		//ï¿½ï¿½ï¿½Ã¶Ë¿Úºï¿½
 		virtual void setPort(const uint16_t port) override;
 
-		//»ñÈ¡¸ÃµØÖ·µÄ¹ã²¥µØÖ·
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½Ä¹ã²¥ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
-		//»ñÈ¡¸ÃµØÖ·µÄÍø¶Î
+		//ï¿½ï¿½È¡ï¿½Ãµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
-		//»ñÈ¡×ÓÍøÑÚÂëµØÖ·
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 	private:
-		//IPv6µØÖ·½á¹¹Ìå
+		//IPv6ï¿½ï¿½Ö·ï¿½á¹¹ï¿½ï¿½
 		sockaddr_in6 m_address;
 	};
 
-	//UnixµØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
+	//Unixï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
 	class UnixAddress : public Address
 	{
 	public:
 		UnixAddress();
-		//Í¨¹ıÂ·¾¶×Ö·û´®¹¹ÔìUnixAddress
+		//Í¨ï¿½ï¿½Â·ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UnixAddress
 		UnixAddress(const string& path);
 
-		//»ñÈ¡Ö»¶Á°æµØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual const sockaddr* getAddress()const override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual sockaddr* getAddress() override { return (sockaddr*)&m_address; }
-		//»ñÈ¡µØÖ·µÄ³¤¶È
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·ï¿½Ä³ï¿½ï¿½ï¿½
 		virtual socklen_t getAddress_length()const override { return m_length; }
-		//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+		//ï¿½ï¿½È¡ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 
-		//ÉèÖÃµØÖ·³¤¶È
+		//ï¿½ï¿½ï¿½Ãµï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 		void setAddress_length(const uint32_t address_length) { m_length = address_length; }
 	private:
-		//UnixµØÖ·½á¹¹Ìå
+		//Unixï¿½ï¿½Ö·ï¿½á¹¹ï¿½ï¿½
 		sockaddr_un m_address;
-		//UnixµØÖ·³¤¶È
+		//Unixï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 		socklen_t m_length;
 	private:
-		//×î´óÂ·¾¶³¤¶È
+		//ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		static const size_t MAX_PATH_LEN;
 	};
 
-	//Î´ÖªµØÖ·Àà£¬¹«ÓĞ¼Ì³Ğ×ÔAddressÀà
+	//Î´Öªï¿½ï¿½Ö·ï¿½à£¬ï¿½ï¿½ï¿½Ğ¼Ì³ï¿½ï¿½ï¿½Addressï¿½ï¿½
 	class UnknownAddress :public Address
 	{
 	public:
 		UnknownAddress(const int family);
-		//Í¨¹ısockaddr¹¹ÔìUnknownAddress
+		//Í¨ï¿½ï¿½sockaddrï¿½ï¿½ï¿½ï¿½UnknownAddress
 		UnknownAddress(const sockaddr& address) { m_address = address; }
 
-		//»ñÈ¡Ö»¶Á°æµØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual const sockaddr* getAddress()const override { return &m_address; }
-		//»ñÈ¡µØÖ·Ö¸Õë
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·Ö¸ï¿½ï¿½
 		virtual sockaddr* getAddress() override { return &m_address; }
-		//»ñÈ¡µØÖ·µÄ³¤¶È
+		//ï¿½ï¿½È¡ï¿½ï¿½Ö·ï¿½Ä³ï¿½ï¿½ï¿½
 		virtual socklen_t getAddress_length()const override { return sizeof(m_address); }
-		//»ñÈ¡¿É¶ÁĞÔÊä³öµØÖ·
+		//ï¿½ï¿½È¡ï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 		virtual	ostream& getAddress_ostream(ostream& os)const override;
 	private:
-		//Í¨ÓÃµØÖ·½á¹¹Ìå
+		//Í¨ï¿½Ãµï¿½Ö·ï¿½á¹¹ï¿½ï¿½
 		sockaddr m_address;
 	};
 }

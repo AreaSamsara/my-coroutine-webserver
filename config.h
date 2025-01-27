@@ -19,14 +19,14 @@
 //	public:
 //		ConfigVarBase(const string& name, const string& description = "")
 //			:m_name(name),m_description(description){}
-//		virtual ~ConfigVarBase(){}		//¸¸ÀàµÄÎö¹¹º¯ÊıÓ¦¸ÃÉèÖÃÎªĞéº¯Êı
+//		virtual ~ConfigVarBase(){}		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½éº¯ï¿½ï¿½
 //
-//		//»ñÈ¡±£»¤³ÉÔ±
+//		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±
 //		const string getName()const { return m_name; }
 //		const string getDescription()const { return m_description; }
 //
-//		virtual string toString() = 0;	//´¿Ğéº¯Êı£¬×ÓÀà±ØĞëÊµÏÖ
-//		virtual bool fromString(const string& val) = 0;		//´¿Ğéº¯Êı£¬×ÓÀà±ØĞëÊµÏÖ
+//		virtual string toString() = 0;	//ï¿½ï¿½ï¿½éº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
+//		virtual bool fromString(const string& val) = 0;		//ï¿½ï¿½ï¿½éº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 //	protected:
 //		string m_name;
 //		string m_description;
@@ -47,12 +47,12 @@
 //			}
 //			catch (exception& e)
 //			{
-//				//ÉèÖÃÈÕÖ¾ÊÂ¼ş
-//				//__FILE__·µ»Øµ±Ç°ÎÄ¼şµÄÎÄ¼şÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëĞĞÊı;elapseÎª²âÊÔÖµ
+//				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+//				//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "ConfigVar::toString exception" << e.what()
 //					<< "convert:" << typeid(m_value).name() << " to string";
-//				//Ê¹ÓÃLoggerManagerµ¥ÀıµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+//				//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //			}
 //			return "";
@@ -65,12 +65,12 @@
 //			}
 //			catch (exception& e)
 //			{
-//				//ÉèÖÃÈÕÖ¾ÊÂ¼ş
-//				//__FILE__·µ»Øµ±Ç°ÎÄ¼şµÄÎÄ¼şÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëĞĞÊı;elapseÎª²âÊÔÖµ
+//				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+//				//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "ConfigVar::toString exception" << e.what()
 //					<< "convert:" << typeid(m_value).name();
-//				//Ê¹ÓÃLoggerManagerµ¥ÀıµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+//				//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //			}
 //		}
@@ -93,22 +93,22 @@
 //			auto temp = Lookup<T>(name);
 //			if (temp)
 //			{
-//				//ÉèÖÃÈÕÖ¾ÊÂ¼ş
-//				//__FILE__·µ»Øµ±Ç°ÎÄ¼şµÄÎÄ¼şÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëĞĞÊı;elapseÎª²âÊÔÖµ
+//				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+//				//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "Lookup name=" << name << "exists";
-//				//Ê¹ÓÃLoggerManagerµ¥ÀıµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+//				//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //				return temp;
 //			}
 //			else if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._0123456789") != string::npos)
 //			{
-//				//ÉèÖÃÈÕÖ¾ÊÂ¼ş
-//				//__FILE__·µ»Øµ±Ç°ÎÄ¼şµÄÎÄ¼şÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëĞĞÊı;elapseÎª²âÊÔÖµ
+//				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+//				//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "Lookup name invalid ";
-//				//Ê¹ÓÃLoggerManagerµ¥ÀıµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+//				//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //
 //				throw invalid_argument(name);

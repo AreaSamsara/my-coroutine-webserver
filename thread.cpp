@@ -6,66 +6,66 @@ namespace ThreadSpace
 	//class Thread:public
 	Thread::Thread(const function<void()>& callback, const string& name) :m_callback(callback), m_name(name)
 	{
-		//Èç¹ûÊäÈëµÄÃû³ÆÎª¿Õ×Ö·û´®£¬¸ÄÎª"UNKNOW"
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª"UNKNOW"
 		if (name.empty())
 		{
 			m_name = "UNKNOW";
 		}
 
-		//´´½¨Ïß³Ì£¬Ò»¾­´´½¨Ïß³Ì±ã¿ªÊ¼Ö´ÐÐ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì±ã¿ªÊ¼Ö´ï¿½ï¿½
 		int return_value = pthread_create(&m_thread, nullptr, &run, this);
-		if (return_value != 0)		//·µ»Ø0±íÊ¾´´½¨³É¹¦£¬·ñÔò±¨´í
+		if (return_value != 0)		//ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 		{
-			//ÉèÖÃÈÕÖ¾ÊÂ¼þ
-			//__FILE__·µ»Øµ±Ç°ÎÄ¼þµÄÎÄ¼þÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëÐÐÊý;elapseÎª²âÊÔÖµ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+			//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "pthread_create thread fail, return_value=" << return_value << " name=" << name;
-			//Ê¹ÓÃLoggerManagerµ¥ÀýµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+			//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 
 			throw logic_error("pthread_create error");
 		}
 
-		//×èÈûÖ÷Ïß³Ì£¬µÈ´ýÐÅºÅÁ¿´óÓÚ0£¨runº¯ÊýµÄÖ¸Áî£©ÔÙ½áÊø¹¹Ôìº¯Êý
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì£ï¿½ï¿½È´ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½runï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î£©ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
 		m_semaphore.wait();
 	}
 
-	//Îö¹¹Thread¶ÔÏó²¢½«Ïß³ÌÉèÖÃÎª·ÖÀë×´Ì¬
+	//ï¿½ï¿½ï¿½ï¿½Threadï¿½ï¿½ï¿½ó²¢½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½×´Ì¬
 	Thread::~Thread()
 	{
-		//Èç¹ûÏß³Ì´æÔÚ£¬½«Ïß³ÌÉèÖÃÎª·ÖÀë×´Ì¬
+		//ï¿½ï¿½ï¿½ï¿½ß³Ì´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½×´Ì¬
 		if (m_thread)
 		{
 			pthread_detach(m_thread);
 		}
 	}
 
-	//×èÈûÕýÔÚÔËÐÐµÄ½ø³Ì£¬½«thread¼ÓÈëÏß³ÌµÈ´ý¶ÓÁÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½threadï¿½ï¿½ï¿½ï¿½ï¿½ß³ÌµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½
 	void Thread::join()
 	{
-		//Èç¹ûÏß³Ì´æÔÚ£¬½«Ïß³Ì¼ÓÈëÏß³ÌµÈ´ý¶ÓÁÐ
+		//ï¿½ï¿½ï¿½ï¿½ß³Ì´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ß³Ì¼ï¿½ï¿½ï¿½ï¿½ß³ÌµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_thread)
 		{
 			int return_value = pthread_join(m_thread,nullptr);
-			if (return_value != 0)		//³É¹¦¼ÓÈë½ø³Ì¶ÓÁÐÔò·µ»Ø0£¬·ñÔò±¨´í
+			if (return_value != 0)		//ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 			{
-				//ÉèÖÃÈÕÖ¾ÊÂ¼þ
-				//__FILE__·µ»Øµ±Ç°ÎÄ¼þµÄÎÄ¼þÃû£¨×Ô´øÂ·¾¶£©£¬__LINE__·µ»Øµ±Ç°´úÂëÐÐÊý;elapseÎª²âÊÔÖµ
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Â¼ï¿½
+				//__FILE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½__LINE__ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;elapseÎªï¿½ï¿½ï¿½ï¿½Öµ
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "pthread_join thread fail, return_value=" << return_value << " name=" << m_name;
 				throw logic_error("pthread_join error");
-				//Ê¹ÓÃLoggerManagerµ¥ÀýµÄÄ¬ÈÏloggerÊä³öÈÕÖ¾
+				//Ê¹ï¿½ï¿½LoggerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			}
 
-			//Ïß³ÌÒÑÖ´ÐÐÍê±Ï£¬ÖØÖÃm_threadÎª0
+			//ï¿½ß³ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½m_threadÎª0
 			m_thread = 0;
 		}
 	}
 
 
 	//class Thread:public static
-	//»ñÈ¡Ïß³Ì×¨ÊôµÄThreadÀàÖ¸Õë£¬ÉèÖÃÎª¾²Ì¬·½·¨ÒÔ·ÃÎÊ¾²Ì¬ÀàÐÍ
+	//ï¿½ï¿½È¡ï¿½ß³ï¿½×¨ï¿½ï¿½ï¿½ï¿½Threadï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ê¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
 	Thread* Thread::getThis()
 	{
 		return t_thread;
@@ -73,25 +73,25 @@ namespace ThreadSpace
 
 
 	//class Thread:private static
-	//´«µÝ¸øpthread_createµÄÖ÷ÔËÐÐº¯Êý
+	//ï¿½ï¿½ï¿½Ý¸ï¿½pthread_createï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðºï¿½ï¿½ï¿½
 	void* Thread::run(void* arg)
 	{
-		//½ÓÊÜThread*ÀàÐÍ²ÎÊý£¨µ±Ç°Ïß³Ì¶ÔÏó£©
+		//ï¿½ï¿½ï¿½ï¿½Thread*ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ß³Ì¶ï¿½ï¿½ï¿½
 		Thread* thread = (Thread*)arg;
 
-		//ÉèÖÃ¾²Ì¬±äÁ¿t_thread
+		//ï¿½ï¿½ï¿½Ã¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½t_thread
 		t_thread = thread;
 
-		//»ñÈ¡Ïß³Ìid
+		//ï¿½ï¿½È¡ï¿½ß³ï¿½id
 		thread->m_id = UtilitySpace::GetThread_id();
-		//ÉèÖÃÏß³ÌÃû³Æ£¨±»ÏÞÖÆÔÚ15¸ö×Ö·ûÒÔÄÚ£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½15ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ú£ï¿½
 		pthread_setname_np(pthread_self(), thread->m_name.substr(0, 15).c_str());
 
-		//½«threadµÄ»Øµ÷º¯Êý¸´ÖÆµ½¾Ö²¿±äÁ¿ÔÙÔËÐÐ£¬È·±£threadµÄ×ÔÓÉ
+		//ï¿½ï¿½threadï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½È·ï¿½ï¿½threadï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		function<void()> callback;
 		callback.swap(thread->m_callback);
 
-		//»ù±¾ÉèÖÃÒÑ¾­½áÊø£¬ÏÈÔö¼ÓÐÅºÅÁ¿½â·ÅÖ÷Ïß³Ì£¬ÔÙÔËÐÐ»Øµ÷º¯Êý
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		thread->m_semaphore.notify();
 		callback();
 
@@ -100,5 +100,5 @@ namespace ThreadSpace
 
 
 	//class Thread:public static variable
-	thread_local Thread* Thread::t_thread = nullptr;	//Ïß³Ì×¨ÊôµÄThreadÀàÖ¸Õë£¨Ïß³Ì×¨Êô±äÁ¿µÄÉúÃüÖÜÆÚÓÉÏß³Ì×ÔÖ÷¹ÜÀí£¬¹ÊÊ¹ÓÃÂãÖ¸Õë£©
+	thread_local Thread* Thread::t_thread = nullptr;	//ï¿½ß³ï¿½×¨ï¿½ï¿½ï¿½ï¿½Threadï¿½ï¿½Ö¸ï¿½ë£¨ï¿½ß³ï¿½×¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë£©
 }

@@ -7,47 +7,47 @@
 #include <fcntl.h>
 
 /*
-* hookÏµÍ³½éÉÜ£º
-* 1.hookÏµÍ³ÖØÐ´ÁË¶à¸öÔ­Ê¼¿âº¯Êý£¬Ê¹µÃÆäËûÏµÍ³ÔÚ°´Ô­±¾·½·¨µ÷ÓÃ¶ÔÓ¦º¯ÊýÊ±¸ÄÎªµ÷ÓÃhook°æ±¾
-* 2.hook°æ±¾µÄº¯ÊýÔÚ×èÈûÊ±Æ¾½èepollÏµÍ³ºÍ¶¨Ê±Æ÷ÏµÍ³ÒÔ²ÉÓÃÒì²½²Ù×÷£¬Ìá¸ßÁËÐÔÄÜ
+* hookÏµÍ³ï¿½ï¿½ï¿½Ü£ï¿½
+* 1.hookÏµÍ³ï¿½ï¿½Ð´ï¿½Ë¶ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½Ú°ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½hookï¿½æ±¾
+* 2.hookï¿½æ±¾ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Æ¾ï¿½ï¿½epollÏµÍ³ï¿½Í¶ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ì²½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 
 namespace HookSpace
 {
-	//tcpÁ¬½Ó³¬Ê±Ê±¼ä
+	//tcpï¿½ï¿½ï¿½Ó³ï¿½Ê±Ê±ï¿½ï¿½
 	extern uint64_t s_tcp_connect_timeout;
-	//Ïß³Ì×¨Êô¾²Ì¬±äÁ¿£¬±íÊ¾µ±Ç°Ïß³ÌÊÇ·ñhook×¡£¨ÊÇ·ñÆôÓÃhook£©
+	//ï¿½ß³ï¿½×¨ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ç°ï¿½ß³ï¿½ï¿½Ç·ï¿½hook×¡ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½hookï¿½ï¿½
 	extern thread_local bool t_hook_enable;
 }
 
-//°´ÕÕC·ç¸ñ±àÒë,ÉùÃ÷Ô­Ê¼¿âº¯Êý
+//ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½
 extern "C"
 {
-	//sleepÏà¹Ø
+	//sleepï¿½ï¿½ï¿½
 	extern unsigned int (*sleep_origin)(unsigned int);
 	extern int (*usleep_origin)(useconds_t usec);
 	extern int (*nanosleep_origin)(const struct timespec* req, struct timespec* rem);
 
-	//socketÏà¹Ø
+	//socketï¿½ï¿½ï¿½
 	extern int (*socket_origin)(int domain, int type, int protocol);
 	extern int (*connect_origin)(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
 	extern int (*accept_origin)(int s, struct sockaddr* addr, socklen_t* addrlen);
 
-	//readÏà¹Ø
+	//readï¿½ï¿½ï¿½
 	extern ssize_t(*read_origin)(int fd, void* buf, size_t count);
 	extern ssize_t(*readv_origin)(int fd, const struct iovec* iov, int iovcnt);
 	extern ssize_t(*recv_origin)(int sockfd, void* buf, size_t len, int flags);
 	extern ssize_t(*recvfrom_origin)(int sockfd, void* buf, size_t len, int flags, struct sockaddr* src_addr, socklen_t* addrlen);
 	extern ssize_t(*recvmsg_origin)(int sockfd, struct msghdr* msg, int flags);
 
-	//writeÏà¹Ø
+	//writeï¿½ï¿½ï¿½
 	extern ssize_t(*write_origin)(int fd, const void* buf, size_t count);
 	extern ssize_t(*writev_origin)(int fd, const struct iovec* iov, int iovcnt);
 	extern ssize_t(*send_origin)(int s, const void* msg, size_t len, int flags);
 	extern ssize_t(*sendto_origin)(int s, const void* msg, size_t len, int flags, const struct sockaddr* to, socklen_t tolen);
 	extern ssize_t(*sendmsg_origin)(int s, const struct msghdr* msg, int flags);
 
-	//fdÏà¹Ø
+	//fdï¿½ï¿½ï¿½
 	extern int (*close_origin)(int fd);
 	extern int (*fcntl_origin)(int fd, int cmd, .../* arg */);
 	extern int (*ioctl_origin)(int d, unsigned long int request, .../* arg */);

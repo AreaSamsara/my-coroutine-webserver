@@ -18,35 +18,35 @@ namespace UtilitySpace
 	using std::shared_ptr;
 	
 #if defined __GNUC__ || defined __llvm__
-	/// LIKCLY ºêµÄ·â×°, ¸æËß±àÒëÆ÷ÓÅ»¯,Ìõ¼þ´ó¸ÅÂÊ³ÉÁ¢
+	/// LIKCLY ï¿½ï¿½Ä·ï¿½×°, ï¿½ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê³ï¿½ï¿½ï¿½
 #   define SYLAR_LIKELY(x)       __builtin_expect(!!(x), 1)
-/// LIKCLY ºêµÄ·â×°, ¸æËß±àÒëÆ÷ÓÅ»¯,Ìõ¼þ´ó¸ÅÂÊ²»³ÉÁ¢
+/// LIKCLY ï¿½ï¿½Ä·ï¿½×°, ï¿½ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½ï¿½ï¿½
 #   define SYLAR_UNLIKELY(x)     __builtin_expect(!!(x), 0)
 #else
 #   define SYLAR_LIKELY(x)      (x)
 #   define SYLAR_UNLIKELY(x)      (x)
 #endif
 
-	//»ñÈ¡µ±Ç°Ïß³Ìid
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ß³ï¿½id
 	pid_t GetThread_id();
-	//»ñÈ¡µ±Ç°Ïß³ÌÃû³Æ
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
 	string GetThread_name();
 
-	//»ñÈ¡µ±Ç°Ð­³Ìid
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ð­ï¿½ï¿½id
 	uint32_t GetFiber_id();
 
-	//Ê±¼äms
+	//Ê±ï¿½ï¿½ms
 	uint64_t GetCurrentMS();
-	//Ê±¼äus
+	//Ê±ï¿½ï¿½us
 	uint64_t GetCurrentUS();
 
 	void Backtrace(vector<string>& bt, const int size, const int skip = 1);
 
 	string BacktraceToString(const int size = 64, const int skip = 2, const string& prefix = "");
 
-	//»ØËÝÕ»²¢·¢ËÍÕ»ÏûÏ¢£¬ÔÙÖÐ¶Ï³ÌÐò
+	//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï³ï¿½ï¿½ï¿½
 	void Assert(shared_ptr<LogEvent> event);
 
-	//»ØËÝÕ»²¢·¢ËÍÕ»ÏûÏ¢ºÍmessage×Ö·û´®£¬ÔÙÖÐ¶Ï³ÌÐò
+	//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½Ï¢ï¿½ï¿½messageï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï³ï¿½ï¿½ï¿½
 	void Assert(shared_ptr<LogEvent> event, const string& message);
 }

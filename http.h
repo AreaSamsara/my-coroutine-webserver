@@ -126,7 +126,7 @@ namespace HttpSpace
   XX(510, NOT_EXTENDED,                    Not Extended)                    \
   XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required) \
 
-//HTTP·½·¨Ã¶¾Ù
+//HTTPï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½
 enum HttpMethod
 {
 #define XX(num, name, string) name = num,
@@ -135,7 +135,7 @@ enum HttpMethod
     INVALID_METHOD
 };
 
-//HTTP×´Ì¬Ã¶¾Ù
+//HTTP×´Ì¬Ã¶ï¿½ï¿½
 enum class HttpStatus 
 {
 #define XX(code, name, desc) name = code,
@@ -149,7 +149,7 @@ HttpMethod CharsToHttpMethod(const char* method);
 const char* HttpMethodToString(const HttpMethod& method);
 const char* HttpStatusToString(const HttpStatus& status);
 
-//ºöÂÔ´óÐ¡Ð´±È½Ï×Ö·û´®
+//ï¿½ï¿½ï¿½Ô´ï¿½Ð¡Ð´ï¿½È½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 class CaseInsensitiveLess
 {
 public:

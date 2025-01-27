@@ -11,30 +11,30 @@ namespace FdManagerSpace
 		:m_file_descriptor(file_descriptor),m_is_socket(false)
 		,m_is_systemNonblock(false),m_is_userNonblock(false),m_is_close(false)
 	{
-		//³¢ÊÔ»ñÈ¡ÎÄ¼ş×´Ì¬
+		//ï¿½ï¿½ï¿½Ô»ï¿½È¡ï¿½Ä¼ï¿½×´Ì¬
 		struct stat file_descriptor_state;
-		//Èç¹û»ñÈ¡³É¹¦£¨fstat()²»·µ»Ø-1£©£¬¸ù¾İS_ISSOCKÉèÖÃÆäÊÇ·ñÎªsocket£¨·ñÔòÄ¬ÈÏÉèÖÃÎª·Çsocket£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½É¹ï¿½ï¿½ï¿½fstat()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½S_ISSOCKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªsocketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½socketï¿½ï¿½
 		if (fstat(m_file_descriptor, &file_descriptor_state) != -1)
 		{
 			m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
 		}
 
-		//Èç¹û¸ÃÎÄ¼şÃèÊö·ûÊÇsocket£¬ÉèÖÃÎÄ¼şÃèÊö·ûÎªhook·Ç×èÈû£¨·ñÔòÄ¬ÈÏÉèÖÃÎªhook×èÈû£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªhookï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªhookï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_is_socket)
 		{
-			//³¢ÊÔ»ñÈ¡ÎÄ¼ş±êÖ¾£¨Ê¹ÓÃÔ­Ê¼¿âº¯Êı£©
+			//ï¿½ï¿½ï¿½Ô»ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê¹ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½ï¿½ï¿½
 			int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
-			//Èç¹ûÎÄ¼ş±êÖ¾Î´ÉèÖÃ·Ç×èÈû£¬ÉèÖÃÖ®£¨Ê¹ÓÃÔ­Ê¼¿âº¯Êı£©
+			//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ö¾Î´ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ê¹ï¿½ï¿½Ô­Ê¼ï¿½âº¯ï¿½ï¿½ï¿½ï¿½
 			if (!(flags & O_NONBLOCK))
 			{
 				fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
 			}
-			//ÉèÖÃÎÄ¼şÃèÊö·ûÎªhook·Ç×èÈû
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªhookï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			m_is_systemNonblock = true;
 		}
 	}
 
-	//¸ù¾İÀàĞÍ»ñÈ¡¶ÔÓ¦µÄ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½È¡ï¿½ï¿½Ó¦ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 	uint64_t FileDescriptorEntity::getTimeout(const int type)const
 	{
 		if (type == SO_RCVTIMEO)
@@ -47,7 +47,7 @@ namespace FdManagerSpace
 		}
 	}
 
-	//¸ù¾İÀàĞÍÉèÖÃ¶ÔÓ¦µÄ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ó¦ï¿½Ä³ï¿½Ê±Ê±ï¿½ï¿½
 	void FileDescriptorEntity::setTimeout(const int type, const uint64_t timeout)
 	{
 		if (type == SO_RCVTIMEO)
@@ -66,64 +66,64 @@ namespace FdManagerSpace
 	//class FileDescriptorManager:public
 	FileDescriptorManager::FileDescriptorManager()
 	{
-		//ÈİÆ÷³õÊ¼´óĞ¡ÉèÖÃÎª64
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Îª64
 		m_file_descriptor_entities.resize(64);
 	}
 
-	//»ñÈ¡ÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊµÌå£¬²¢ÔÚ¸ÃÊµÌå²»´æÔÚÇÒauto_createÎªtrueÊ±´´½¨Ö®
+	//ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½å£¬ï¿½ï¿½ï¿½Ú¸ï¿½Êµï¿½å²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½auto_createÎªtrueÊ±ï¿½ï¿½ï¿½ï¿½Ö®
 	shared_ptr<FileDescriptorEntity> FileDescriptorManager::getFile_descriptor(const int file_descriptor, const bool auto_create)
 	{
-		//Èç¹ûÎÄ¼şÃèÊö·ûÎª-1£¨ÎŞĞ§£©£¬Ö±½Ó·µ»Ønullptr
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª-1ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½nullptr
 		if (file_descriptor == -1)
 		{
 			return nullptr;
 		}
 
-		//ÏÈ¼Ó»¥³âËø£¬±£»¤m_file_descriptor_entities
+		//ï¿½È¼Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_entities
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-		//Èç¹ûÈİÆ÷´óĞ¡²»×ã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½
 		if (m_file_descriptor_entities.size() <= file_descriptor)
 		{
-			//Èç¹û²»ĞèÒª×Ô¶¯´´½¨ĞÂµÄÊµÌå£¬ÔòÖ±½Ó·µ»Ø¿ÕÖ¸Õë
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Êµï¿½å£¬ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¿ï¿½Ö¸ï¿½ï¿½
 			if (!auto_create)
 			{
 				return nullptr;
 			}
-			//·ñÔòÀ©³äÈİÆ÷´óĞ¡µ½ĞèÇóÖµµÄ1.5±¶²¢´´½¨ĞÂÊµÌå£¬·µ»ØÖ®
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½1.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å£¬ï¿½ï¿½ï¿½ï¿½Ö®
 			else
 			{
-				//½âËø¶ÁÈ¡Ëø
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 				readlock.unlock();
-				//ÏÈ¼Ó»¥³âËø£¬±£»¤m_file_descriptor_entities
+				//ï¿½È¼Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_entities
 				WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-				//À©³äÈİÆ÷´óĞ¡µ½ĞèÇóÖµµÄ1.5±¶
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½1.5ï¿½ï¿½
 				m_file_descriptor_entities.resize(1.5 * file_descriptor);
 
-				//¸ù¾İ´«ÈëµÄÎÄ¼şÃèÊö·û´´½¨¶ÔÓ¦ÊµÌå²¢·µ»Ø
+				//ï¿½ï¿½ï¿½İ´ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Êµï¿½å²¢ï¿½ï¿½ï¿½ï¿½
 				shared_ptr<FileDescriptorEntity> file_descriptor_entity(new FileDescriptorEntity(file_descriptor));
 				m_file_descriptor_entities[file_descriptor] = file_descriptor_entity;
 				return file_descriptor_entity;
 			}
 		}
-		//Èç¹ûÈİÆ÷´óĞ¡³ä×ã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½
 		else
 		{
-			//Èç¹ûÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊµÌå²»Îª¿Õ»ò²»ĞèÒª×Ô¶¯´´½¨£¬Ö±½Ó·µ»Ø¶ÔÓ¦µÄÊµÌå
+			//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½å²»Îªï¿½Õ»ï¿½ï¿½ï¿½Òªï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¶ï¿½Ó¦ï¿½ï¿½Êµï¿½ï¿½
 			if (m_file_descriptor_entities[file_descriptor] || !auto_create)
 			{
 				return m_file_descriptor_entities[file_descriptor];
 			}
-			//·ñÔò´´½¨¶ÔÓ¦ÊµÌå²¢·µ»Ø
+			//ï¿½ï¿½ï¿½ò´´½ï¿½ï¿½ï¿½Ó¦Êµï¿½å²¢ï¿½ï¿½ï¿½ï¿½
 			else
 			{
-				//½âËø¶ÁÈ¡Ëø
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 				readlock.unlock();
 
-				//ÏÈ¼Ó»¥³âËø£¬±£»¤m_file_descriptor_entities
+				//ï¿½È¼Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_entities
 				WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-				//¸ù¾İ´«ÈëµÄÎÄ¼şÃèÊö·û´´½¨¶ÔÓ¦ÊµÌå²¢·µ»Ø
+				//ï¿½ï¿½ï¿½İ´ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Êµï¿½å²¢ï¿½ï¿½ï¿½ï¿½
 				shared_ptr<FileDescriptorEntity> file_descriptor_entity(new FileDescriptorEntity(file_descriptor));
 				m_file_descriptor_entities[file_descriptor] = file_descriptor_entity;
 				return file_descriptor_entity;
@@ -131,12 +131,12 @@ namespace FdManagerSpace
 		}
 	}
 
-	//É¾³ıÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊµÌå
+	//É¾ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½ï¿½
 	void FileDescriptorManager::deleteFile_descriptor(const int file_descriptor)
 	{
-		//ÏÈ¼Ó»¥³âËø£¬±£»¤m_file_descriptor_entities
+		//ï¿½È¼Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_entities
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-		//½öÔÚ´«ÈëµÄÎÄ¼şÃèÊö·ûÓĞĞ§Ê±£¬½«¶ÔÓ¦µÄÊµÌåÇå¿Õ
+		//ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_file_descriptor_entities.size() > file_descriptor)
 		{
 			m_file_descriptor_entities[file_descriptor].reset();

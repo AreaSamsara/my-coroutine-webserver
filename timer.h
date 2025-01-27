@@ -10,19 +10,19 @@ namespace TimerSpace
 	using std::set;
 
 	/*
-	* Àà¹ØÏµ£º
-	* TimerÀàÄÚ²¿Ö»ÓÐ¶ÁÈ¡»òÐÞ¸ÄË½ÓÐ³ÉÔ±µÄ·½·¨£¬´ó²¿·Ö¸´ÔÓ·½·¨¶¼Î»ÓÚTimerManagerÀàÄÚ²¿
-	* TimerManagerÀàÄÚ²¿ÓÐ×°ÓÐ¶à¸ö¶¨Ê±Æ÷µÄ¶¨Ê±Æ÷¼¯ºÏ£¬ÒÔ¼°¶à¸ö²Ù×Ý¶¨Ê±Æ÷µÄ·½·¨
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* Timerï¿½ï¿½ï¿½Ú²ï¿½Ö»ï¿½Ð¶ï¿½È¡ï¿½ï¿½ï¿½Þ¸ï¿½Ë½ï¿½Ð³ï¿½Ô±ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó²¿·Ö¸ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½TimerManagerï¿½ï¿½ï¿½Ú²ï¿½
+	* TimerManagerï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½×°ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½Ê±ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
 	*/
 	/*
-	* ¶¨Ê±Æ÷ÏµÍ³µ÷ÓÃ·½·¨£º
-	* 1.ÏÈ´´½¨¶ÀÁ¢µÄTimer¶ÔÏó²¢ÎªÆäÉèÖÃ»Øµ÷º¯Êý£¬
-	* 2.ÔÙ´´½¨TimerManager¶ÔÏóÓÃÓÚ¹ÜÀíTimer¶ÔÏó£¬
-	* 3.µ÷ÓÃaddTimer·½·¨¿ÉÒÔ½«Timer¶ÔÏó¼ÓÈëTimerManager¶ÔÏóµÄ¶¨Ê±Æ÷¼¯ºÏÖÐ
+	* ï¿½ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Timerï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 2.ï¿½Ù´ï¿½ï¿½ï¿½TimerManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½Timerï¿½ï¿½ï¿½ï¿½
+	* 3.ï¿½ï¿½ï¿½ï¿½addTimerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½Timerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TimerManagerï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	*/
 
 
-	//¶¨Ê±Æ÷
+	//ï¿½ï¿½Ê±ï¿½ï¿½
 	class Timer
 	{
 	public:
@@ -30,37 +30,37 @@ namespace TimerSpace
 		Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring = false);
 		Timer(const uint64_t execute_time);
 
-		//»ñÈ¡Ë½ÓÐ³ÉÔ±
+		//ï¿½ï¿½È¡Ë½ï¿½Ð³ï¿½Ô±
 		bool isRecurring()const { return m_is_recurring; }
 		uint64_t getRun_cycle()const { return m_run_cycle; }
 		function<void()> getCallback()const { return m_callback; }
 		uint64_t getExecute_time()const { return m_execute_time; }
 
-		//ÐÞ¸ÄË½ÓÐ³ÉÔ±
+		//ï¿½Þ¸ï¿½Ë½ï¿½Ð³ï¿½Ô±
 		void setRun_cycle(const uint64_t run_cycle) { m_run_cycle = run_cycle; }
 		void setExecute_time(const uint64_t execute_time) { m_execute_time = execute_time; }
 		void setCallback(const function<void()>& callback) { m_callback = callback; }
 	private:
-		//¾²Ì¬Ë½ÓÐ·½·¨£ºÌõ¼þ»Øµ÷º¯Êý£¬ÓÃÓÚ¸¨Öú¹¹ÔìÌõ¼þ¶¨Ê±Æ÷£¨ÎªÏÈÓÚ¹¹Ôìº¯Êýµ÷ÓÃ£¬¹ÊÉèÖÃÎª¾²Ì¬·½·¨£©
+		//ï¿½ï¿½Ì¬Ë½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		static void condition_callback(weak_ptr<void> weak_condition, const function<void()>& callback);
 	private:
-		//ÊÇ·ñÎªÑ­»·¶¨Ê±Æ÷
+		//ï¿½Ç·ï¿½ÎªÑ­ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 		bool m_is_recurring = false;
-		//Ö´ÐÐÖÜÆÚ
+		//Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		uint64_t m_run_cycle = 0;
-		//¾ø¶ÔÖ´ÐÐÊ±¼ä£¬³õÊ¼»¯Îªµ±Ç°Ê±¼ä+Ö´ÐÐÖÜÆÚ
+		//ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½+Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		uint64_t m_execute_time = 0;
-		//»Øµ÷º¯Êý
+		//ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		function<void()> m_callback;
 	};
 
 
 
-	//¶¨Ê±Æ÷¹ÜÀíÕß
+	//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	class TimerManager
 	{
 	private:
-		//¶¨Ê±Æ÷ÅÅÐòÀà£¬°´¶¨Ê±Æ÷µÄ¾ø¶ÔÖ´ÐÐÊ±¼ä´ÓÔçµ½ÍíÅÅÐò
+		//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½çµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		class Comparator
 		{
 		public:
@@ -70,30 +70,30 @@ namespace TimerSpace
 		TimerManager();
 		virtual ~TimerManager() {}
 
-		//Ìí¼Ó¶¨Ê±Æ÷
+		//ï¿½ï¿½ï¿½Ó¶ï¿½Ê±ï¿½ï¿½
 		bool addTimer(const shared_ptr<Timer> timer);
-		//È¡Ïû¶¨Ê±Æ÷
+		//È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 		bool cancelTimer(const shared_ptr<Timer> timer);
-		//Ë¢ÐÂ¶¨Ê±Æ÷µÄ¾ø¶ÔÖ´ÐÐÊ±¼ä
+		//Ë¢ï¿½Â¶ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½
 		bool refreshExecute_time(const shared_ptr<Timer> timer);
-		//ÖØÉè¶¨Ê±Æ÷Ö´ÐÐÖÜÆÚ
+		//ï¿½ï¿½ï¿½è¶¨Ê±ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool resetRun_cycle(const shared_ptr<Timer> timer, const uint64_t run_cycle, const bool from_now);
 
-		//·µ»ØÊÇ·ñÓÐ¶¨Ê±Æ÷
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ð¶ï¿½Ê±ï¿½ï¿½
 		bool hasTimer();
-		//»ñÈ¡¾àÀëÏÂÒ»¸ö¶¨Ê±Æ÷Ö´ÐÐ»¹ÐèÒªµÄÊ±¼ä
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö´ï¿½Ð»ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ï¿½
 		uint64_t getTimeUntilNextTimer();
-		//»ñÈ¡µ½ÆÚµÄ£¨ÐèÒªÖ´ÐÐµÄ£©¶¨Ê±Æ÷µÄ»Øµ÷º¯ÊýÁÐ±í
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ÚµÄ£ï¿½ï¿½ï¿½ÒªÖ´ï¿½ÐµÄ£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
 		void getExpired_callbacks(vector<function<void()>>& callbacks);
 	private:
-		//¼ì²â·þÎñÆ÷µÄÊ±¼äÊÇ·ñ±»µ÷ºóÁË
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ñ±»µï¿½ï¿½ï¿½ï¿½ï¿½
 		bool detectClockRollover(const uint64_t now_ms);
 	private:
-		//»¥³âËø£¨¶Á/Ð´Ëø£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½
 		Mutex_Read_Write m_mutex;
-		//¶¨Ê±Æ÷¼¯ºÏ£¬°´¶¨Ê±Æ÷µÄ¾ø¶ÔÖ´ÐÐÊ±¼ä´ÓÔçµ½ÍíÅÅÐò
+		//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½çµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		set<shared_ptr<Timer>, Comparator> m_timers;
-		//ÉÏ´ÎÖ´ÐÐµÄÊ±¼ä
+		//ï¿½Ï´ï¿½Ö´ï¿½Ðµï¿½Ê±ï¿½ï¿½
 		uint64_t m_previous_time = 0;
 	};
 }

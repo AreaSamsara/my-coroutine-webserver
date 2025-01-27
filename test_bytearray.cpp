@@ -17,14 +17,14 @@
 //
 //
 //	vector<uint32_t> vec;
-//	//»ñÈ¡¶à¸öËæ»úÊý
+//	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	for (int i = 0; i < count; ++i)
 //	{
 //		vec.push_back(rand());
 //	}
 //
 //	shared_ptr<ByteArray> bytearray(new ByteArray(base_size));
-//	//½«ËùÓÐËæ»úÊýÒÀ´ÎÐ´Èë
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½
 //	for (auto& i : vec)
 //	{
 //		bytearray->writeUint32(i);
@@ -41,14 +41,14 @@
 //
 //	for (size_t i = 0; i < vec.size(); ++i)
 //	{
-//		//¶ÁÈ¡Ëæ»úÊý²¢´òÓ¡
+//		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡
 //		int32_t value = bytearray->readUint32();
 //
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //		log_event->getSstream() << i << "-" << value << "-" << (int32_t)vec[i];
 //		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 //
-//		//valueÓ¦¸ÃµÈÓÚvec[i]£¬·ñÔò±¨´í
+//		//valueÓ¦ï¿½Ãµï¿½ï¿½ï¿½vec[i]ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 //		if (value != vec[i])
 //		{
 //			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -56,7 +56,7 @@
 //		}
 //	}
 //
-//	//´ËÊ±¿É¶ÁÊý¾ÝµÄ´óÐ¡Ó¦¸ÃÎªÁã£¨Êý¾Ý±»¶ÁÍê£©£¬·ñÔò±¨´í
+//	//ï¿½ï¿½Ê±ï¿½É¶ï¿½ï¿½ï¿½ï¿½ÝµÄ´ï¿½Ð¡Ó¦ï¿½ï¿½Îªï¿½ã£¨ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ï¿½ê£©ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 //	if (bytearray->getRead_size() != 0)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -77,13 +77,13 @@
 //
 //
 //	vector<uint64_t> vec;
-//	//»ñÈ¡¶à¸öËæ»úÊý
+//	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	for (int i = 0; i < count; ++i)
 //	{
 //		vec.push_back(rand());
 //	}
 //	shared_ptr<ByteArray> bytearray(new ByteArray(base_size));
-//	//½«ËùÓÐËæ»úÊýÒÀ´ÎÐ´Èë
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½
 //	for (auto& i : vec)
 //	{
 //		bytearray->writeUint64_compressed(i);
@@ -94,10 +94,10 @@
 //
 //	for (size_t i = 0; i < vec.size(); ++i)
 //	{
-//		//¶ÁÈ¡Ëæ»úÊý
+//		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½
 //		int32_t value = bytearray->readUint64_compressed();
 //
-//		//valueÓ¦¸ÃµÈÓÚvec[i]£¬·ñÔò±¨´í
+//		//valueÓ¦ï¿½Ãµï¿½ï¿½ï¿½vec[i]ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 //		if (value != vec[i])
 //		{
 //			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -105,7 +105,7 @@
 //		}
 //	}
 //
-//	//´ËÊ±¿É¶ÁÊý¾ÝµÄ´óÐ¡Ó¦¸ÃÎªÁã£¨Êý¾Ý±»¶ÁÍê£©£¬·ñÔò±¨´í
+//	//ï¿½ï¿½Ê±ï¿½É¶ï¿½ï¿½ï¿½ï¿½ÝµÄ´ï¿½Ð¡Ó¦ï¿½ï¿½Îªï¿½ã£¨ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ï¿½ê£©ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 //	if (bytearray->getRead_size() != 0)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));

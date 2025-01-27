@@ -9,22 +9,22 @@ namespace TimerSpace
 	Timer::Timer(const uint64_t run_cycle, const function<void()>& callback, const bool recurring)
 		:m_run_cycle(run_cycle), m_callback(callback), m_is_recurring(recurring)
 	{
-		//¾«È·µÄÖ´ÐÐÊ±¼ä£¬³õÊ¼»¯Îªµ±Ç°Ê±¼ä+Ö´ÐÐÖÜÆÚ
+		//ï¿½ï¿½È·ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½+Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_execute_time = GetCurrentMS() + m_run_cycle;
 	}
-	//¹¹ÔìÌõ¼þ¶¨Ê±Æ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	Timer::Timer(const uint64_t run_cycle, const function<void()>& callback, weak_ptr<void> weak_condition, const bool recurring)
 		:Timer(run_cycle, bind(&condition_callback, weak_condition, callback), recurring) {}
 	Timer::Timer(const uint64_t execute_time) :m_execute_time(execute_time) {}
 
 
 	//class Timer:private static
-	//Ìõ¼þ»Øµ÷º¯Êý£¬ÓÃÓÚ¸¨Öú¹¹ÔìÌõ¼þ¶¨Ê±Æ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	void Timer::condition_callback(weak_ptr<void> weak_condition, const function<void()>& callback)
 	{
-		//¶ÁÈ¡weak_ptr±£´æµÄÄÚÈÝ
+		//ï¿½ï¿½È¡weak_ptrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<void> temp = weak_condition.lock();
-		//Èç¹ûÄÚÈÝÓÐÐ§£¬ÔòÕÕ³£Ö´ÐÐ»Øµ÷º¯Êý
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½Õ³ï¿½Ö´ï¿½Ð»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		if (temp)
 		{
 			callback();
@@ -35,25 +35,25 @@ namespace TimerSpace
 
 
 	//class TimerManager:private class
-	//¶¨Ê±Æ÷ÅÅÐòÀà£¬°´¶¨Ê±Æ÷µÄ¾ø¶ÔÖ´ÐÐÊ±¼ä´ÓÔçµ½ÍíÅÅÐò
+	//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½çµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool TimerManager::Comparator::operator()(const shared_ptr<Timer>& left_timer, const shared_ptr<Timer>& right_timer)const
 	{
-		//Èç¹ûÓÒ±ßµÄ¶¨Ê±Æ÷Îª¿Õ£¬Ôò·µ»Øfalse£¨ÒòÎª´ËÊ±¼´±ã×ó±ßµÄ¶¨Ê±Æ÷Ò²Îª¿Õ£¬ÈÔ·µ»Øfalse£©
+		//ï¿½ï¿½ï¿½ï¿½Ò±ßµÄ¶ï¿½Ê±ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ò·µ»ï¿½falseï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµÄ¶ï¿½Ê±ï¿½ï¿½Ò²Îªï¿½Õ£ï¿½ï¿½Ô·ï¿½ï¿½ï¿½falseï¿½ï¿½
 		if (!right_timer)
 		{
 			return false;
 		}
-		//·ñÔòËµÃ÷ÓÒ±ßµÄ¶¨Ê±Æ÷²»Îª¿Õ£¬´ËÊ±Èô×ó±ßÎª¿ÕÔò·µ»Øtrue
+		//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ò±ßµÄ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ò·µ»ï¿½true
 		else if (!left_timer)
 		{
 			return true;
 		}
-		//·ñÔòËµÃ÷¶þÕß½Ô·Ç¿Õ£¬Èô¶þÕßµÄ¾ø¶ÔÖ´ÐÐÊ±¼ä²»Í¬£¬·µ»ØÆä±È½Ï½á¹û
+		//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ß½Ô·Ç¿Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµÄ¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ä²»Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½Ï½ï¿½ï¿½
 		else if (left_timer->getExecute_time() != right_timer->getExecute_time())
 		{
 			return left_timer->getExecute_time() < right_timer->getExecute_time();
 		}
-		//·ñÔòÖ±½Ó°´ÕÕÄ¬ÈÏµÄ·½·¨±È½ÏµØÖ·
+		//ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó°ï¿½ï¿½ï¿½Ä¬ï¿½ÏµÄ·ï¿½ï¿½ï¿½ï¿½È½Ïµï¿½Ö·
 		else
 		{
 			return left_timer.get() < right_timer.get();
@@ -64,184 +64,184 @@ namespace TimerSpace
 	//class TimerManager:public
 	TimerManager::TimerManager()
 	{
-		//³õÊ¼»¯ÉÏ´ÎÖ´ÐÐÊ±¼äÎªµ±Ç°Ê±¼ä
+		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ï´ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½
 		m_previous_time = GetCurrentMS();
 	}
 
-	//½«¶¨Ê±Æ÷Ìí¼Óµ½¹ÜÀíÆ÷ÖÐ
+	//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool TimerManager::addTimer(const shared_ptr<Timer> timer)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-		//insert()·µ»ØÖµÎªÒ»¸öpair£¬ÆäfirstÎªÒ»Ö¸ÏòÐÂ²åÈëÔªËØµÄµü´úÆ÷£¬Æäsecond±íÊ¾ÊÇ·ñ³É¹¦
-		auto iterator = m_timers.insert(timer).first;	//Ö¸ÏòÐÂ²åÈëtimerµÄµü´úÆ÷
+		//insert()ï¿½ï¿½ï¿½ï¿½ÖµÎªÒ»ï¿½ï¿½pairï¿½ï¿½ï¿½ï¿½firstÎªÒ»Ö¸ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½Ôªï¿½ØµÄµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½secondï¿½ï¿½Ê¾ï¿½Ç·ï¿½É¹ï¿½
+		auto iterator = m_timers.insert(timer).first;	//Ö¸ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½timerï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½
 
-		//ÓÉÓÚsetÊÇÓÐÐòÈÝÆ÷£¬Èç¹ûÐÂ²åÈëµÄtimerÎ»ÓÚsetµÄ¿ªÍ·£¬ËµÃ÷ÆäÖ´ÐÐÊ±¼ä×î¿¿Ç°£¬ÊÇ¼´½«ÒªÖ´ÐÐµÄ¶¨Ê±Æ÷£¬´ËÊ±·µ»Øtrue×÷ÎªÌáÐÑ
+		//ï¿½ï¿½ï¿½ï¿½setï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½timerÎ»ï¿½ï¿½setï¿½Ä¿ï¿½Í·ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½î¿¿Ç°ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ÒªÖ´ï¿½ÐµÄ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½trueï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 		return iterator == m_timers.begin();
 	}
 
-	//È¡Ïû¶¨Ê±Æ÷
+	//È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	bool TimerManager::cancelTimer(const shared_ptr<Timer> timer)
 	{
 		auto callback = timer->getCallback();
-		//Èç¹û¶¨Ê±Æ÷ÄÚ²¿µÄ»Øµ÷º¯Êý²»Îª¿Õ£¬È¡ÏûÖ®²¢·µ»Øtrue
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½È¡ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½true
 		if (callback)
 		{
 			callback = nullptr;
 
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-			//ÔÚ¶¨Ê±Æ÷¼¯ºÏÖÐ²éÕÒµ±Ç°¶¨Ê±Æ÷
+			//ï¿½Ú¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½Òµï¿½Ç°ï¿½ï¿½Ê±ï¿½ï¿½
 			auto iterator = m_timers.find(timer);
-			//Èç¹ûÕÒµ½ÁËÔò½«ÆäÉ¾³ý
+			//ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 			m_timers.erase(iterator);
 			return true;
 		}
-		//·ñÔòÈ¡ÏûÊ§°Ü£¬·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 		else
 		{
 			return false;
 		}
 	}
 
-	//Ë¢ÐÂ¶¨Ê±Æ÷µÄ¾ø¶ÔÖ´ÐÐÊ±¼ä
+	//Ë¢ï¿½Â¶ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½
 	bool TimerManager::refreshExecute_time(const shared_ptr<Timer> timer)
 	{
 		auto callback = timer->getCallback();
-		//Èç¹û¶¨Ê±Æ÷µÄ»Øµ÷º¯ÊýÎª¿Õ£¬Ë¢ÐÂÊ§°Ü£¬·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½Ë¢ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (!callback)
 		{
 			return false;
 		}
 
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-			//ÔÚ¶¨Ê±Æ÷¼¯ºÏÖÐ²éÕÒµ±Ç°¶¨Ê±Æ÷
+			//ï¿½Ú¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½Òµï¿½Ç°ï¿½ï¿½Ê±ï¿½ï¿½
 			auto iterator = m_timers.find(timer);
-			//Èç¹ûÎ´ÕÒµ½ÔòË¢ÐÂÊ§°Ü£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½Î´ï¿½Òµï¿½ï¿½ï¿½Ë¢ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (iterator == m_timers.end())
 			{
 				return false;
 			}
-			//Èç¹ûÕÒµ½ÁËÔò½«ÆäÉ¾³ý
+			//ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 			m_timers.erase(iterator);
 		}
 
-		//½«µ±Ç°¼ÆÊ±Æ÷µÄ¾«È·Ö´ÐÐÊ±¼äË¢ÐÂÎªµ±Ç°Ê±¼ä+Ö´ÐÐÖÜÆÚ
+		//ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä¾ï¿½È·Ö´ï¿½ï¿½Ê±ï¿½ï¿½Ë¢ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½+Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		timer->setExecute_time(GetCurrentMS() + timer->getRun_cycle());
 
-		//Ë¢ÐÂÍê¾ø¶ÔÖ´ÐÐÊ±¼äÒÔºóÔÙ½«¶¨Ê±Æ÷ÖØÐÂÌí¼Óµ½¶¨Ê±Æ÷¼¯ºÏÖÐ£¨±£Ö¤ÓÐÐòÐÔ£©
+		//Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ôºï¿½ï¿½Ù½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½
 		addTimer(timer);
 
-		//Ë¢ÐÂ³É¹¦£¬·µ»Øtrue
+		//Ë¢ï¿½Â³É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½true
 		return true;
 	}
 
-	//ÖØÉè¶¨Ê±Æ÷Ö´ÐÐÖÜÆÚ
+	//ï¿½ï¿½ï¿½è¶¨Ê±ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool TimerManager::resetRun_cycle(const shared_ptr<Timer> timer, const uint64_t run_cycle, const bool from_now)
 	{
-		//Èç¹ûÖØÉèµÄÖµÓëÔ­ÖµÏàÍ¬ÇÒ²»ÊÇ´Óµ±Ç°Ê±¼ä¿ªÊ¼¼ÆËã£¬ÔòÃ»ÓÐ±ØÒª½øÐÐÐÞ¸Ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ô­Öµï¿½ï¿½Í¬ï¿½Ò²ï¿½ï¿½Ç´Óµï¿½Ç°Ê±ï¿½ä¿ªÊ¼ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½Ã»ï¿½Ð±ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½
 		if (run_cycle == timer->getRun_cycle() && !from_now)
 		{
 			return true;
 		}
 
 		auto callback = timer->getCallback();
-		//Èç¹û¶¨Ê±Æ÷µÄ»Øµ÷º¯ÊýÎª¿Õ£¬ÖØÖÃÊ§°Ü£¬·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (!callback)
 		{
 			return false;
 		}
 
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-			//ÔÚ¶¨Ê±Æ÷¼¯ºÏÖÐ²éÕÒµ±Ç°¶¨Ê±Æ÷
+			//ï¿½Ú¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½Òµï¿½Ç°ï¿½ï¿½Ê±ï¿½ï¿½
 			auto iterator = m_timers.find(timer);
-			//Èç¹ûÎ´ÕÒµ½ÔòÖØÖÃÊ§°Ü£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½Î´ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (iterator == m_timers.end())
 			{
 				return false;
 			}
 
-			//Èç¹ûÕÒµ½ÁËÔò½«ÆäÉ¾³ý
+			//ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 			m_timers.erase(iterator);	
 		}
 
-		//ÆðÊ¼Ê±¼ä
+		//ï¿½ï¿½Ê¼Ê±ï¿½ï¿½
 		uint64_t start = 0;
-		//Èç¹û´ÓÏÖÔÚ¿ªÊ¼¼ÆËãÆðÊ¼Ê±¼ä£¬Ôò¾ø¶ÔÖ´ÐÐÊ±¼äÉèÎªµ±Ç°Ê±¼ä+ÐÂµÄÖ´ÐÐÖÜÆÚ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½+ï¿½Âµï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (from_now)
 		{
 			start = GetCurrentMS();
 		}
-		//·ñÔò¾ø¶ÔÖ´ÐÐÊ±¼ä°´ÕÕÔ­Öµµ÷ÕûµÈÍ¬ÓÚÖ´ÐÐÖÜÆÚµÄ¸Ä±äÁ¿
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ä°´ï¿½ï¿½Ô­Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ¸Ä±ï¿½ï¿½ï¿½
 		else
 		{
 			start = timer->getExecute_time() - timer->getRun_cycle();
 		}
-		//ÖØÉè¶¨Ê±Æ÷µÄÖ´ÐÐÖÜÆÚºÍ¾ø¶ÔÖ´ÐÐÊ±¼ä
+		//ï¿½ï¿½ï¿½è¶¨Ê±ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ÚºÍ¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½
 		timer->setRun_cycle(run_cycle);
 		timer->setExecute_time(start + timer->getRun_cycle());
 
-		//ÖØÉèÍêÖ´ÐÐÖÜÆÚÒÔºóÔÙ½«¶¨Ê±Æ÷ÖØÐÂÌí¼Óµ½¶¨Ê±Æ÷¼¯ºÏÖÐ£¨±£Ö¤ÓÐÐòÐÔ£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½Ù½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½
 		addTimer(timer);
 
 		return true;
 	}
 
-	//·µ»ØÊÇ·ñÓÐ¶¨Ê±Æ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ð¶ï¿½Ê±ï¿½ï¿½
 	bool TimerManager::hasTimer()
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
 		return !m_timers.empty();
 	}
 	
-	//»ñÈ¡¾àÀëÏÂÒ»¸ö¶¨Ê±Æ÷Ö´ÐÐ»¹ÐèÒªµÄÊ±¼ä
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö´ï¿½Ð»ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ï¿½
 	uint64_t TimerManager::getTimeUntilNextTimer()
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		
-		//Èç¹û²»´æÔÚÏÂÒ»¸ö¶¨Ê±Æ÷£¬·µ»Øunsigned long longµÄ¼«´óÖµ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½unsigned long longï¿½Ä¼ï¿½ï¿½ï¿½Öµ
 		if (m_timers.empty())
 		{
 			return ~0ull;
 		}
 
-		//¼´½«Ö´ÐÐµÄÏÂÒ»¸ö¶¨Ê±Æ÷
+		//ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ðµï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 		const shared_ptr<Timer>& next = *m_timers.begin();
-		//»ñÈ¡µ±Ç°Ê±¼ä
+		//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ê±ï¿½ï¿½
 		uint64_t now = GetCurrentMS();
 
-		//Èç¹ûÏÂÒ»¸ö¶¨Ê±Æ÷µÄÖ´ÐÐÊ±¼äÔÚÒÔÇ°£¬ËµÃ÷¸Ã¶¨Ê±Æ÷ÑÓÎóÁË£¬Á¢¼´Ö´ÐÐÖ®
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ö®
 		if (now >= next->getExecute_time())
 		{
 			return 0;
 		}
-		//·ñÔò·µ»ØÈÔÐèµÈ´ýµÄÊ±¼ä
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 		else
 		{
 			return next->getExecute_time() - now;
 		}
 	}
 
-	//»ñÈ¡µ½ÆÚµÄ£¨ÐèÒªÖ´ÐÐµÄ£©¶¨Ê±Æ÷µÄ»Øµ÷º¯ÊýÁÐ±í
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ÚµÄ£ï¿½ï¿½ï¿½ÒªÖ´ï¿½ÐµÄ£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
 	void TimerManager::getExpired_callbacks(vector<function<void()>>& expired_callbacks)
 	{
-		//»ñÈ¡µ±Ç°Ê±¼ä
+		//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ê±ï¿½ï¿½
 		uint64_t now = GetCurrentMS();
 
-		//Èç¹û²»´æÔÚÏÂÒ»¸ö¶¨Ê±Æ÷£¬Ö±½Ó·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 			if (m_timers.empty())
 			{
@@ -249,12 +249,12 @@ namespace TimerSpace
 			}
 		}
 
-		//¼ì²é·þÎñÆ÷µÄÊ±¼äÊÇ·ñ±»µ÷ºóÁË
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ñ±»µï¿½ï¿½ï¿½ï¿½ï¿½
 		bool rollover = detectClockRollover(now);
 
-		//Èç¹ûÊ±¼äÃ»ÓÐ±»µ÷ºóÇÒ¶¨Ê±Æ÷¼¯ºÏµÄµÚÒ»¸ö¶¨Ê±Æ÷¶¼ÉÐ²»ÐèÒªÖ´ÐÐ£¬ÔòÖ±½Ó·µ»Ø
+		//ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ã»ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ÒªÖ´ï¿½Ð£ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_timers
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_timers
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 			if (!rollover && ((*m_timers.begin())->getExecute_time() > now))
 			{
@@ -262,37 +262,37 @@ namespace TimerSpace
 			}
 		}
 
-		//ÁÙÊ±¶¨Ê±Æ÷£¬¾ø¶ÔÖ´ÐÐÊ±¼ä±»ÉèÎªµ±Ç°Ê±¼ä£¬ÓÃÓÚ¸¨Öú¶¨Ê±Æ÷¼¯ºÏµÄÅÅÐò
+		//ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ê±ï¿½ä±»ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ä£¬ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Timer> now_timer(new Timer(now));
 
-		//ÒÑµ½ÆÚµÄ¶¨Ê±Æ÷¼¯ºÏ
+		//ï¿½Ñµï¿½ï¿½ÚµÄ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		vector<shared_ptr<Timer>> expired_timers;
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-			//Èç¹û·þÎñÆ÷Ê±¼ä±»µ÷ºóÁË£¬½«expired_timersÉèÎªÕû¸öm_timers£»·ñÔò½«ÆäÖÐËùÓÐ¾«È·Ö´ÐÐÊ±¼ä²»´óÓÚnowµÄ¼ÓÈëexpired_timers
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä±»ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½expired_timersï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½m_timersï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½È·Ö´ï¿½ï¿½Ê±ï¿½ä²»ï¿½ï¿½ï¿½ï¿½nowï¿½Ä¼ï¿½ï¿½ï¿½expired_timers
 			auto iterator = rollover ? m_timers.end() : m_timers.upper_bound(now_timer);
 			expired_timers = vector<shared_ptr<Timer>>(m_timers.begin(), iterator);
 
-			//´Ó¶¨Ê±Æ÷¼¯ºÏÖÐÉ¾³ýÒÑ±»expired_timersÈ¡×ßµÄ¶¨Ê±Æ÷
+			//ï¿½Ó¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½Ñ±ï¿½expired_timersÈ¡ï¿½ßµÄ¶ï¿½Ê±ï¿½ï¿½
 			m_timers.erase(m_timers.begin(), iterator);
 		}
 
-		//½«expired_callbacksµÄ´óÐ¡ÉèÖÃÎªÓëexpired_timersÒ»ÖÂ
+		//ï¿½ï¿½expired_callbacksï¿½Ä´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½expired_timersÒ»ï¿½ï¿½
 		expired_callbacks.reserve(expired_timers.size());
 
-		//½«expired_timersÈ¡µ½µÄËùÓÐ¶¨Ê±Æ÷ÒÀ´Î·ÅÈëexpired_callbacks
+		//ï¿½ï¿½expired_timersÈ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Î·ï¿½ï¿½ï¿½expired_callbacks
 		for (auto& expired_timer : expired_timers)
 		{
 			expired_callbacks.push_back(expired_timer->getCallback());
-			//Èç¹û¸Ã¶¨Ê±Æ÷ÎªÑ­»·¶¨Ê±Æ÷£¬ÔÚÖ´ÐÐÇ°Ó¦ÉèÖÃÏÂÒ»¸öÖÜÆÚµÄ¶¨Ê±Æ÷
+			//ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½ÎªÑ­ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ç°Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ¶ï¿½Ê±ï¿½ï¿½
 			if (expired_timer->isRecurring())
 			{
 				expired_timer->setExecute_time(now + expired_timer->getRun_cycle());
 				addTimer(expired_timer);
 			}
-			//·ñÔòÖÃ¿ÕÆä»Øµ÷º¯Êý
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 			else
 			{
 				expired_timer->getCallback() = nullptr;
@@ -302,12 +302,12 @@ namespace TimerSpace
 
 
 	//class TimerManager:private
-	//¼ì²â·þÎñÆ÷µÄÊ±¼äÊÇ·ñ±»µ÷ºóÁË
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ç·ñ±»µï¿½ï¿½ï¿½ï¿½ï¿½
 	bool TimerManager::detectClockRollover(const uint64_t now)
 	{
-		//Èç¹ûµ±Ç°Ê±¼äÔçÓÚÉÏÒ»´ÎÖ´ÐÐµÄÊ±¼äÒ»¸öÐ¡Ê±ÒÔÉÏ£¬Ôò¿ÉÒÔÈÏÎª·þÎñÆ÷Ê±¼ä±»µ÷ºóÁË
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö´ï¿½Ðµï¿½Ê±ï¿½ï¿½Ò»ï¿½ï¿½Ð¡Ê±ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä±»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		bool rollover =  now < (m_previous_time - 60 * 60 * 1000);
-		//½«ÉÏ´ÎÖ´ÐÐÊ±¼äÉèÖÃÎªµ±Ç°Ê±¼ä
+		//ï¿½ï¿½ï¿½Ï´ï¿½Ö´ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ç°Ê±ï¿½ï¿½
 		m_previous_time = now;
 		return rollover;
 	}

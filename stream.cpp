@@ -9,7 +9,7 @@ namespace StreamSpace
 		while (length_to_read > 0)
 		{
 			size_t return_value = read((char*)buffer + offset, length_to_read);
-			//Èç¹ûread()º¯Êý³ö´í£¬Ö±½Ó·µ»Ø¸ÃÖµ
+			//ï¿½ï¿½ï¿½read()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¸ï¿½Öµ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -25,7 +25,7 @@ namespace StreamSpace
 		while (length_to_read > 0)
 		{
 			size_t return_value = read(bytearray, length_to_read);
-			//Èç¹ûread()º¯Êý³ö´í£¬Ö±½Ó·µ»Ø¸ÃÖµ
+			//ï¿½ï¿½ï¿½read()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¸ï¿½Öµ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -42,7 +42,7 @@ namespace StreamSpace
 		while (length_to_write > 0)
 		{
 			size_t return_value = write((char*)buffer + offset, length_to_write);
-			//Èç¹ûwrite()º¯Êý³ö´í£¬Ö±½Ó·µ»Ø¸ÃÖµ
+			//ï¿½ï¿½ï¿½write()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¸ï¿½Öµ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -58,7 +58,7 @@ namespace StreamSpace
 		while (length_to_write > 0)
 		{
 			size_t return_value = write(bytearray, length_to_write);
-			//Èç¹ûwrite()º¯Êý³ö´í£¬Ö±½Ó·µ»Ø¸ÃÖµ
+			//ï¿½ï¿½ï¿½write()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø¸ï¿½Öµ
 			if (return_value <= 0)
 			{
 				return return_value;

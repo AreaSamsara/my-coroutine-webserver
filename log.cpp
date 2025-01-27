@@ -7,7 +7,7 @@ namespace LogSpace
 	using namespace UtilitySpace;
 
 	//class LogLevel:static public
-	//½«Level¹²ÓÃÌå×ª»¯Îª×Ö·û´®£¨ÉùÃ÷Îª¾²Ì¬·½·¨Ê¹µÃÆä¿ÉÒÔÔÚÎ´´´½¨LogLevelÀà¶ÔÏóÊ±±»µ÷ÓÃ£©
+	//ï¿½ï¿½Levelï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½LogLevelï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½
 	const string LogLevel::toString(const Level level)
 	{
 		switch (level)
@@ -39,14 +39,14 @@ namespace LogSpace
 		:m_filename(filename), m_line(line), m_thread_id(GetThread_id()),m_thread_name(GetThread_name()),
 		m_fiber_id(GetFiber_id()), m_elapse(0), m_time(time(0)) {}
 
-	//ÉèÖÃstringstream
+	//ï¿½ï¿½ï¿½ï¿½stringstream
 	void LogEvent::setSstream(const string& str)
 	{
-		//Çå¿Õstringstream±êÖ¾
+		//ï¿½ï¿½ï¿½stringstreamï¿½ï¿½Ö¾
 		m_sstream.clear();
-		//Çå¿ÕstringstreamÄÚÈÝ
+		//ï¿½ï¿½ï¿½stringstreamï¿½ï¿½ï¿½ï¿½
 		m_sstream.str("");
-		//Ð´ÈëÐÂÄÚÈÝ
+		//Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_sstream << str;
 	}
 
@@ -55,35 +55,35 @@ namespace LogSpace
 	//class Logger:public
 	Logger::Logger(const string& name) :m_name(name), m_level(LogLevel::LOG_DEBUG)
 	{
-		//¹¹ÔìLogger¶ÔÏóÊ±×Ô¶¯ÉèÖÃformatterÎªÄ¬ÈÏÈÕÖ¾Ä£Ê½
+		//ï¿½ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½formatterÎªÄ¬ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½
 		m_formatter.reset(new LogFormatter(Default_FormatPattern));
 	}
 
-	//ÈÕÖ¾Êä³öº¯Êý
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void Logger::log(const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		//Ö»ÓÐÈÕÖ¾µÈ¼¶´óÓÚ»òµÈÓÚLoggerÀàµÄÈÕÖ¾µÈ¼¶²ÅÊä³ö
+		//Ö»ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½Ú»ï¿½ï¿½ï¿½ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (level >= m_level)
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_appendersºÍm_name
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_appendersï¿½ï¿½m_name
 			ScopedLock<SpinLock> lock(m_mutex);
 			for (auto& appender : m_appenders)
 			{
-				//µ÷ÓÃAppender¶ÔÏóµÄlog·½·¨
+				//ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½ï¿½logï¿½ï¿½ï¿½ï¿½
 				appender->log(m_name, level, event);
 			}
 		}
 	}
 
-	//Ìí¼Ó»òÉ¾³ýAppender
+	//ï¿½ï¿½ï¿½Ó»ï¿½É¾ï¿½ï¿½Appender
 	void Logger::addAppender(const shared_ptr<LogAppender> appender)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_appendersºÍm_formatter
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_appendersï¿½ï¿½m_formatter
 		ScopedLock<SpinLock> lock(m_mutex);
-		//Èç¹û¼´½«ÐÂÔöµÄAppenderÃ»ÓÐÉèÖÃFormatter£¬Ôò¼Ì³ÐLogger¶ÔÏóµÄFormatter
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½AppenderÃ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Formatterï¿½ï¿½ï¿½ï¿½Ì³ï¿½Loggerï¿½ï¿½ï¿½ï¿½ï¿½Formatter
 		if (!appender->getFormatter())
 		{
-			//ÏÈ¼àÊÓ»¥³âËø
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
 			//MutexType mutex = appender->getMutex();
 			//ScopedLock<MutexType> appender_lock(mutex);
 			appender->setFormatter(m_formatter);
@@ -92,7 +92,7 @@ namespace LogSpace
 	}
 	void Logger::deleteAppender(const shared_ptr<const LogAppender> appender)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_appenders
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_appenders
 		ScopedLock<SpinLock> lock(m_mutex);
 		for (auto iterator = m_appenders.begin(); iterator != m_appenders.end(); ++iterator)
 		{
@@ -104,17 +104,17 @@ namespace LogSpace
 		}
 	}
 
-	//ÐÞ¸Äformatter
+	//ï¿½Þ¸ï¿½formatter
 	void Logger::setFormatter(const shared_ptr<LogFormatter> formatter)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_formatter
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_formatter
 		ScopedLock<SpinLock> lock(m_mutex);
 		m_formatter = formatter;
 
-		//½«ËùÓÐ°üº¬µÄAppenderµÄFormatterÒ»²¢ÐÞ¸Ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½FormatterÒ»ï¿½ï¿½ï¿½Þ¸ï¿½
 		for (auto& appender : m_appenders)
 		{
-			//ÏÈ¼àÊÓ»¥³âËø
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
 			//MutexType mutex = appender->getMutex();
 			//ScopedLock<MutexType> appender_lock(mutex);
 			appender->setFormatter(formatter);
@@ -122,63 +122,63 @@ namespace LogSpace
 	}
 	void Logger::setFormatter(const string& str)
 	{
-		//ÓÃstring²ÎÊý´´½¨formatter¶ÔÏó£¬ÔÙµ÷ÓÃÁíÒ»¸öÖØÔØ
+		//ï¿½ï¿½stringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½formatterï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<LogFormatter> formatter(new LogFormatter(str));
 		setFormatter(formatter);
 	}
 
-	//¶ÁÈ¡»òÐÞ¸ÄÈÕÖ¾µÈ¼¶
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½
 	LogLevel::Level Logger::getlevel()
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_level
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_level
 		ScopedLock<SpinLock> lock(m_mutex);
 		return m_level; 
 	}
 	void Logger::setLevel(const LogLevel::Level level) 
 	{ 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_level
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_level
 		ScopedLock<SpinLock> lock(m_mutex);
 		m_level = level;
 	}
 
 
 	//class Logger:static public variable
-	//Ä¬ÈÏÈÕÖ¾¸ñÊ½Ä£Ê½
+	//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½Ä£Ê½
 	const string Logger::Default_FormatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%X%T[%p]%T[%c]%T%f:%l%T%m%n";
-	//Ä¬ÈÏÈÕÖ¾Ãû³Æ
+	//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
 	const string Logger::Default_LoggerName = "root_logger";
-	//Ä¬ÈÏÈÕÖ¾Ê±¼äÄ£Ê½
+	//Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾Ê±ï¿½ï¿½Ä£Ê½
 	const string Logger::Default_DataTimePattern = "%Y-%m-%d %H:%M:%S";
 
 
 
 	//class LogAppender:public
 	LogAppender::LogAppender(const LogLevel::Level level, const string& logger_name) :m_level(level),m_logger_name(logger_name){}
-	//¶ÁÈ¡»òÐÞ¸ÄLogLevel
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Þ¸ï¿½LogLevel
 	LogLevel::Level LogAppender::getLevel()
 	{ 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_level
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_level
 		ScopedLock<SpinLock> lock(m_mutex);
 		return m_level; 
 	}
 	void LogAppender::setLevel(const LogLevel::Level level) 
 	{ 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_level
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_level
 		ScopedLock<SpinLock> lock(m_mutex);
 		m_level = level; 
 	}
 
-	//¶ÁÈ¡formatter
+	//ï¿½ï¿½È¡formatter
 	shared_ptr<LogFormatter> LogAppender::getFormatter()
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_formatter
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_formatter
 		ScopedLock<SpinLock> lock(m_mutex);
 		return m_formatter;
 	}
-	//ÐÞ¸Äformatter
+	//ï¿½Þ¸ï¿½formatter
 	void LogAppender::setFormatter(const shared_ptr<LogFormatter> formatter)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_formatter
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_formatter
 		ScopedLock<SpinLock> lock(m_mutex);
 		m_formatter = formatter; 
 	}
@@ -187,13 +187,13 @@ namespace LogSpace
 
 	//class StdoutLogAppender:public
 	StdoutLogAppender::StdoutLogAppender(const LogLevel::Level level, const string& logger_name) :LogAppender(level, logger_name) {}
-	//ÈÕÖ¾Êä³öº¯Êý£¬ÓÉ Logger::logµ÷ÓÃ£¨ÖØÐ´LogAppenderµÄÏàÓ¦·½·¨£©
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logger::logï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ð´LogAppenderï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void StdoutLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		//Ö»ÓÐÈÕÖ¾µÈ¼¶´óÓÚ»òµÈÓÚAppenderÀàµÄÈÕÖ¾µÈ¼¶²ÅÊä³ö
+		//Ö»ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½Ú»ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (level >= m_level)
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_formatterºÍcout
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_formatterï¿½ï¿½cout
 			ScopedLock<SpinLock> lock(m_mutex);
 			cout << m_formatter->format(logger_name, level, event);
 		}
@@ -203,30 +203,30 @@ namespace LogSpace
 	//class FileLogAppender:public
 	FileLogAppender::FileLogAppender(const LogLevel::Level level, const string& logger_name,const string& filename)
 		:LogAppender(level,logger_name), m_filename(filename) {}
-	//ÈÕÖ¾Êä³öº¯Êý£¬ÓÉ Logger::logµ÷ÓÃ£¨ÖØÐ´LogAppenderµÄÏàÓ¦·½·¨£©
+	//ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logger::logï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ð´LogAppenderï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void FileLogAppender::log(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
-		//ÏÈÖØÆôÎÄ¼þ£¬²¢ÅÐ¶ÏÎÄ¼þÊÇ·ñ³É¹¦´ò¿ª
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ä¼ï¿½ï¿½Ç·ï¿½É¹ï¿½ï¿½ï¿½
 		assert(reopen());
-		//Ö»ÓÐÈÕÖ¾µÈ¼¶´óÓÚ»òµÈÓÚAppenderÀàµÄÈÕÖ¾µÈ¼¶²ÅÊä³ö
+		//Ö»ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½Ú»ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (level >= m_level)
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_formatterºÍm_filestream
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_formatterï¿½ï¿½m_filestream
 			ScopedLock<SpinLock> lock(m_mutex);
 			m_filestream << m_formatter->format(logger_name, level, event);
 		}
 	}
-	//ÖØÐÂ´ò¿ªÎÄ¼þ£¬ÎÄ¼þ´ò¿ª³É¹¦·µ»Øtrue
+	//ï¿½ï¿½ï¿½Â´ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ò¿ª³É¹ï¿½ï¿½ï¿½ï¿½ï¿½true
 	bool FileLogAppender::reopen()
 	{
-		//Èç¹ûÎÄ¼þÒÑ´ò¿ª£¬ÏÈ½«Æä¹Ø±Õ
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ñ´ò¿ª£ï¿½ï¿½È½ï¿½ï¿½ï¿½Ø±ï¿½
 		if (m_filestream.is_open())
 		{
 			m_filestream.close();
 		}
-		//ÎÄ¼þÒÔ×·¼ÓÄ£Ê½´ò¿ª£¬·ÀÖ¹¸²¸ÇÈÕÖ¾ÎÄ¼þÔ­ÓÐµÄÄÚÈÝ
+		//ï¿½Ä¼ï¿½ï¿½ï¿½×·ï¿½ï¿½Ä£Ê½ï¿½ò¿ª£ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½Ä¼ï¿½Ô­ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
 		m_filestream.open(m_filename, std::ios_base::app);
-		//ÎÄ¼þ´ò¿ª³É¹¦·µ»Øtrue
+		//ï¿½Ä¼ï¿½ï¿½ò¿ª³É¹ï¿½ï¿½ï¿½ï¿½ï¿½true
 		return m_filestream.is_open();
 	}
 
@@ -235,16 +235,16 @@ namespace LogSpace
 	//class LogFormatter:public
 	LogFormatter::LogFormatter(const string& pattern) :m_pattern(pattern)
 	{
-		//¹¹ÔìLogFormatter¶ÔÏóºóÁ¢¼´°´ÕÕÈÕÖ¾Ä£Ê½£¨pattern£©³õÊ¼»¯ÈÕÖ¾¸ñÊ½
+		//ï¿½ï¿½ï¿½ï¿½LogFormatterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½patternï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½
 		initialize();
 	}
 	
-	//formatterÖ÷º¯Êý£¬ÓÉAppenderµ÷ÓÃ
+	//formatterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Appenderï¿½ï¿½ï¿½ï¿½
 	string LogFormatter::format(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event)
 	{
 		string str;
-		//½«½âÎöÍê±ÏµÄÈÕÖ¾Ä£Ê½Ð´Èë
-		for (auto& x : m_modes_and_formats)	//±»½âÎöµÄµ¥¶ÎÈÕÖ¾Ä£Ê½¼¯ºÏ,Ç°ÕßÎª½âÎö'%'µÃµ½µÄÄ£Ê½£¬ºóÕßÎª'{}'ÄÚµÄÄÚÈÝ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½Ö¾Ä£Ê½Ð´ï¿½ï¿½
+		for (auto& x : m_modes_and_formats)	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½,Ç°ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½'%'ï¿½Ãµï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª'{}'ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			str += write_piece(logger_name, level, event, x.first, x.second);
 		}
@@ -253,185 +253,185 @@ namespace LogSpace
 
 
 	//class LogFormatter:private
-	//°´ÕÕÈÕÖ¾Ä£Ê½£¨pattern£©³õÊ¼»¯ÈÕÖ¾¸ñÊ½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½patternï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½Ê½
 	void LogFormatter::initialize()
 	{
-		//±íÊ¾µ±Ç°µÄ½âÎö½×¶Î
+		//ï¿½ï¿½Ê¾ï¿½ï¿½Ç°ï¿½Ä½ï¿½ï¿½ï¿½ï¿½×¶ï¿½
 		enum Status
 		{
-			//µÈ´ý'{'
+			//ï¿½È´ï¿½'{'
 			WAIT_FOR_OPEN_BRACE = 1,
-			//µÈ´ý'}'
+			//ï¿½È´ï¿½'}'
 			WAIT_FOR_CLOSE_BRACE = 2,
-			//µÈ´ýÒÑ½áÊø
+			//ï¿½È´ï¿½ï¿½Ñ½ï¿½ï¿½ï¿½
 			WAIT_FOR_NOTHING = 3
 		};
 
-		//³£¹æ×Ö·û´®
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 		string normal_str;
-		//Öð¸ö·ÖÎöpatternÄÚµÄ×Ö·û
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½patternï¿½Úµï¿½ï¿½Ö·ï¿½
 		for (int i = 0; i < m_pattern.size(); ++i)
 		{
-			//Èç¹û²»ÊÇ%Ôò¼ÓÈë³£¹æ×Ö·û´®
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½%ï¿½ï¿½ï¿½ï¿½ë³£ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 			if (m_pattern[i] != '%')
 			{
 				normal_str.push_back(m_pattern[i]);
 			}
 			else if (i + 1 < m_pattern.size())
 			{
-				//Èç¹ûÁ¬ÐøÁ½¸ö%£¬ËµÃ÷ÕæµÄÊÇ%£¬¼ÓÈë³£¹æ×Ö·û´®
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½%ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½%ï¿½ï¿½ï¿½ï¿½ï¿½ë³£ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 				if (m_pattern[i + 1] == '%')
 				{
 					++i;
 					normal_str.push_back(m_pattern[i]);
 				}
-				//·ñÔò¿ªÊ¼½âÎö
+				//ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 				else
 				{
-					//½âÎöÖ®Ç°ÏÈ°ÑÒÑ¶ÁµÄ³£¹æ×Ö·û´®Ð´Èëm_modes_and_formats
+					//ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½È°ï¿½ï¿½Ñ¶ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ð´ï¿½ï¿½m_modes_and_formats
 					if (!normal_str.empty())
 					{
 						m_modes_and_formats.push_back(make_pair(normal_str, ""));
 					}
-					//Ð´ÈëºóÇå¿Õ³£¹æ×Ö·û´®£¬±ÜÃâÖØ¸´
+					//Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½
 					normal_str.clear();
 
-					//ÉèÖÃ³õÊ¼½âÎö½×¶Î
+					//ï¿½ï¿½ï¿½Ã³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½×¶ï¿½
 					Status format_status = WAIT_FOR_OPEN_BRACE;
-					int str_in_brace_begin = 0, mode_begin = i + 1;		//str_inbrace_begin´ý¶¨£¬mode_begin´Ó'%'µÄÏÂÒ»¸öÎ»ÖÃ¿ªÊ¼
+					int str_in_brace_begin = 0, mode_begin = i + 1;		//str_inbrace_beginï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mode_beginï¿½ï¿½'%'ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½Ã¿ï¿½Ê¼
 					string mode("%"), str_in_brace;
 
-					//Öð¸ö½âÎö'%'ºóÃæµÄ×Ö·û
+					//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½'%'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
 					for (; i + 1 < m_pattern.size();++i)
 					{
-						//Èç¹ûÉÐÎ´Óöµ½'{'
+						//ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½'{'
 						if (format_status == WAIT_FOR_OPEN_BRACE)
 						{
-							//Èç¹ûµÚi + 1¸ö×Ö·ûÊÇ×ÖÄ¸£¬ÉèÖÃmode
+							//ï¿½ï¿½ï¿½ï¿½ï¿½i + 1ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mode
 							if (isalpha(m_pattern[i + 1]))
 							{
 								mode.push_back(m_pattern[i + 1]);
 							}
-							//Èç¹ûµÚi + 1¸ö×Ö·ûÊÇ'{'
+							//ï¿½ï¿½ï¿½ï¿½ï¿½i + 1ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½'{'
 							else if (m_pattern[i + 1] == '{')
 							{
-								//ÇÐ»»×´Ì¬
+								//ï¿½Ð»ï¿½×´Ì¬
 								format_status = WAIT_FOR_CLOSE_BRACE;
-								str_in_brace_begin = i + 2;		//str_inbrace_begin¶¨Îª'{'µÄÏÂÒ»¸öÎ»ÖÃ£¬¼´i+2
+								str_in_brace_begin = i + 2;		//str_inbrace_beginï¿½ï¿½Îª'{'ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½i+2
 							}
-							//·ñÔòÖ±½Ó½áÊøÑ­»·
+							//ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 							else
 							{
 								break;
 							}
 						}
-						//Èç¹ûÓöµ½ÁË'{',µ«ÉÐÎ´Óöµ½'}'ÇÒÓöµ½'}'
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½'{',ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½'}'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½'}'
 						else if (format_status == WAIT_FOR_CLOSE_BRACE && m_pattern[i + 1] == '}')
 						{
-							//Óöµ½'}'ÇÐ»»×´Ì¬²¢½áÊøÑ­»·
+							//ï¿½ï¿½ï¿½ï¿½'}'ï¿½Ð»ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 							format_status = WAIT_FOR_NOTHING;
-							//°Ñ'{}'ÄÚµÄ×Ö·û´®Ð´Èëstr_inbrace
+							//ï¿½ï¿½'{}'ï¿½Úµï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ð´ï¿½ï¿½str_inbrace
 							str_in_brace = m_pattern.substr(str_in_brace_begin, i + 1 - str_in_brace_begin);
-							//ÒÆ¶¯Ò»Î»·ÀÖ¹'}'Ò²±»Ð´Èë
+							//ï¿½Æ¶ï¿½Ò»Î»ï¿½ï¿½Ö¹'}'Ò²ï¿½ï¿½Ð´ï¿½ï¿½
 							++i;
 							break;
 						}
 					}
 
-					//Èç¹û´ÓÎ´Óöµ½¹ý{
+					//ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½{
 					if (format_status == WAIT_FOR_OPEN_BRACE)
 					{
 						if (!mode.empty())
 						{
-							//ËµÃ÷Ã»ÓÐ'{}'£¬Ö±½Ó°ÑmodeºÍ¿Õ×Ö·û´®Ð´ÈëÈÕÖ¾Ä£Ê½¼¯ºÏ
+							//Ëµï¿½ï¿½Ã»ï¿½ï¿½'{}'ï¿½ï¿½Ö±ï¿½Ó°ï¿½modeï¿½Í¿ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½
 							m_modes_and_formats.push_back(make_pair(mode, ""));
 						}
 					}
-					//ÔÚ×´Ì¬1¾Í½áÊøÁË½âÎö£¬ËµÃ÷È±Ê§ÁË'}'£¬±¨´í
+					//ï¿½ï¿½×´Ì¬1ï¿½Í½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½È±Ê§ï¿½ï¿½'}'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					else if (format_status == WAIT_FOR_CLOSE_BRACE)
 					{
 						cout << "pattern parse error: " << m_pattern << " - " << m_pattern.substr(i) << endl;
-						//½«´íÎóÌáÊ¾Ð´ÈëÈÕÖ¾Ä£Ê½¼¯ºÏ
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ð´ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½
 						m_modes_and_formats.push_back(make_pair("<<pattern_error>>", ""));
 					}
-					//Èç¹ûÍê³ÉÁË{}ÄÚÈÝµÄ¶ÁÈ¡
+					//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½{}ï¿½ï¿½ï¿½ÝµÄ¶ï¿½È¡
 					else if (format_status == WAIT_FOR_NOTHING)
 					{
 						if (!mode.empty())
 						{
-							//°ÑmodeºÍstr_inbraceÒ»ÆðÐ´ÈëÈÕÖ¾Ä£Ê½¼¯ºÏ
+							//ï¿½ï¿½modeï¿½ï¿½str_inbraceÒ»ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½
 							m_modes_and_formats.push_back(make_pair(mode, str_in_brace));
 						}
 					}
 				}
 			}
 		}
-		//Èç¹û»¹ÓÐÓàÏÂµÄ³£¹æ×Ö·û´®£¬½«ÆäÐ´ÈëÈÕÖ¾Ä£Ê½¼¯ºÏ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ³ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ö¾Ä£Ê½ï¿½ï¿½ï¿½ï¿½
 		if (!normal_str.empty())
 		{
 			m_modes_and_formats.push_back(make_pair(normal_str, ""));
 		}
 	}
 
-	//Êä³öµ¥¶Î±»½âÎöµÄÈÕÖ¾
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 	string LogFormatter::write_piece(const string& logger_name,const LogLevel::Level level,const shared_ptr<const LogEvent> event, const string& mode, const string& format)
 	{
-		//½âÎö¹æÔò£º
-		//%m ÏûÏ¢Ìå
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%m ï¿½ï¿½Ï¢ï¿½ï¿½
 		//%p level
-		//%r Æô¶¯ºóÊ±¼ä
-		//%c ÈÕÖ¾Ãû³Æ
-		//%t Ïß³Ìid
-		//%n »Ø³µ»»ÐÐ
-		//%d Ê±¼ä
-		//%f ÎÄ¼þÃû£¨º¬Â·¾¶£©
-		//%l ÐÐºÅ
+		//%r ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		//%c ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+		//%t ï¿½ß³ï¿½id
+		//%n ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%d Ê±ï¿½ï¿½
+		//%f ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
+		//%l ï¿½Ðºï¿½
 		//%T tab
-		//%N Ïß³ÌÃû³Æ
-		//%X Ð­³Ìid
-		// ³£ÓÃÄ£Ê½Ê¾Àý£º
+		//%N ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%X Ð­ï¿½ï¿½id
+		// ï¿½ï¿½ï¿½ï¿½Ä£Ê½Ê¾ï¿½ï¿½ï¿½ï¿½
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 		// "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"
 		
 		if (mode == "%m")
 		{
-			//%m ÏûÏ¢Ìå
+			//%m ï¿½ï¿½Ï¢ï¿½ï¿½
 			return event->getContent();
 		}
 		else if (mode == "%p")
 		{
 			//%p level
-			return LogLevel::toString(level);	//½«LogLevel::LevelÀàÐÍ×ª»»ÎªstringÀàÐÍ
+			return LogLevel::toString(level);	//ï¿½ï¿½LogLevel::Levelï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªstringï¿½ï¿½ï¿½ï¿½
 		}
 		else if (mode == "%r")
 		{
-			//%r Æô¶¯ºóÊ±¼ä
+			//%r ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 			return to_string(event->getElapse());
 		}
 		else if (mode == "%c")
 		{
-			//%c ÈÕÖ¾Ãû³Æ
+			//%c ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
 			return logger_name;
 		}
 		else if (mode == "%t")
 		{
-			//%t Ïß³Ìid
+			//%t ï¿½ß³ï¿½id
 			return to_string(event->getThread_id());
 		}
 		else if (mode == "%n")
 		{
-			//%n »Ø³µ»»ÐÐ
+			//%n ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½
 			return "\n";
 		}
 		else if (mode == "%d")
 		{
-			//%d Ê±¼ä
+			//%d Ê±ï¿½ï¿½
 			struct tm tm;
 			time_t time = event->getTime();
-			//½«Unix¼ÍÔªÊ±¼ä×ª»»Îª±¾µØÊ±¼ä£¬¿¼ÂÇÁËÊ±ÇøºÍÏÄÁîÊ±µÈÒòËØ
+			//ï¿½ï¿½Unixï¿½ï¿½ÔªÊ±ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			localtime_r(&time, &tm);
 			char buffer[64];
-			//Èç¹ûÃ»ÓÐ'{}'ÄÚµÄ¸ñÊ½£¬¸³ÓèÄ¬ÈÏÈÕÖ¾Ê±¼ä¸ñÊ½
+			//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½'{}'ï¿½ÚµÄ¸ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Ö¾Ê±ï¿½ï¿½ï¿½Ê½
 			if (format.empty())
 			{
 				strftime(buffer, sizeof(buffer), Logger::Default_DataTimePattern.c_str(), &tm);
@@ -445,12 +445,12 @@ namespace LogSpace
 		}
 		else if (mode == "%f")
 		{
-			//%f ÎÄ¼þÃû
+			//%f ï¿½Ä¼ï¿½ï¿½ï¿½
 			return event->getFilename();
 		}
 		else if (mode == "%l")
 		{
-			//%l ÐÐºÅ
+			//%l ï¿½Ðºï¿½
 			return to_string(event->getLine());
 		}
 		else if (mode == "%T")
@@ -460,15 +460,15 @@ namespace LogSpace
 		}
 		else if (mode == "%N")
 		{
-			//%N Ïß³ÌÃû³Æ
+			//%N ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
 			return event->getThreadname();
 		}
 		else if (mode == "%X")
 		{
-			//%X Ð­³Ìid
+			//%X Ð­ï¿½ï¿½id
 			return to_string(event->getFiber_id());
 		}
-		//Èç¹ûÊ¶±ðÊ§°Ü£¬µ±×÷³£¹æ×Ö·û´®´¦Àí
+		//ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		else
 		{
 			return mode;
@@ -480,40 +480,40 @@ namespace LogSpace
 	//class LogManager:public
 	LoggerManager::LoggerManager()
 	{
-		//³õÊ¼»¯Ä¬ÈÏlogger
+		//ï¿½ï¿½Ê¼ï¿½ï¿½Ä¬ï¿½ï¿½logger
 		m_default_logger.reset(new Logger);
 
-		//Ìí¼ÓÄ¬ÈÏStdoutLogAppender
+		//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½StdoutLogAppender
 		m_default_logger->addAppender(shared_ptr<LogAppender>(new StdoutLogAppender));
 
-		//Ìí¼ÓÄ¬ÈÏFileLogAppender
+		//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½FileLogAppender
 		/*shared_ptr<FileLogAppender> file_appender(new FileLogAppender);
 		m_default_logger->addAppender(file_appender);*/
 		m_default_logger->addAppender(shared_ptr<LogAppender>(new FileLogAppender));
 	}
 
-	//°´logger_name»ñÈ¡logger
+	//ï¿½ï¿½logger_nameï¿½ï¿½È¡logger
 	shared_ptr<Logger> LoggerManager::getLogger(const string& logger_name)
 	{
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_loggers
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_loggers
 		ScopedLock<SpinLock> lock(m_mutex);
-		//Èç¹û²éÕÒµ½ÁËÏàÓ¦loggerÔò·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ó¦loggerï¿½ò·µ»ï¿½
 		auto iterator = m_loggers.find(logger_name);
 		if (iterator != m_loggers.end())
 		{
 			return iterator->second;
 		}
 
-		//·ñÔò´´½¨¶ÔÓ¦logger²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ò´´½ï¿½ï¿½ï¿½Ó¦loggerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Logger> logger(new Logger(logger_name));
 		m_loggers[logger_name] = logger;
 		return logger;
 	}
 
-	//»ñÈ¡Ä¬ÈÏlogger
+	//ï¿½ï¿½È¡Ä¬ï¿½ï¿½logger
 	shared_ptr<Logger> LoggerManager::getDefault_logger()
 	{ 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_default_logger
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_default_logger
 		ScopedLock<SpinLock> lock(m_mutex);
 		return m_default_logger;
 	}

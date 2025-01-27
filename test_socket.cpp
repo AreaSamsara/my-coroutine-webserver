@@ -13,7 +13,7 @@ using namespace IOManagerSpace;
 
 void test_socket()
 {
-	//´´½¨µØÖ·
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
 	shared_ptr<IPAddress> address = Address::LookupAnyIPAddress("www.baidu.com");
 	if (address)
 	{
@@ -29,10 +29,10 @@ void test_socket()
 		return;
 	}
 
-	//ÉèÖÃ¶Ë¿ÚºÅ
+	//ï¿½ï¿½ï¿½Ã¶Ë¿Úºï¿½
 	address->setPort(80);
 
-	//´´½¨socket¶ÔÏó
+	//ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½
 	shared_ptr<Socket> socket(new Socket((Socket::FamilyType)address->getFamily(), (Socket::SocketType)Socket::TCP));
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -40,7 +40,7 @@ void test_socket()
 		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_DEBUG, log_event);
 	}
 
-	//socket¶ÔÏó³¢ÊÔÁ¬½Óµ½Ä¿±êµØÖ·
+	//socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½Ä¿ï¿½ï¿½ï¿½Ö·
 	if (socket->connect(address))
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -55,7 +55,7 @@ void test_socket()
 		return;
 	}
 
-	//·¢ËÍÇëÇó±¨ÎÄ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	const char message[] = "GET / HTTP/1.0\r\n\r\n";
 	int return_value = socket->send(message, sizeof(message));
 	if (return_value <= 0)
@@ -66,7 +66,7 @@ void test_socket()
 		return;
 	}
 
-	//½ÓÊÜÏìÓ¦
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
 	string buffers;
 	buffers.resize(4096);
 	return_value = socket->recv(&buffers[0], buffers.size());

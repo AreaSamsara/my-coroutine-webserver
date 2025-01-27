@@ -4,17 +4,17 @@
 
 namespace IOManagerSpace
 {
-	//½«ÊÂ¼ş´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ı£¬²¢´¥·¢Ö®
+	//ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 	void IOManager::FileDescriptorEvent::triggerEvent(const EventType event_type)
 	{
-		//Òª´¥·¢µÄÊÂ¼şÓ¦ÎªÒÑ×¢²áÊÂ¼ş£¬·ñÔò±¨´í
+		//Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ó¦Îªï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (!(m_registered_event_types & event_type))
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
-		//´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ıevent
+		//ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½event
 		m_registered_event_types = (EventType)(m_registered_event_types & ~event_type);
 
 		auto& task = getTask(event_type);
@@ -30,9 +30,9 @@ namespace IOManagerSpace
 	IOManager::IOManager(size_t thread_count, const bool use_caller, const string& name)
 		:Scheduler(thread_count,use_caller,name)
 	{
-		//ÉèÖÃepollÎÄ¼şÃèÊö·û
-		m_epoll_file_descriptor = epoll_create(5000);	//ĞÂ°æ±¾µÄlinuxÏµÍ³ÖĞepoll_create()µÄsize²ÎÊıÒÑ¾­Ã»ÓĞÒâÒåÁË£¬Ö»Òª±£Ö¤´óÓÚ0¼´¿É
-		//Èôepoll_create()´´½¨³É¹¦£¬m_epoll_file_descriptorÓ¦µ±´óÓÚ0£¬·ñÔò±¨´í
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		m_epoll_file_descriptor = epoll_create(5000);	//ï¿½Â°æ±¾ï¿½ï¿½linuxÏµÍ³ï¿½ï¿½epoll_create()ï¿½ï¿½sizeï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½Ö»Òªï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½epoll_create()ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½m_epoll_file_descriptorÓ¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (m_epoll_file_descriptor <= 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -40,83 +40,83 @@ namespace IOManagerSpace
 		}
 
 		
-		//pipe()´´½¨¹ÜµÀ£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»´´½¨Ê§°ÜÔò±¨´í
+		//pipe()ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (pipe(m_pipe_file_descriptors) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
-		//ÉèÖÃ¹Ø×¢Í¨ĞÅ¹ÜµÀµÄ¶ÁÈ¡¶ËµÄepollÊÂ¼ş£¬Ä¬ÈÏÌí¼Óµ½epollÎÄ¼şÃèÊö·ûÖĞ
+		//ï¿½ï¿½ï¿½Ã¹ï¿½×¢Í¨ï¿½Å¹Üµï¿½ï¿½Ä¶ï¿½È¡ï¿½Ëµï¿½epollï¿½Â¼ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½epollï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		epoll_event epollevent;
-		//Çå¿Õepollevent±äÁ¿
+		//ï¿½ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½
 		memset(&epollevent, 0, sizeof(epoll_event));
-		//½«eventÉèÖÃÎª¿É¶Á¡¢±ßÔµ´¥·¢Ä£Ê½£¨Ö»ÓĞÔÚ×´Ì¬·¢Éú±ä»¯µÄÊ±ºò²Å»á¼¤»îÍ¨Öª£¬²»ÖØ¸´Í¨Öª£©
+		//ï¿½ï¿½eventï¿½ï¿½ï¿½ï¿½Îªï¿½É¶ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯ï¿½ï¿½Ê±ï¿½ï¿½Å»á¼¤ï¿½ï¿½Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½Í¨Öªï¿½ï¿½
 		epollevent.events = EPOLLIN | EPOLLET;
-		//¹Ø×¢Í¨ĞÅ¹ÜµÀµÄ¶ÁÈ¡¶Ë
+		//ï¿½ï¿½×¢Í¨ï¿½Å¹Üµï¿½ï¿½Ä¶ï¿½È¡ï¿½ï¿½
 		epollevent.data.fd = m_pipe_file_descriptors[0];
 
-		//½«Í¨ĞÅ¹ÜµÀµÄ¶ÁÈ¡¶ËÉèÖÃÎª·Ç×èÈûÄ£Ê½£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»Ê§°ÜÔò±¨´í
+		//ï¿½ï¿½Í¨ï¿½Å¹Üµï¿½ï¿½Ä¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (fcntl(m_pipe_file_descriptors[0], F_SETFL, O_NONBLOCK) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 		
-		//½«Í¨ĞÅ¹ÜµÀµÄ¶ÁÈ¡¶ËµÄeventÊÂ¼şÌí¼Óµ½epollÎÄ¼şÃèÊö·ûÖĞ£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»Ê§°ÜÔò±¨´í
+		//ï¿½ï¿½Í¨ï¿½Å¹Üµï¿½ï¿½Ä¶ï¿½È¡ï¿½Ëµï¿½eventï¿½Â¼ï¿½ï¿½ï¿½ï¿½Óµï¿½epollï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (epoll_ctl(m_epoll_file_descriptor, EPOLL_CTL_ADD, m_pipe_file_descriptors[0], &epollevent) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
-		//ÉèÖÃÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷³õÊ¼´óĞ¡
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ğ¡
 		resizeFile_descriptor_events(32);
 
 
-		//³õÊ¼»¯¶¨Ê±Æ÷¹ÜÀíÕß
+		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_timer_manager.reset(new TimerManager());
 
-		//IO¹ÜÀíÕß¶ÔÏó´´½¨Íê±Ïºó£¬Ä¬ÈÏÆô¶¯
+		//IOï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ó´´½ï¿½ï¿½ï¿½Ïºï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		start();
 	}
 
 	IOManager::~IOManager()
 	{
-		//IO¹ÜÀíÕß¶ÔÏó¿ªÊ¼Îö¹¹Ê±£¬Ä¬ÈÏÍ£Ö¹µ÷¶ÈÆ÷
+		//IOï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ä¬ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		stop();
 
-		//¹Ø±ÕÎÄ¼şÃèÊö·û
+		//ï¿½Ø±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		close(m_epoll_file_descriptor);
 		close(m_pipe_file_descriptors[0]);
 		close(m_pipe_file_descriptors[1]);
 	}
 
-	//Ìí¼ÓÊÂ¼şµ½ÎÄ¼şÃèÊö·ûÉÏ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool IOManager::addEvent(const int file_descriptor, const EventType event_type, function<void()> callback)
 	{
-		//Èç¹ûÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷´óĞ¡²»×ã£¬ÔòÏÈ½«ÈİÆ÷À©³ä
+		//ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_file_descriptor_events.size() <= file_descriptor)
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_file_descriptor_events
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_events
 			WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-			//Ã¿´Î½«´óĞ¡À©³äµ½ĞèÇóÖµµÄ1.5±¶
+			//Ã¿ï¿½Î½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½äµ½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½1.5ï¿½ï¿½
 			resizeFile_descriptor_events(file_descriptor * 1.5);
 		}
 
-		//ÎÄ¼şÃèÊö·ûÊÂ¼ş
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		shared_ptr<FileDescriptorEvent> file_descriptor_event;
-		//½«ÎÄ¼şÃèÊö·û¶ÔÓ¦µÄÊÂ¼ş´ÓÈİÆ÷ÖĞÈ¡³ö
+		//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_file_descriptor_events
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_events
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
 			file_descriptor_event = m_file_descriptor_events[file_descriptor];
 		}
 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScopedLock<Mutex> lock(file_descriptor_event->m_mutex);
-		//Òª¼ÓÈëµÄÊÂ¼ş²»Ó¦ÊÇÒÑ±»ÎÄ¼şÃèÊö·û×¢²áµÄÊÂ¼ş£¬·ñÔò±¨´í
+		//Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (file_descriptor_event->m_registered_event_types & event_type)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -128,17 +128,17 @@ namespace IOManagerSpace
 
 
 
-		//²Ù×÷Âë£ºÈç¹ûÎÄ¼şÃèÊö·ûÊÂ¼şÒÑ¾­×¢²áµÄÊÂ¼ş²»Îª¿Õ£¬ÔòÖ´ĞĞĞŞ¸ÄÊÂ¼ş£»·ñÔòÖ´ĞĞÌí¼ÓÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ñ¾ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		int operation_code = file_descriptor_event->m_registered_event_types ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
 
-		//ÉèÖÃepollÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 		epoll_event epollevent;
-		//½«epolleventÉèÖÃÎª±ßÔµ´¥·¢Ä£Ê½£¬²¢Ìí¼ÓÒÑ×¢²áµÄÊÂ¼ş
+		//ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		epollevent.events = EPOLLET | file_descriptor_event->m_registered_event_types | event_type;
-		//½«ÎÄ¼şÃèÊö·ûÊÂ¼şµÄÂãÖ¸Õë´æ·ÅÔÚepolleventµÄdata_ptrÖĞ
+		//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epolleventï¿½ï¿½data_ptrï¿½ï¿½
 		epollevent.data.ptr = file_descriptor_event.get();
 
-		//¿ØÖÆepoll£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»¿ØÖÆÊ§°ÜÔò±¨´íÇÒaddEvent()·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½addEvent()ï¿½ï¿½ï¿½ï¿½false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value != 0)
 		{
@@ -151,21 +151,21 @@ namespace IOManagerSpace
 
 
 
-		//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼ÓÒ»
+		//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 		++m_pending_event_count;
 
-		//Ìí¼Óeventµ½ÒÑ×¢²áÊÂ¼şÖĞ£¨×¢²áÔÚ¿ØÖÆepollÖ®ºóÖ´ĞĞ£¬ÒÔÈ·±£epoll¿ØÖÆÒÑ³É¹¦£©
+		//ï¿½ï¿½ï¿½ï¿½eventï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ğ£ï¿½×¢ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½epollÖ®ï¿½ï¿½Ö´ï¿½Ğ£ï¿½ï¿½ï¿½È·ï¿½ï¿½epollï¿½ï¿½ï¿½ï¿½ï¿½Ñ³É¹ï¿½ï¿½ï¿½
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types | event_type);
 
 		auto& file_descriptor_task = file_descriptor_event->getTask(event_type);
 
-		//Èç¹û´«ÈëµÄ»Øµ÷º¯Êı²»Îª¿Õ£¬Ôò½«ÆäÉè×÷ÎÄ¼şÃèÊö·ûÊÂ¼ş¶ÔÓ¦µÄ»Øµ÷º¯Êı
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ó¦ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		if (callback)
 		{
 			shared_ptr<Fiber> fiber(new Fiber(callback));
 			file_descriptor_task.m_fiber = fiber;
 		}
-		//Èç¹û´«ÈëµÄ»Øµ÷º¯ÊıÎª¿Õ£¬Ôò½«µ±Ç°Ğ­³ÌÉè×÷ÎÄ¼şÃèÊö·ûÊÂ¼şµÄÈÎÎñ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ò½«µï¿½Ç°Ğ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		else
 		{
 			file_descriptor_task.m_fiber = Fiber::GetThis();
@@ -176,49 +176,49 @@ namespace IOManagerSpace
 			}
 		}
 
-		//addEvent()º¯ÊıÕı³£Ö´ĞĞ£¬·µ»Ø0
+		//addEvent()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½0
 		return true;
 	}
 
-	//É¾³ıÎÄ¼şÃèÊö·ûÉÏµÄ¶ÔÓ¦ÊÂ¼ş
+	//É¾ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¶ï¿½Ó¦ï¿½Â¼ï¿½
 	bool IOManager::deleteEvent(const int file_descriptor, const EventType event_type)
 	{
-		//ÎÄ¼şÃèÊö·ûÊÂ¼ş
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		shared_ptr<FileDescriptorEvent> file_descriptor_event;
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤m_file_descriptor_events
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_file_descriptor_events
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
-			//Èç¹ûfile_descriptor³¬³öÁËÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷µÄ´óĞ¡£¬ÔòËµÃ÷Ã»ÓĞÓë¸ÃÎÄ¼şÃèÊö·ûÆ¥ÅäµÄÊÂ¼ş£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½file_descriptorï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if ((int)m_file_descriptor_events.size() <= file_descriptor)
 			{
 				return false;
 			}
 
-			//·ñÔò½«ÎÄ¼şÃèÊö·ûÊÂ¼ş´ÓÖĞÈ¡³ö
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 			file_descriptor_event = m_file_descriptor_events[file_descriptor];
 		}
 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScopedLock<Mutex> lock(file_descriptor_event->m_mutex);
 
-		//ÒªÉ¾³ıµÄÊÂ¼şÓ¦ÊÇÒÑ±»ÎÄ¼şÃèÊö·û×¢²áµÄÊÂ¼ş£¬·ñÔò·µ»Øfalse
+		//ÒªÉ¾ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ó¦ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½false
 		if (!(file_descriptor_event->m_registered_event_types & event_type))
 		{
 			return false;
 		}
 
-		//²Ù×÷Âë£ºÈç¹ûÎÄ¼şÃèÊö·ûÒÑ¾­×¢²áµÄÊÂ¼ş²»Îª¿Õ£¬ÔòÖ´ĞĞĞŞ¸ÄÊÂ¼ş£»·ñÔòÖ´ĞĞÉ¾³ıÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
 		int operation_code = file_descriptor_event->m_registered_event_types ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 
-		//ÉèÖÃepollÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 		epoll_event epollevent;
-		//½«epolleventÉèÖÃÎª±ßÔµ´¥·¢Ä£Ê½£¬²¢Ìí¼ÓÒÑ×¢²áµÄÊÂ¼ş
+		//ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		epollevent.events = EPOLLET | file_descriptor_event->m_registered_event_types & ~event_type;
-		//½«ÎÄ¼şÃèÊö·ûÊÂ¼şµÄÂãÖ¸Õë´æ·ÅÔÚepolleventµÄdata_ptrÖĞ
+		//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epolleventï¿½ï¿½data_ptrï¿½ï¿½
 		epollevent.data.ptr = file_descriptor_event.get();
 
-		//¿ØÖÆepoll£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»¿ØÖÆÊ§°ÜÔò±¨´íÇÒdeleteEvent()·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½deleteEvent()ï¿½ï¿½ï¿½ï¿½false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -231,64 +231,64 @@ namespace IOManagerSpace
 
 
 
-		//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+		//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 		--m_pending_event_count;
 
-		//´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ıevent
+		//ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½event
 		file_descriptor_event->m_registered_event_types = (EventType)(file_descriptor_event->m_registered_event_types & ~event_type);
 
-		////ÒÔÒıÓÃµÄĞÎÊ½»ñÈ¡ÎÄ¼şÃèÊö·ûÊÂ¼şÖĞµÄ»Øµ÷º¯Êı
+		////ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ê½ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ĞµÄ»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		//auto& callback = file_descriptor_event->getCallback(event_type);
-		////½«¸Ã»Øµ÷º¯ÊıÖÃ¿Õ
+		////ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½
 		//callback = nullptr;
 
 		auto& file_descriptor_task = file_descriptor_event->getTask(event_type);	//new
 		file_descriptor_task.reset();	//new
 
 
-		//deleteEvent()º¯ÊıÕı³£Ö´ĞĞ£¬·µ»Øtrue
+		//deleteEvent()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½true
 		return true;
 	}
 
-	//½áËã£¨´¥·¢²¢É¾³ı£©ÎÄ¼şÃèÊö·ûÉÏµÄ¶ÔÓ¦ÊÂ¼ş
+	//ï¿½ï¿½ï¿½ã£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¶ï¿½Ó¦ï¿½Â¼ï¿½
 	bool IOManager::settleEvent(const int file_descriptor, const EventType event_type)
 	{
-		//ÎÄ¼şÃèÊö·ûÊÂ¼ş
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		shared_ptr<FileDescriptorEvent> file_descriptor_context;
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
-			//Èç¹ûfile_descriptor³¬³öÁËÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷µÄ´óĞ¡£¬ÔòËµÃ÷Ã»ÓĞÓë¸ÃÎÄ¼şÃèÊö·ûÆ¥ÅäµÄÊÂ¼ş£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½file_descriptorï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if ((int)m_file_descriptor_events.size() <= file_descriptor)
 			{
 				return false;
 			}
 
-			//·ñÔò½«ÎÄ¼şÃèÊö·ûÊÂ¼ş´ÓÖĞÈ¡³ö
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 			file_descriptor_context = m_file_descriptor_events[file_descriptor];
 		}
 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
-		//ÒªÉ¾³ıÈ¡ÏûµÄÊÂ¼şÓ¦ÊÇÒÑ±»ÎÄ¼şÃèÊö·û×¢²áµÄÊÂ¼ş£¬·ñÔò·µ»Øfalse
+		//ÒªÉ¾ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ó¦ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½false
 		if (!(file_descriptor_context->m_registered_event_types & event_type))
 		{
 			return false;
 		}
 
-		//²Ù×÷Âë£ºÈç¹ûÎÄ¼şÃèÊö·ûÒÑ¾­×¢²áµÄÊÂ¼ş²»Îª¿Õ£¬ÔòÖ´ĞĞĞŞ¸ÄÊÂ¼ş£»·ñÔòÖ´ĞĞÉ¾³ıÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
 		int operation_code = file_descriptor_context->m_registered_event_types ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
 
-		//ÉèÖÃepollÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 		epoll_event epollevent;
-		//½«epolleventÉèÖÃÎª±ßÔµ´¥·¢Ä£Ê½£¬²¢Ìí¼ÓÒÑ×¢²áµÄÊÂ¼ş
+		//ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		epollevent.events = EPOLLET | file_descriptor_context->m_registered_event_types & ~event_type;
-		//½«ÎÄ¼şÃèÊö·ûÊÂ¼şµÄÂãÖ¸Õë´æ·ÅÔÚepolleventµÄdata_ptrÖĞ
+		//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epolleventï¿½ï¿½data_ptrï¿½ï¿½
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		//¿ØÖÆepoll£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»¿ØÖÆÊ§°ÜÔò±¨´íÇÒdeleteEvent()·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½deleteEvent()ï¿½ï¿½ï¿½ï¿½false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -299,55 +299,55 @@ namespace IOManagerSpace
 			return false;
 		}
 
-		//½«ÊÂ¼ş´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ı£¬²¢´¥·¢Ö®
+		//ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 		file_descriptor_context->triggerEvent(event_type);
 
-		//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+		//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 		--m_pending_event_count;
 
-		//cancelEvent()º¯ÊıÕı³£Ö´ĞĞ£¬·µ»Øtrue
+		//cancelEvent()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½true
 		return true;
 	}
 
-	//½áËã£¨´¥·¢²¢É¾³ı£©ÎÄ¼şÃèÊö·ûÉÏµÄËùÓĞÊÂ¼ş
+	//ï¿½ï¿½ï¿½ã£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 	bool IOManager::settleAllEvents(const int file_descriptor)
 	{
-		//ÎÄ¼şÃèÊö·ûÊÂ¼ş
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		shared_ptr<FileDescriptorEvent> file_descriptor_context;
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 
-			//Èç¹ûfile_descriptor³¬³öÁËÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷µÄ´óĞ¡£¬ÔòËµÃ÷Ã»ÓĞÓë¸ÃÎÄ¼şÃèÊö·ûÆ¥ÅäµÄÊÂ¼ş£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½file_descriptorï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if ((int)m_file_descriptor_events.size() <= file_descriptor)
 			{
 				return false;
 			}
 
-			//·ñÔò½«ÎÄ¼şÃèÊö·ûÊÂ¼ş´ÓÖĞÈ¡³ö
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½
 			file_descriptor_context = m_file_descriptor_events[file_descriptor];
 		}
 
-		//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+		//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
-		//ÒªÉ¾³ıÈ«²¿ÊÂ¼şµÄÎÄ¼şÃèÊö·ûÊÂ¼şµÄÒÑ×¢²áÊÂ¼ş²»Ó¦Îª¿Õ£¬·ñÔò·µ»Øfalse
+		//ÒªÉ¾ï¿½ï¿½È«ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ó¦Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½false
 		if (!file_descriptor_context->m_registered_event_types)
 		{
 			return false;
 		}
 
-		//²Ù×÷Âë£ºÖ´ĞĞÉ¾³ıÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ë£ºÖ´ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
 		int operation_code = EPOLL_CTL_DEL;
 
-		//ÉèÖÃepollÊÂ¼ş
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 		epoll_event epollevent;
-		//½«epolleventÉèÖÃÎª¿Õ
+		//ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 		epollevent.events = NONE;
-		//½«ÎÄ¼şÃèÊö·ûÊÂ¼şµÄÂãÖ¸Õë´æ·ÅÔÚepolleventµÄdata_ptrÖĞ
+		//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epolleventï¿½ï¿½data_ptrï¿½ï¿½
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		//¿ØÖÆepoll£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»¿ØÖÆÊ§°ÜÔò±¨´íÇÒcancelAllEvent()·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½epollï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½cancelAllEvent()ï¿½ï¿½ï¿½ï¿½false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -359,36 +359,36 @@ namespace IOManagerSpace
 			return false;
 		}
 
-		//¸ù¾İÒÑ×¢²áREADÊÂ¼ş£¬½«Æä´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ı£¬²¢´¥·¢Ö®
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½READï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 		if (file_descriptor_context->m_registered_event_types & READ)
 		{
 			file_descriptor_context->triggerEvent(READ);
-			//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+			//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 			--m_pending_event_count;
 		}
-		//¸ù¾İÒÑ×¢²áWRITEÊÂ¼ş£¬½«Æä´ÓÒÑ×¢²áÊÂ¼şÖĞÉ¾³ı£¬²¢´¥·¢Ö®
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½WRITEï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 		if (file_descriptor_context->m_registered_event_types & WRITE)
 		{
 			file_descriptor_context->triggerEvent(WRITE);
-			//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+			//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 			--m_pending_event_count;
 		}
 
-		//´¥·¢½áÊøºóÒÑ×¢²áÊÂ¼şÓ¦Îª¿Õ£¬·ñÔò±¨´í
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½Ó¦Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ò±¨´ï¿½
 		if (file_descriptor_context->m_registered_event_types != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			Assert(log_event);
 		}
 
-		//cancelAllEvent()º¯ÊıÕı³£Ö´ĞĞ£¬·µ»Øtrue
+		//cancelAllEvent()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½true
 		return true;
 	}
 
-	//Ìí¼Ó¶¨Ê±Æ÷£¬²¢ÔÚĞèÒªÊ±Í¨Öªµ÷¶ÈÆ÷ÓĞÈÎÎñ
+	//ï¿½ï¿½ï¿½Ó¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ±Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void IOManager::addTimer(const shared_ptr<Timer> timer)
 	{
-		//Èç¹ûĞÂ¼ÓÈëµÄ¶¨Ê±Æ÷Î»ÓÚ¶¨Ê±Æ÷¼¯ºÏµÄ¿ªÍ·£¬ËµÃ÷ĞèÒªÍ¨Öªµ÷¶ÈÆ÷ÓĞÈÎÎñÁË
+		//ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½ï¿½Î»ï¿½Ú¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¿ï¿½Í·ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ÒªÍ¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (m_timer_manager->addTimer(timer))
 		{
 			tickle();
@@ -398,15 +398,15 @@ namespace IOManagerSpace
 
 
 	//class IOManager:protected
-	//Í¨Öªµ÷¶ÈÆ÷ÓĞÈÎÎñÁË
+	//Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void IOManager::tickle()
 	{
-		//½öÔÚÓĞ¿ÕÏĞÏß³ÌÊ±²Å·¢ËÍÏûÏ¢
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¿ï¿½ï¿½ï¿½ï¿½ß³ï¿½Ê±ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 		if (getIdle_thread_count() > 0)
 		{
-			//½«"T"Ğ´ÈëÍ¨ĞÅ¹ÜµÀµÄĞ´Èë¶Ë
+			//ï¿½ï¿½"T"Ğ´ï¿½ï¿½Í¨ï¿½Å¹Üµï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½
 			int return_value = write(m_pipe_file_descriptors[1], "T", 1);
-			//Èç¹ûwrite()Ê§°ÜÔò±¨´í
+			//ï¿½ï¿½ï¿½write()Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½
 			if (return_value != 1)
 			{
 				//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -415,24 +415,24 @@ namespace IOManagerSpace
 			}
 		}
 	}
-	//·µ»ØÊÇ·ñ¿¢¹¤
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ñ¿¢¹ï¿½
 	bool IOManager::isCompleted()
 	{
-		//ÔÚÂú×ãScheduler::is_completed()µÄÇ°ÌáÏÂ£¬»¹Ó¦µ±Âú×ãµ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿Îª0¡¢ÔİÊ±Ã»ÓĞÏÂÒ»¸ö¶¨Ê±Æ÷²ÅÄÜ¿¢¹¤
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Scheduler::is_completed()ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ãµ±Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ê±Ã»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿ï¿½ï¿½ï¿½
 		return !m_timer_manager->hasTimer() && m_pending_event_count == 0 && Scheduler::isCompleted();
 	}
-	//¿ÕÏĞĞ­³ÌµÄ»Øµ÷º¯Êı
+	//ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ÌµÄ»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 	void IOManager::idle()
 	{
-		//epollÊÂ¼şÊı×é
+		//epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 		epoll_event* epollevents = new epoll_event[64]();
-		//ÓÃÖÇÄÜÖ¸Õë¶ÔepollÊÂ¼şÊı×éµÄ¶¯Ì¬ÄÚ´æ½øĞĞ¹ÜÀí
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Ì¬ï¿½Ú´ï¿½ï¿½ï¿½Ğ¹ï¿½ï¿½ï¿½
 		shared_ptr<epoll_event> shared_events(epollevents, [](epoll_event* ptr) {delete[] ptr; });
 
-		//ÂÖÑ¯epollÊÂ¼şºÍ¶¨Ê±Æ÷
+		//ï¿½ï¿½Ñ¯epollï¿½Â¼ï¿½ï¿½Í¶ï¿½Ê±ï¿½ï¿½
 		while (true)
 		{
-			//Èç¹ûÒÑ¾­¿¢¹¤£¬ÔòÍË³öidleĞ­³ÌµÄÂÖÑ¯Ñ­»·£¬½áÊøidleĞ­³Ì
+			//ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½idleĞ­ï¿½Ìµï¿½ï¿½ï¿½Ñ¯Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½idleĞ­ï¿½ï¿½
 			if (isCompleted())
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -441,33 +441,33 @@ namespace IOManagerSpace
 				break;
 			}
 
-			//ÉèÖÃ³¬Ê±Ê±¼ä£¨¾²Ì¬±äÁ¿£©Îª3000ms
+			//ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ä£¨ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª3000ms
 			static const int MAX_TIMEOUT = 3000;
 
-			//epoll_waitµÄµÈ´ıÊ±¼ä
+			//epoll_waitï¿½ÄµÈ´ï¿½Ê±ï¿½ï¿½
 			uint64_t epoll_wait_time = m_timer_manager->getTimeUntilNextTimer();
-			//Èç¹û¾àÀëÏÂÒ»¸ö¶¨Ê±Æ÷Ö´ĞĞ»¹ĞèÒªµÄÊ±¼ä²»ÊÇÎŞÇî´ó£¬Ôòepoll_waitµÄµÈ´ıÊ±¼äÈ¡ÆäÓë³¬Ê±Ê±¼äµÄ½ÏĞ¡Öµ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ö´ï¿½Ğ»ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ä²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epoll_waitï¿½ÄµÈ´ï¿½Ê±ï¿½ï¿½È¡ï¿½ï¿½ï¿½ë³¬Ê±Ê±ï¿½ï¿½Ä½ï¿½Ğ¡Öµ
 			if (epoll_wait_time != ~0ull)
 			{
 				epoll_wait_time = epoll_wait_time < MAX_TIMEOUT ? epoll_wait_time : MAX_TIMEOUT;
 			}
-			//·ñÔò½«epoll_waitµÈ´ıÊ±¼äÉèÖÃÎª³¬Ê±Ê±¼ä
+			//ï¿½ï¿½ï¿½ï¿½epoll_waitï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ê±Ê±ï¿½ï¿½
 			else
 			{
 				epoll_wait_time = MAX_TIMEOUT;
 			}
 
 
-			//¾ÍĞ÷µÄepolleventÊıÁ¿
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epolleventï¿½ï¿½ï¿½ï¿½
 			int epollevent_count = 0;
-			//³ÖĞøµ÷ÓÃepoll_wait()µÈ´ıÊÂ¼ş£¬Ö±µ½ÓĞepollÊÂ¼ş¾ÍĞ÷£¬»òÕß·¢Éú·ÇÖĞ¶ÏµÄ´íÎó
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epoll_wait()ï¿½È´ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ÏµÄ´ï¿½ï¿½ï¿½
 			while(true)
 			{
-				//epoll_wait()·µ»Ø¾ÍĞ÷µÄÎÄ¼şÃèÊö·ûÊıÁ¿,Èç¹û·¢Éú´íÎóÔò·µ»Ø-1
-				//×î¶àµÈ´ı64¸öepollÊÂ¼ş£¬×î¾ÃµÈ´ınext_timeout£¬³¬Ê±·µ»Ø0
+				//epoll_wait()ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½-1
+				//ï¿½ï¿½ï¿½È´ï¿½64ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÈ´ï¿½next_timeoutï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½0
 				epollevent_count = epoll_wait(m_epoll_file_descriptor, epollevents, 64, epoll_wait_time);
 
-				//Èç¹ûÓĞepollÊÂ¼ş¾ÍĞ÷¡¢epoll_wait()µÈ´ı³¬Ê±»ò·¢Éú·ÇÖĞ¶ÏµÄ´íÎó£¬ÔòÍË³öÑ­»·
+				//ï¿½ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epoll_wait()ï¿½È´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ÏµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½Ñ­ï¿½ï¿½
 				if (epollevent_count >=0 || errno != EINTR)
 				{
 					break;
@@ -475,10 +475,10 @@ namespace IOManagerSpace
 			}
 
 
-			//»ñÈ¡µ½ÆÚµÄ£¨ĞèÒªÖ´ĞĞµÄ£©¶¨Ê±Æ÷µÄ»Øµ÷º¯ÊıÁĞ±í
+			//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ÚµÄ£ï¿½ï¿½ï¿½ÒªÖ´ï¿½ĞµÄ£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½
 			vector<function<void()>> expired_callbacks;
 			m_timer_manager->getExpired_callbacks(expired_callbacks);
-			//µ÷¶ÈÕâĞ©»Øµ÷º¯Êı
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ©ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 			if (!expired_callbacks.empty())
 			{
 				schedule(expired_callbacks.begin(), expired_callbacks.end());
@@ -486,13 +486,13 @@ namespace IOManagerSpace
 			}
 
 
-			//ÒÀ´Î´¦Àí¾ÍĞ÷µÄepollÊÂ¼ş
+			//ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 			for (size_t i = 0; i < epollevent_count; ++i)
 			{
-				//ÒÔÒıÓÃµÄĞÎÊ½»ñÈ¡epollÊÂ¼ş
+				//ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ê½ï¿½ï¿½È¡epollï¿½Â¼ï¿½
 				epoll_event& epollevent = epollevents[i];
 
-				//Èç¹û¸ÃepollÊÂ¼ş¹Ø×¢ÁËÍ¨ĞÅ¹ÜµÀµÄ¶ÁÈ¡¶Ë£¬ÔòÖ»Ğè¶ÁÈ¡£¨Çå¿Õ£©ÉÏÃæµÄËùÓĞÊı¾İ£¬½áÊø±¾´ÎÑ­»·
+				//ï¿½ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½×¢ï¿½ï¿½Í¨ï¿½Å¹Üµï¿½ï¿½Ä¶ï¿½È¡ï¿½Ë£ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 				if (epollevent.data.fd == m_pipe_file_descriptors[0])
 				{
 					uint8_t dummy = 0;
@@ -501,12 +501,12 @@ namespace IOManagerSpace
 					continue;
 				}
 
-				//ÎÄ¼şÃèÊö·ûÊÂ¼ş
+				//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 				FileDescriptorEvent* file_descriptor_event =(FileDescriptorEvent*)epollevent.data.ptr;
-				//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+				//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				ScopedLock<Mutex> lock(file_descriptor_event->m_mutex);
 
-				//Èç¹ûepollÊÂ¼ş·¢Éú´íÎóÇÒÊä³ö»º³åÇøÒÑ¾­×¼±¸ºÃ£¬Ôò½«epollÊÂ¼şÉèÖÃÎªÊäÈë¾ÍĞ÷ÇÒÊä³ö¾ÍĞ÷
+				//ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½×¼ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				/*if (epollevent.events & (EPOLLERR | EPOLLOUT))
 				{
 					epollevent.events |= EPOLLIN | EPOLLOUT;
@@ -516,7 +516,7 @@ namespace IOManagerSpace
 					epollevent.events |= (EPOLLIN | EPOLLOUT) & file_descriptor_event->m_registered_event_types;	//???
 				}
 
-				//Êµ¼ÊÒªÖ´ĞĞµÄÊÂ¼ş
+				//Êµï¿½ï¿½ÒªÖ´ï¿½Ğµï¿½ï¿½Â¼ï¿½
 				int real_events = NONE;
 				if (epollevent.events & EPOLLIN)
 				{
@@ -527,22 +527,22 @@ namespace IOManagerSpace
 					real_events |= WRITE;
 				}
 
-				//Èç¹ûÊµ¼ÊÒªÖ´ĞĞµÄÊÂ¼ş¾ùÎ´±»ÎÄ¼şÃèÊö·ûÓï¾³×¢²á£¬½áÊø±¾´ÎÑ­»·
+				//ï¿½ï¿½ï¿½Êµï¿½ï¿½ÒªÖ´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¾³×¢ï¿½á£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 				if ((file_descriptor_event->m_registered_event_types & real_events) == NONE)
 				{
 					continue;
 				}
 
-				//ÎÄ¼şÃèÊö·ûÓï¾³³ıÊµ¼ÊÒªÖ´ĞĞµÄÊÂ¼şÒÔÍâ£¬Ê£ÓàµÄÒÑ×¢²áÊÂ¼ş
+				//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¾³ï¿½ï¿½Êµï¿½ï¿½ÒªÖ´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½â£¬Ê£ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½
 				int left_events = (file_descriptor_event->m_registered_event_types & ~real_events);
 
-				//²Ù×÷Âë£ºÈç¹ûÊ£ÓàÒÑ×¢²áÊÂ¼şÊÂ¼ş²»Îª¿Õ£¬ÔòÖ´ĞĞĞŞ¸ÄÊÂ¼ş£»·ñÔòÖ´ĞĞÉ¾³ıÊÂ¼ş
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
 				int operation_code = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
-				//ÉèÖÃepollÊÂ¼ş
+				//ï¿½ï¿½ï¿½ï¿½epollï¿½Â¼ï¿½
 				epollevent.events = EPOLLET | left_events;
 
 
-				//¿ØÖÆepoll£¬³É¹¦·µ»Ø0£¬Ê§°Ü·µ»Ø-1£»´´½¨Ê§°ÜÔò±¨´í²¢½áÊø±¾´ÎÑ­»·
+				//ï¿½ï¿½ï¿½ï¿½epollï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 				int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor_event->m_file_descriptor, &epollevent);
 				if (return_value!=0)
 				{
@@ -555,44 +555,44 @@ namespace IOManagerSpace
 					continue;
 				}
 
-				//¸ù¾İÊµ¼ÊÒªÖ´ĞĞµÄREADÊÂ¼ş£¬´¥·¢Ö®
+				//ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ÒªÖ´ï¿½Ğµï¿½READï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 				if (real_events & READ)
 				{
 					file_descriptor_event->triggerEvent(READ);
-					//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+					//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 					--m_pending_event_count;
 				}
-				//¸ù¾İÊµ¼ÊÒªÖ´ĞĞµÄWRITEÊÂ¼ş£¬´¥·¢Ö®
+				//ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ÒªÖ´ï¿½Ğµï¿½WRITEï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 				if (real_events & WRITE)
 				{
 					file_descriptor_event->triggerEvent(WRITE);
-					//µ±Ç°µÈ´ıÖ´ĞĞµÄÊÂ¼şÊıÁ¿¼õÒ»
+					//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ğµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»
 					--m_pending_event_count;
 				}
 			}
 
 
 
-			//»ñÈ¡µ±Ç°Ğ­³Ì
+			//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ğ­ï¿½ï¿½
 			shared_ptr<Fiber> current = Fiber::GetThis();
-			//ÔÚÇĞ»»µ½ºóÌ¨Ö®Ç°½«ÖÇÄÜÖ¸ÕëÇĞ»»ÎªÂãÖ¸Õë£¬·ÀÖ¹shared_ptrµÄ¼ÆÊı´íÎóµ¼ÖÂÎö¹¹º¯Êı²»±»µ÷ÓÃ
+			//ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ğ»ï¿½Îªï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½Ö¹shared_ptrï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			auto raw_ptr = current.get();
-			//Çå¿Õshared_ptr
+			//ï¿½ï¿½ï¿½shared_ptr
 			current.reset();
-			//Ê¹ÓÃÂãÖ¸Õë½«µ±Ç°Ğ­³ÌÇĞ»»µ½ºóÌ¨
+			//Ê¹ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë½«ï¿½ï¿½Ç°Ğ­ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨
 			raw_ptr->swapOut();
 		}
 	}
 
-	//ÖØÉèÎÄ¼şÃèÊö·ûÊÂ¼şÈİÆ÷´óĞ¡
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡
 	void IOManager::resizeFile_descriptor_events(const size_t size)
 	{
-		//ÖØÉèÈİÆ÷´óĞ¡
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡
 		m_file_descriptor_events.resize(size);
 
 		for (size_t i = 0; i < m_file_descriptor_events.size(); ++i)
 		{
-			//Èç¹û¸ÃÎ»ÖÃÔªËØÎª¿Õ£¬ÎªÆä·ÖÅäÄÚ´æ²¢½«ÎÄ¼şÃèÊö·ûÉèÖÃÎªÔªËØÏÂ±ê
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ôªï¿½ï¿½Îªï¿½Õ£ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ²¢ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÔªï¿½ï¿½ï¿½Â±ï¿½
 			if (!m_file_descriptor_events[i])
 			{
 				m_file_descriptor_events[i].reset(new FileDescriptorEvent());

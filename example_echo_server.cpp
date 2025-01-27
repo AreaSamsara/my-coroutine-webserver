@@ -13,7 +13,7 @@
 //class EchoServer :public TcpServer
 //{
 //public:
-//	//·þÎñÆ÷½ÓÊÜÊý¾ÝµÄÀàÐÍ
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½
 //	enum Type
 //	{
 //		TEXT = 1,
@@ -93,7 +93,7 @@
 //
 //int main(int argc, char** argv)
 //{
-//	//Èç¹û²ÎÊýÐ¡ÓÚ2¸ö£¬ÖÕÖ¹³ÌÐò²¢ÌáÊ¾
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 //	if (argc < 2)
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -102,10 +102,10 @@
 //		return 0;
 //	}
 //
-//	//·þÎñÆ÷½ÓÊÜÊý¾ÝµÄÀàÐÍÄ¬ÈÏÉèÖÃÎªÎÄ±¾
+//	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ä±ï¿½
 //	EchoServer::Type type = EchoServer::TEXT;
 //
-//	//¸ù¾ÝµÚ¶þ¸ö²ÎÊýÉèÖÃÀàÐÍ
+//	//ï¿½ï¿½ï¿½ÝµÚ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	if (strcmp(argv[1], "-b") == 0)
 //	{
 //		type = EchoServer::BINARY;

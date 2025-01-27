@@ -42,7 +42,7 @@
 //{
 //	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 //
-//	//½«server_socketÉèÖÃÎª·Ç×èÈû×´Ì¬
+//	//ï¿½ï¿½server_socketï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 //	//fcntl(server_socket, F_SETFL, O_NONBLOCK);
 //
 //	sockaddr_in server_addr;

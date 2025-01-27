@@ -40,7 +40,7 @@ namespace HttpConnectionSpace
 		uint64_t buffer_size = HttpResponseParser::GetHttp_response_buffer_size();
 		//uint64_t buffer_size = 100;
 
-		shared_ptr<char> buffer(new char[buffer_size+1], [](char* ptr) {delete[]ptr; });	//¶à¼ÓÒ»¸ö×Ö½Ú×¨ÃÅÈ¥·ÅÄÇ¸ö0£¿£¿£¿
+		shared_ptr<char> buffer(new char[buffer_size+1], [](char* ptr) {delete[]ptr; });	//ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½×¨ï¿½ï¿½È¥ï¿½ï¿½ï¿½Ç¸ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		char* data = buffer.get();
 		int offset = 0;
@@ -116,7 +116,7 @@ namespace HttpConnectionSpace
 						return nullptr;
 					}
 					length -= length_parsed;
-					//Èç¹ûÑ¹¸ùÃ»½â¶Á£¬Ö±½Ó·µ»Ønullptr
+					//ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½nullptr
 					if (length == buffer_size)
 					{
 						close();
@@ -348,7 +348,7 @@ namespace HttpConnectionSpace
 		HttpConnection* ptr = nullptr;
 
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ScopedLock<Mutex> lock(m_mutex);
 
 			while (!m_connections.empty())
@@ -560,7 +560,7 @@ namespace HttpConnectionSpace
 		}
 		else
 		{
-			//ÏÈ¼àÊÓ»¥³âËø£¬±£»¤
+			//ï¿½È¼ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ScopedLock<Mutex> lock(pool->m_mutex);
 			pool->m_connections.push_back(ptr);
 		}

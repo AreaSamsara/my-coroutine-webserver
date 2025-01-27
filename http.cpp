@@ -62,7 +62,7 @@ namespace HttpSpace
     //class CaseInsensitiveLess:public
 	bool CaseInsensitiveLess::operator()(const string& lhs, const string& rhs)const
 	{
-		//°´×ÖµäË³Ðò±È½ÏÁ½¸ö×Ö·û´®£¬²»Çø·Ö´óÐ¡Ð´
+		//ï¿½ï¿½ï¿½Öµï¿½Ë³ï¿½ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¡Ð´
 		return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
 	}
 
@@ -164,7 +164,7 @@ namespace HttpSpace
 		//...
 		//...
 
-		//µÚÒ»ÐÐ
+		//ï¿½ï¿½Ò»ï¿½ï¿½
 		os << HttpMethodToString(m_method) << " "
 			<< m_path
 			<< (m_query.empty() ? "" : "?")
@@ -179,7 +179,7 @@ namespace HttpSpace
 
 		os << "connection: " << (m_is_close ? "close" : "keep-alive") << "\r\n";
 
-		//ÇëÇóÍ·²¿
+		//ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
 		for (auto& header : m_headers)
 		{
 			if (strcasecmp(header.first.c_str(), "connection") != 0)
@@ -188,7 +188,7 @@ namespace HttpSpace
 			}
 		}
 
-		//ÇëÇóÌå
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (!m_body.empty())
 		{
 			os << "content-length: " << m_body.size() << "\r\n\r\n"

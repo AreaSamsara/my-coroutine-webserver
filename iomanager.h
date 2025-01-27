@@ -9,27 +9,27 @@ namespace IOManagerSpace
 	using std::string;
 
 	/*
-	* Àà¹ØÏµ£º
-	* FileDescriptorEventÀàÊÇ±»IOManagerÀà°üº¬µÄË½ÓÐÀà£¬ÓÉÎÄ¼þÃèÊö·û¡¢ÊÂ¼þ±êÖ¾ºÍ»Øµ÷º¯Êý×é³É
-	* FileDescriptorEventÀàÄÚ²¿Ö»ÓÐ¶ÁÈ¡»òÐÞ¸ÄË½ÓÐ³ÉÔ±µÄ·½·¨ºÍ´¥·¢ÊÂ¼þµÄ·½·¨£¬´ó²¿·Ö¸´ÔÓ·½·¨¶¼Î»ÓÚIOManagerÀàÄÚ²¿
-	* IOManagerÀàÄÚ²¿ÓÐ×°ÓÐ¶à¸öÎÄ¼þÃèÊö·ûÊÂ¼þµÄÈÝÆ÷£¬ÒÔ¼°¶à¸ö²Ù×ÝÎÄ¼þÃèÊö·ûÊÂ¼þµÄ·½·¨
-	* IOManagerÀàÍ¨¹ýFileDescriptorEventÀàÈÝÆ÷ÓëepollÏµÍ³½øÐÐ½»»¥£¬¶øÍ¨¹ýTimerManagerÀà´¦Àí¶¨Ê±Æ÷
+	* ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	* FileDescriptorEventï¿½ï¿½ï¿½Ç±ï¿½IOManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ö¾ï¿½Í»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	* FileDescriptorEventï¿½ï¿½ï¿½Ú²ï¿½Ö»ï¿½Ð¶ï¿½È¡ï¿½ï¿½ï¿½Þ¸ï¿½Ë½ï¿½Ð³ï¿½Ô±ï¿½Ä·ï¿½ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó²¿·Ö¸ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½IOManagerï¿½ï¿½ï¿½Ú²ï¿½
+	* IOManagerï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½×°ï¿½Ð¶ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+	* IOManagerï¿½ï¿½Í¨ï¿½ï¿½FileDescriptorEventï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½epollÏµÍ³ï¿½ï¿½ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½TimerManagerï¿½à´¦ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 	*/
 	/*
-	* IO¹ÜÀíÕßÀàµ÷ÓÃ·½·¨£º
-	* 1.ÏÈµ÷ÓÃ¹¹Ôìº¯Êý´´½¨IOManager¶ÔÏó£¬¿ÉÒÔ½«Æä¿´×÷Ò»ÖÖÌØÊâµÄScheduler¶ÔÏó
-	* 2.¹¹Ôìº¯ÊýÄÚ²¿»á×Ô¶¯´´½¨epollºÍ¶¨Ê±Æ÷¹ÜÀíÕß£¬¶þÕß·Ö±ð¶ÔepollÊÂ¼þºÍ¶¨Ê±Æ÷ÊÂ¼þ½øÐÐ¹ÜÀí
-	* 3.¹¹Ôìº¯ÊýÄÚ²¿Ä¬ÈÏµ÷ÓÃstart()·½·¨Æô¶¯ÈÎÎñµ÷¶ÈÆ÷
-	* 4.(1)ºÍScheduler¶ÔÏóÒ»Ñù£¬¿ÉÒÔµ÷ÓÃschedule()·½·¨½«ÐèÒªÍê³ÉµÄÈÎÎñ£¨Ð­³Ì»òÕß»Øµ÷º¯Êý£©¼ÓÈëÈÎÎñ¶ÓÁÐ£¬ÒÔ´ËÖÖ·½Ê½µ÷¶ÈµÄÈÎÎñ»á½»ÓÉepoll´¦Àí
-	*   (2)»¹¿ÉÒÔÍ¨¹ýaddTimer()·½·¨Ìí¼ÓÉè¶¨ºÃÈÎÎñ£¨»Øµ÷º¯Êý£©µÄ¶¨Ê±Æ÷£¬ÒÔ´ËÖÖ·½Ê½µ÷¶ÈµÄÈÎÎñ»á½»ÓÉ¶¨Ê±Æ÷¹ÜÀíÕß´¦Àí
-	* 5.Îö¹¹º¯ÊýÄ¬ÈÏµ÷ÓÃstop()·½·¨Í£Ö¹µ÷¶ÈÆ÷£¬ÔÚµÈ´ýepollÈÎÎñ¶ÓÁÐµÄËùÓÐÈÎÎñÒÔ¼°ËùÓÐµÄ¶¨Ê±Æ÷¶¼´¦ÀíÍê±ÏÒÔºó£¬IO¹ÜÀíÕßÍ£Ö¹¡£
+	* IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 1.ï¿½Èµï¿½ï¿½Ã¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IOManagerï¿½ï¿½ï¿½ó£¬¿ï¿½ï¿½Ô½ï¿½ï¿½ä¿´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Schedulerï¿½ï¿½ï¿½ï¿½
+	* 2.ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½epollï¿½Í¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ß·Ö±ï¿½ï¿½epollï¿½Â¼ï¿½ï¿½Í¶ï¿½Ê±ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½
+	* 3.ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½Ú²ï¿½Ä¬ï¿½Ïµï¿½ï¿½ï¿½start()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	* 4.(1)ï¿½ï¿½Schedulerï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½schedule()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½Ì»ï¿½ï¿½ß»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ô´ï¿½ï¿½Ö·ï¿½Ê½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½á½»ï¿½ï¿½epollï¿½ï¿½ï¿½ï¿½
+	*   (2)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½addTimer()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è¶¨ï¿½ï¿½ï¿½ï¿½ï¿½ñ£¨»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½Ö·ï¿½Ê½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½á½»ï¿½É¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½
+	* 5.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ïµï¿½ï¿½ï¿½stop()ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÈ´ï¿½epollï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½
 	*/
 
-	//IO¹ÜÀíÕß£¬¹«ÓÐ¼Ì³Ð×Ôµ÷¶ÈÆ÷Àà
+	//IOï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½Ð¼Ì³ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	class IOManager :public Scheduler
 	{
 	public:
-		//±íÊ¾ÊÂ¼þÀàÐÍµÄÃ¶¾ÙÀàÐÍ
+		//ï¿½ï¿½Ê¾ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Íµï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		enum EventType
 		{
 			NONE = 0x00,
@@ -37,11 +37,11 @@ namespace IOManagerSpace
 			WRITE = 0x04	//EPOLLOUT
 		};
 	private:
-		//ÎÄ¼þÃèÊö·ûÊÂ¼þÀà
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½
 		class FileDescriptorEvent
 		{
 		public:
-			//¸ù¾ÝÊÂ¼þÀàÐÍ»ñÈ¡¶ÔÓ¦µÄ»Øµ÷º¯Êý
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Í»ï¿½È¡ï¿½ï¿½Ó¦ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 			Task& getTask(const EventType event_type)
 			{
 				switch (event_type)
@@ -56,61 +56,61 @@ namespace IOManagerSpace
 					Assert(log_event, "getTask");
 				}
 			}
-			//½«ÊÂ¼þ´ÓÒÑ×¢²áÊÂ¼þÖÐÉ¾³ý£¬²¢´¥·¢Ö®
+			//ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®
 			void triggerEvent(const EventType event_type);
 		public:
-			int m_file_descriptor;				//ÊÂ¼þ¹ØÁªµÄÎÄ¼þÃèÊö·û
-			Task m_read_task;					//¶ÁÈ¡ÈÎÎñ
-			Task m_write_task;					//Ð´ÈëÈÎÎñ
-			EventType m_registered_event_types = NONE;		//ÒÑ¾­×¢²áµÄÊÂ¼þÀàÐÍ£¬³õÊ¼»¯ÎªNONE
-			Mutex m_mutex;						//»¥³âËø
+			int m_file_descriptor;				//ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			Task m_read_task;					//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+			Task m_write_task;					//Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			EventType m_registered_event_types = NONE;		//ï¿½Ñ¾ï¿½×¢ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ÎªNONE
+			Mutex m_mutex;						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		};
 	public:
 		IOManager(size_t thread_count = 1, const bool use_caller = true, const string& name = "main_scheduler");
 		virtual ~IOManager();
 
-		//»ñÈ¡¶¨Ê±Æ÷¹ÜÀíÕß
+		//ï¿½ï¿½È¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<TimerManager> getTimer_manager()const { return m_timer_manager; }
 
-		//Ìí¼ÓÊÂ¼þµ½ÎÄ¼þÃèÊö·ûÉÏ
-		bool addEvent(const int file_description, const EventType event, function<void()> callback);		//ÄÚ²¿ÒªÓÃcallbackµ÷ÓÃswapº¯Êý£¬¹Ê²»ÄÜ¼Óconst&
-		//É¾³ýÎÄ¼þÃèÊö·ûÉÏµÄ¶ÔÓ¦ÊÂ¼þ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		bool addEvent(const int file_description, const EventType event, function<void()> callback);		//ï¿½Ú²ï¿½Òªï¿½ï¿½callbackï¿½ï¿½ï¿½ï¿½swapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½Ü¼ï¿½const&
+		//É¾ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¶ï¿½Ó¦ï¿½Â¼ï¿½
 		bool deleteEvent(const int file_description, const EventType event);
-		//½áËã£¨´¥·¢²¢É¾³ý£©ÎÄ¼þÃèÊö·ûÉÏµÄ¶ÔÓ¦ÊÂ¼þ
+		//ï¿½ï¿½ï¿½ã£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¶ï¿½Ó¦ï¿½Â¼ï¿½
 		bool settleEvent(const int file_description, const EventType event);
-		//½áËã£¨´¥·¢²¢É¾³ý£©ÎÄ¼þÃèÊö·ûÉÏµÄËùÓÐÊÂ¼þ
+		//ï¿½ï¿½ï¿½ã£¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 		bool settleAllEvents(const int file_description);
 
-		//Ìí¼Ó¶¨Ê±Æ÷£¬²¢ÔÚÐèÒªÊ±Í¨Öªµ÷¶ÈÆ÷ÓÐÈÎÎñ
+		//ï¿½ï¿½ï¿½Ó¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ±Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void addTimer(const shared_ptr<Timer> timer);
 	public:
-		//¾²Ì¬·½·¨£¬»ñÈ¡µ±Ç°IO¹ÜÀíÕß
+		//ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ç°IOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		static IOManager* GetThis() { return dynamic_cast<IOManager*>(Scheduler::GetThis()); }
 	protected:
-		//Í¨Öªµ÷¶ÈÆ÷ÓÐÈÎÎñÁË
+		//Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		void tickle()override;
-		//·µ»ØÊÇ·ñ¿¢¹¤
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ñ¿¢¹ï¿½
 		bool isCompleted()override;
-		//¿ÕÏÐÐ­³ÌµÄ»Øµ÷º¯Êý
+		//ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ÌµÄ»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 		void idle()override;
 
-		//ÖØÉèÎÄ¼þÃèÊö·ûÊÂ¼þÈÝÆ÷´óÐ¡
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 		void resizeFile_descriptor_events(const size_t size);
 	private:
-		//epollÎÄ¼þÃèÊö·û
+		//epollï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int m_epoll_file_descriptor = 0;
-		//Í¨ÐÅ¹ÜµÀpipeÎÄ¼þÃèÊö·û,µÚÒ»¸öÔªËØÊÇpipeµÄ¶ÁÈ¡¶Ë£¬µÚ¶þ¸öÔªËØÊÇpipeµÄÐ´Èë¶Ë£¨°ëË«¹¤¹ÜµÀ£©
+		//Í¨ï¿½Å¹Üµï¿½pipeï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Ò»ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½pipeï¿½Ä¶ï¿½È¡ï¿½Ë£ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½pipeï¿½ï¿½Ð´ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½
 		int m_pipe_file_descriptors[2];
 
-		//µ±Ç°µÈ´ýÖ´ÐÐµÄÊÂ¼þÊýÁ¿£¨Ô­×ÓÀàÐÍ£¬±£Ö¤¶ÁÐ´µÄÏß³Ì°²È«£©
+		//ï¿½ï¿½Ç°ï¿½È´ï¿½Ö´ï¿½Ðµï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ß³Ì°ï¿½È«ï¿½ï¿½
 		atomic<size_t> m_pending_event_count = { 0 };
-		//»¥³âËø£¨¶Á/Ð´Ëø£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/Ð´ï¿½ï¿½ï¿½ï¿½
 		Mutex_Read_Write m_mutex;
 
-		//ÎÄ¼þÃèÊö·ûÊÂ¼þÈÝÆ÷
+		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 		vector<shared_ptr<FileDescriptorEvent>> m_file_descriptor_events;
 
-		//¶¨Ê±Æ÷¹ÜÀíÕß
+		//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		shared_ptr<TimerManager> m_timer_manager;
 	};
 }

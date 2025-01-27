@@ -10,44 +10,44 @@ namespace UtilitySpace
 {
 	using namespace SingletonSpace;
 
-	//»ñÈ¡µ±Ç°Ïß³Ìid
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ß³ï¿½id
 	pid_t GetThread_id()
 	{
-		//ÓÃÁ÷»ñÈ¡Ïß³ÌÔÚ½ø³ÌÄÚµÄid
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ß³ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Úµï¿½id
 		/*stringstream ss;
 		ss << std::this_thread::get_id();
 		pid_t thread_id = atoi(ss.str().c_str());
 		return thread_id;*/
 
-		//µ÷ÓÃÏµÍ³º¯Êý»ñÈ¡Ïß³ÌÔÚÏµÍ³ÖÐµÄid
+		//ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ß³ï¿½ï¿½ï¿½ÏµÍ³ï¿½Ðµï¿½id
 		return syscall(SYS_gettid);
 	}
-	//»ñÈ¡µ±Ç°Ïß³ÌÃû³Æ
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
 	string GetThread_name()
 	{
-		//Èç¹ûµ±Ç°Ã»ÓÐ×ÓÏß³Ì±»´´½¨£¬·µ»Ø"main_thread"
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"main_thread"
 		if (ThreadSpace::Thread::t_thread == nullptr)
 		{
 			return "main_thread";
 		}
-		//·ñÔò·µ»Øµ±Ç°Ïß³ÌÃû³Æ
+		//ï¿½ï¿½ï¿½ò·µ»Øµï¿½Ç°ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
 		return ThreadSpace::Thread::t_thread->getName();
 	}
 
-	//»ñÈ¡µ±Ç°Ð­³Ìid
+	//ï¿½ï¿½È¡ï¿½ï¿½Ç°Ð­ï¿½ï¿½id
 	uint32_t GetFiber_id()
 	{
 		return FiberSpace::Fiber::GetFiber_id();
 	}
 
-	//Ê±¼äms
+	//Ê±ï¿½ï¿½ms
 	uint64_t GetCurrentMS()
 	{
 		struct timeval time_value;
 		gettimeofday(&time_value, NULL);
 		return time_value.tv_sec * 1000ul + time_value.tv_usec / 1000;
 	}
-	//Ê±¼äus
+	//Ê±ï¿½ï¿½us
 	uint64_t GetCurrentUS()
 	{
 		struct timeval time_value;
@@ -90,7 +90,7 @@ namespace UtilitySpace
 		return ss.str();
 	}
 
-	//»ØËÝÕ»²¢·¢ËÍÕ»ÏûÏ¢£¬ÔÙÖÐ¶Ï³ÌÐò
+	//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï³ï¿½ï¿½ï¿½
 	void Assert(shared_ptr<LogEvent> log_event)
 	{
 		log_event->getSstream() << "Assertion: " << "\nbacktrace:\n" << BacktraceToString(100, 2, "    ");
@@ -98,7 +98,7 @@ namespace UtilitySpace
 		assert(false);
 	}
 
-	//»ØËÝÕ»²¢·¢ËÍÕ»ÏûÏ¢ºÍmessage×Ö·û´®£¬ÔÙÖÐ¶Ï³ÌÐò
+	//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½Ï¢ï¿½ï¿½messageï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï³ï¿½ï¿½ï¿½
 	void Assert(shared_ptr<LogEvent> log_event, const string& message)
 	{
 		log_event->getSstream() << "Assertion: " << "\n" << message << "\nbacktrace:\n" << BacktraceToString(100, 2, "    ");

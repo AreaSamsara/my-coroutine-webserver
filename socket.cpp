@@ -14,28 +14,28 @@ namespace SocketSpace
 	Socket::Socket(const FamilyType family, const SocketType type, const int protocol)
 		:m_socket(-1),m_family(family),m_type(type),m_protocol(protocol),m_is_connected(false)
 	{
-		//Èç¹ûÒª´´½¨µÄÊÇUDP socket£¬ÔòÖ±½Ó´´½¨socketÎÄ¼þÃèÊö·û£¨·ñÔòÔÚbind»òconnectÖÐÑÓ³Ù´´½¨£©²¢Ä¬ÈÏ´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¨Êµ¼ÊÉÏÊÇÎÞÁ¬½Ó£©
+		//ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UDP socketï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó´ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bindï¿½ï¿½connectï¿½ï¿½ï¿½Ó³Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½
 		if (type == UDP)
 		{
 			this->newSocket();
 			m_is_connected = true;
 		}
 	}
-	//Îö¹¹Ö®Ç°¹Ø±Õsocket
+	//ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½Ø±ï¿½socket
 	Socket::~Socket()
 	{
 		close();
 	}
 
-	//»ñÈ¡·¢ËÍ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Í³ï¿½Ê±Ê±ï¿½ï¿½
 	int64_t Socket::getSend_timeout()const
 	{
-		//Í¨¹ýµ¥ÀýÎÄ¼þÃèÊö·û¹ÜÀíÕß¸ù¾ÝsocketÎÄ¼þÃèÊö·û»ñÈ¡¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+		//Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¸ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
-		//Èç¹ûÊµÌå²»Îª¿Õ£¬·µ»Ø¶ÔÓ¦µÄ·¢ËÍ³¬Ê±Ê±¼ä£¬·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½Êµï¿½å²»Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½Ó¦ï¿½Ä·ï¿½ï¿½Í³ï¿½Ê±Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return file_descriptor_entity ? file_descriptor_entity->getTimeout(SO_SNDTIMEO) : -1;
 	}
-	//ÉèÖÃ·¢ËÍ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Í³ï¿½Ê±Ê±ï¿½ï¿½
 	void Socket::setSend_timeout(const int64_t send_timeout)
 	{
 		timeval tv;
@@ -44,15 +44,15 @@ namespace SocketSpace
 		setOption(SOL_SOCKET, SO_SNDTIMEO, tv);
 	}
 
-	//»ñÈ¡½ÓÊÕ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Õ³ï¿½Ê±Ê±ï¿½ï¿½
 	int64_t Socket::getReceive_timeout()const
 	{
-		//Í¨¹ýµ¥ÀýÎÄ¼þÃèÊö·û¹ÜÀíÕß¸ù¾ÝsocketÎÄ¼þÃèÊö·û»ñÈ¡¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå
+		//Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¸ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 		shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(m_socket);
-		//Èç¹ûÊµÌå²»Îª¿Õ£¬·µ»Ø¶ÔÓ¦µÄ½ÓÊÕ³¬Ê±Ê±¼ä£¬·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½Êµï¿½å²»Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½Ó¦ï¿½Ä½ï¿½ï¿½Õ³ï¿½Ê±Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return file_descriptor_entity ? file_descriptor_entity->getTimeout(SO_RCVTIMEO) : -1;
 	}
-	//ÉèÖÃ½ÓÊÕ³¬Ê±Ê±¼ä
+	//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½Õ³ï¿½Ê±Ê±ï¿½ï¿½
 	void Socket::setReceive_timeout(const int64_t receive_timeout)
 	{
 		timeval tv;
@@ -61,38 +61,38 @@ namespace SocketSpace
 		setOption(SOL_SOCKET, SO_RCVTIMEO, tv);
 	}
 
-	//»ñÈ¡socketÑ¡Ïî
+	//ï¿½ï¿½È¡socketÑ¡ï¿½ï¿½
 	bool Socket::getOption(const int level, const int option, void* result, socklen_t* len) const
 	{
-		//»ñÈ¡socketÑ¡Ïî£¬³É¹¦·µ»Ø0
+		//ï¿½ï¿½È¡socketÑ¡ï¿½î£¬ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0
 		return getsockopt(m_socket, level, option, result, (socklen_t*)len) == 0;
 	}
 
-	//ÉèÖÃsocketÑ¡Ïî
+	//ï¿½ï¿½ï¿½ï¿½socketÑ¡ï¿½ï¿½
 	bool Socket::setOption(const int level, const int option, const void * result, socklen_t len) const
 	{
-		//ÉèÖÃsocketÑ¡Ïî£¬³É¹¦·µ»Ø0
+		//ï¿½ï¿½ï¿½ï¿½socketÑ¡ï¿½î£¬ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0
 		return setsockopt(m_socket, level, option, result, len) == 0;
 	}
 
 
 	
 
-	//°ó¶¨µØÖ·£¨ÔÚsocketÎÞÐ§Ê±´´½¨ÐÂµÄsocketÎÄ¼þÃèÊö·û£©
+	//ï¿½ó¶¨µï¿½Ö·ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool Socket::bind(const shared_ptr<Address> address)
 	{
-		//Èç¹ûsocketÎÞÐ§£¬´´½¨ÐÂµÄsocketÎÄ¼þÃèÊö·û
+		//ï¿½ï¿½ï¿½socketï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(!isValid())
 		{
 			newSocket();
-			//Èç¹û´´½¨ºósocketÈÔÎªÎÞÐ§£¨Ð¡¸ÅÂÊÊÂ¼þ£©£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Îªï¿½ï¿½Ð§ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (SYLAR_UNLIKELY(!isValid()))
 			{
 				return false;
 			}
 		}
 
-		//Èç¹ûsocketÐ­Òé×åºÍÒª°ó¶¨µÄµØÖ·Ð­Òé×å²»Æ¥Åä(Ð¡¸ÅÂÊÊÂ¼þ)£¬±¨´í²¢·µ»Øfalse
+		//ï¿½ï¿½ï¿½socketÐ­ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ó¶¨µÄµï¿½Ö·Ð­ï¿½ï¿½ï¿½å²»Æ¥ï¿½ï¿½(Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (SYLAR_UNLIKELY(address->getFamily() != m_family))
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -101,7 +101,7 @@ namespace SocketSpace
 			return false;
 		}
 
-		//µ÷ÓÃÈ«¾Öbind()º¯Êý£¨³É¹¦Ôò·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í²¢·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½bind()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ò·µ»ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (::bind(m_socket, address->getAddress(), address->getAddress_length()) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -110,15 +110,15 @@ namespace SocketSpace
 			return false;
 		}
 		
-		//°ó¶¨³É¹¦ºó´ÓÏµÍ³¶ÁÈ¡±¾µØµØÖ·²¢·µ»Øtrue
+		//ï¿½ó¶¨³É¹ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½true
 		getLocal_address();
 		return true;
 	}
 
-	//¼àÌýsocket
+	//ï¿½ï¿½ï¿½ï¿½socket
 	bool Socket::listen(const int backlog) const
 	{
-		//Èç¹ûsocketÎÞÐ§£¨Ð¡¸ÅÂÊÊÂ¼þ£©£¬±¨´í²¢·µ»Øfalse
+		//ï¿½ï¿½ï¿½socketï¿½ï¿½Ð§ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (SYLAR_UNLIKELY(!isValid()))
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -126,7 +126,7 @@ namespace SocketSpace
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
-		//µ÷ÓÃÈ«¾Ölisten()º¯Êý£¨³É¹¦Ôò·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í²¢·µ»Øfalse
+		//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½listen()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ò·µ»ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (::listen(m_socket, backlog) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -134,19 +134,19 @@ namespace SocketSpace
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			return false;
 		}
-		//·ñÔò·µ»Øtrue
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½true
 		return true;
 	}
 
-	//½ÓÊÕconnectÁ´½Ó
+	//ï¿½ï¿½ï¿½ï¿½connectï¿½ï¿½ï¿½ï¿½
 	shared_ptr<Socket> Socket::accept() const
 	{
-		//¸ù¾Ýµ±Ç°socket¶ÔÏóµÄÐÅÏ¢´´ÔìÒ»¸öÍ¬ÀàµÄsocket¶ÔÏó
+		//ï¿½ï¿½ï¿½Ýµï¿½Ç°socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¬ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½
 		shared_ptr<Socket> socket(new Socket((FamilyType)m_family,(SocketType) m_type, m_protocol));
 
-		//µ÷ÓÃÈ«¾Öaccept()º¯Êý½ÓÊÕÁ´½Ó£¨Æähook°æ±¾»á×Ô¶¯´´½¨socketÎÄ¼þÃèÊö·û¶ÔÓ¦µÄÊµÌå£©
+		//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½accept()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½hookï¿½æ±¾ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Êµï¿½å£©
 		int new_socket = ::accept(m_socket, nullptr, nullptr);
-		//Èç¹û½ÓÊÕÊ§°Ü£¬±¨´í²¢·µ»Ønullptr
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½nullptr
 		if (new_socket == -1)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -156,9 +156,9 @@ namespace SocketSpace
 		}
 		else
 		{
-			//»ñÈ¡new_socket¶ÔÓ¦µÄÎÄ¼þÃèÊö·ûÊµÌå£¨Ó¦¸ÃÒÑ¾­ÔÚhook°æ±¾µÄaccept()º¯ÊýÖÐ´´½¨£©
+			//ï¿½ï¿½È¡new_socketï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½å£¨Ó¦ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½hookï¿½æ±¾ï¿½ï¿½accept()ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½
 			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(new_socket);
-			//Èç¹û¸ÃÊµÌå´æÔÚ£¬ÇÒÊÇsocket²¢²»´¦ÓÚ¹Ø±Õ×´Ì¬£¬Ôò½«socket¶ÔÏó³õÊ¼»¯²¢·µ»Ø
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¹Ø±ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			if (file_descriptor_entity != nullptr && file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
 			{
 				socket->m_socket = new_socket;
@@ -168,7 +168,7 @@ namespace SocketSpace
 				socket->getRemote_address();
 				return socket;
 			}
-			//·ñÔò·µ»Ønullptr
+			//ï¿½ï¿½ï¿½ò·µ»ï¿½nullptr
 			else
 			{
 				return nullptr;
@@ -177,21 +177,21 @@ namespace SocketSpace
 	}
 
 
-	//Á¬½ÓµØÖ·£¨ÔÚsocketÎÞÐ§Ê±´´½¨ÐÂµÄsocketÎÄ¼þÃèÊö·û£©
+	//ï¿½ï¿½ï¿½Óµï¿½Ö·ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	bool Socket::connect(const shared_ptr<Address> address, const uint64_t timeout)
 	{
-		//Èç¹ûsocketÎÞÐ§£¬´´½¨ÐÂµÄsocketÎÄ¼þÃèÊö·û
+		//ï¿½ï¿½ï¿½socketï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (!isValid())
 		{
 			newSocket();
-			//Èç¹û´´½¨ºósocketÈÔÎªÎÞÐ§£¨Ð¡¸ÅÂÊÊÂ¼þ£©£¬·µ»Øfalse
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Îªï¿½ï¿½Ð§ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (SYLAR_UNLIKELY(!isValid()))
 			{
 				return false;
 			}
 		}
 
-		//Èç¹ûsocketÐ­Òé×åºÍÒª°ó¶¨µÄµØÖ·Ð­Òé×å²»Æ¥Åä(Ð¡¸ÅÂÊÊÂ¼þ)£¬±¨´í²¢·µ»Øfalse
+		//ï¿½ï¿½ï¿½socketÐ­ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ó¶¨µÄµï¿½Ö·Ð­ï¿½ï¿½ï¿½å²»Æ¥ï¿½ï¿½(Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 		if (SYLAR_UNLIKELY(address->getFamily() != m_family))
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -200,10 +200,10 @@ namespace SocketSpace
 			return false;
 		}
 
-		//Èç¹û³¬Ê±Ê±¼äÎª-1£¬ËµÃ÷Î´ÉèÖÃ³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½Îª-1ï¿½ï¿½Ëµï¿½ï¿½Î´ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ï¿½
 		if (timeout == (uint64_t)-1)
 		{
-			//µ÷ÓÃÈ«¾Öconnect()º¯Êý£¨³É¹¦·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í¡¢¹Ø±Õsocket²¢·µ»Øfalse
+			//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½connect()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½Ø±ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (::connect(m_socket, address->getAddress(), address->getAddress_length()) != 0)
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -213,10 +213,10 @@ namespace SocketSpace
 				return false;
 			}
 		}
-		//·ñÔòËµÃ÷ÉèÖÃÁË³¬Ê±Ê±¼ä
+		//ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½Ê±Ê±ï¿½ï¿½
 		else
 		{
-			//µ÷ÓÃÈ«¾Öconnect_with_timeout()º¯Êý£¨³É¹¦·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í¡¢¹Ø±Õsocket²¢·µ»Øfalse
+			//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½connect_with_timeout()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½Ø±ï¿½socketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½false
 			if (connect_with_timeout(m_socket, address->getAddress(), address->getAddress_length(), timeout))
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -227,43 +227,43 @@ namespace SocketSpace
 			}
 		}
 
-		//Á¬½Ó³É¹¦ºó½«socketÉèÖÃÎªÒÑÁ¬½Ó
+		//ï¿½ï¿½ï¿½Ó³É¹ï¿½ï¿½ï¿½socketï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_is_connected = true;
-		//´ÓÏµÍ³¶ÁÈ¡Ô¶¶ËµØÖ·ºÍ±¾µØµØÖ·²¢·µ»Øtrue
+		//ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡Ô¶ï¿½Ëµï¿½Ö·ï¿½Í±ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½true
 		getRemote_address();
 		getLocal_address();
 		return true;
 	}
 
 
-	//¹Ø±Õsocket
+	//ï¿½Ø±ï¿½socket
 	void Socket::close()
 	{
-		//Èç¹ûÊÇÒÑÁ¬½Ó×´Ì¬£¬½«ÆäÉèÖÃÎªÎ´Á¬½Ó
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÎ´ï¿½ï¿½ï¿½ï¿½
 		if (m_is_connected)
 		{
 			m_is_connected = false;
 		}
-		//Èç¹ûsocketÎÄ¼þÃèÊö·ûÓÐÐ§£¬¹Ø±ÕÖ®
+		//ï¿½ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ø±ï¿½Ö®
 		if (isValid())
 		{
-			//µ÷ÓÃÈ«¾ÖµÄclose()º¯Êý
+			//ï¿½ï¿½ï¿½ï¿½È«ï¿½Öµï¿½close()ï¿½ï¿½ï¿½ï¿½
 			::close(m_socket);
-			//½«socketÎÄ¼þÃèÊö·ûÉèÖÃÎª-1
+			//ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª-1
 			m_socket = -1;
 		}
 	}
 
 
-	//·¢ËÍÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int Socket::send(const void* buffer, const size_t length, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Ösend()º¯Êý²¢·µ»Ø£¬·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½send()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return isConnected() ? ::send(m_socket, buffer, length, flags) : -1;
 	}
 	int Socket::send(const iovec* buffer, const size_t length, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Ösend()º¯Êý²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½send()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (isConnected())
 		{
 			msghdr msg;
@@ -272,17 +272,17 @@ namespace SocketSpace
 			msg.msg_iovlen = length;
 			return ::sendmsg(m_socket, &msg, flags);
 		}
-		//·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return -1;
 	}
 	int Socket::sendto(const void* buffer, const size_t length, const shared_ptr<Address> to, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Ösendto()º¯Êý²¢·µ»Ø£¬·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½sendto()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return isConnected() ? ::sendto(m_socket, buffer, length, flags, to->getAddress(), to->getAddress_length()) : -1;
 	}
 	int Socket::sendto(const iovec* buffer, const size_t length, const shared_ptr<Address> to, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Ösendto()º¯Êý²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½sendto()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (isConnected())
 		{
 			msghdr msg;
@@ -293,19 +293,19 @@ namespace SocketSpace
 			msg.msg_namelen = to->getAddress_length();
 			return ::sendmsg(m_socket, &msg, flags);
 		}
-		//·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return -1;
 	}
 
-	//½ÓÊÕÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int Socket::recv(void* buffer, const size_t length, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Örecv()º¯Êý²¢·µ»Ø£¬·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½recv()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return isConnected() ? ::recv(m_socket, buffer, length, flags) : -1;
 	}
 	int Socket::recv(iovec* buffer, const size_t length, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Örecv()º¯Êý²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½recv()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (isConnected())
 		{
 			msghdr msg;
@@ -314,23 +314,23 @@ namespace SocketSpace
 			msg.msg_iovlen = length;
 			return ::recvmsg(m_socket, &msg, flags);
 		}
-		//·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return -1;
 	}
 	int Socket::recvfrom(void* buffer, const size_t length, const shared_ptr<Address> from, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Örecvfrom()º¯Êý²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½recvfrom()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (isConnected())
 		{
 			socklen_t address_length = from->getAddress_length();
 			return ::recvfrom(m_socket, buffer, length, flags, from->getAddress(), &address_length);
 		}
-		//·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return -1;
 	}
 	int Socket::recvfrom(iovec* buffer, const size_t length, const shared_ptr<Address> from, const int flags) const
 	{
-		//Èç¹ûµ±Ç°´¦ÓÚÒÑÁ¬½Ó×´Ì¬£¬µ÷ÓÃÈ«¾Örecvfrom()º¯Êý²¢·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½recvfrom()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (isConnected())
 		{
 			msghdr msg;
@@ -341,37 +341,37 @@ namespace SocketSpace
 			msg.msg_namelen = from->getAddress_length();
 			return ::recvmsg(m_socket, &msg, flags);
 		}
-		//·ñÔò·µ»Ø-1
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½-1
 		return -1;
 	}
 
 
-	//·µ»ØsocketÊÇ·ñÓÐÐ§
+	//ï¿½ï¿½ï¿½ï¿½socketï¿½Ç·ï¿½ï¿½ï¿½Ð§
 	bool Socket::isValid()const
 	{
 		return m_socket != -1;
 	}
-	//·µ»ØSocket´íÎó
+	//ï¿½ï¿½ï¿½ï¿½Socketï¿½ï¿½ï¿½ï¿½
 	int Socket::getError() const
 	{
 		int error = 0;
 		socklen_t length = sizeof(error);
-		//µ÷ÓÃgetOption()º¯Êý³¢ÊÔ¶ÁÈ¡´íÎó£¬³É¹¦Ôò·µ»Ø¸Ã´íÎó£¬Ê§°Ü·µ»Ø-1
+		//ï¿½ï¿½ï¿½ï¿½getOption()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½È¡ï¿½ï¿½ï¿½ó£¬³É¹ï¿½ï¿½ò·µ»Ø¸Ã´ï¿½ï¿½ï¿½Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1
 		return getOption(SOL_SOCKET, SO_ERROR, &error, &length) ? error : -1;
 	}
 
 
-	//»ñÈ¡Ô¶¶ËµØÖ·£¬²¢ÔÚÊ×´Îµ÷ÓÃÊ±´ÓÏµÍ³¶ÁÈ¡Ö®
+	//ï¿½ï¿½È¡Ô¶ï¿½Ëµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡Ö®
 	shared_ptr<Address> Socket::getRemote_address()
 	{
-		//Èç¹ûÔ¶¶ËµØÖ·ÒÑ´æÔÚ£¬Ö±½Ó·µ»ØÖ®
+		//ï¿½ï¿½ï¿½Ô¶ï¿½Ëµï¿½Ö·ï¿½Ñ´ï¿½ï¿½Ú£ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ö®
 		if (m_remote_address)
 		{
 			return m_remote_address;
 		}
 
 		shared_ptr<Address> remote_address;
-		//¸ù¾ÝsocketµÄÐ­Òé×åÎªÆä·ÖÅä¶ÔÓ¦ÀàÐÍµÄÄÚ´æ
+		//ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Íµï¿½ï¿½Ú´ï¿½
 		switch (m_family)
 		{
 		case AF_INET:
@@ -390,7 +390,7 @@ namespace SocketSpace
 
 		socklen_t length = remote_address->getAddress_length();
 
-		//µ÷ÓÃgetsockname()º¯Êý»ñÈ¡Ô¶¶ËµØÖ·ÐÅÏ¢£¨³É¹¦·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í²¢·µ»ØÎ´ÖªµØÖ·
+		//ï¿½ï¿½ï¿½ï¿½getsockname()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ô¶ï¿½Ëµï¿½Ö·ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´Öªï¿½ï¿½Ö·
 		if (getpeername(m_socket, remote_address->getAddress(), &length) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -399,31 +399,31 @@ namespace SocketSpace
 			return shared_ptr<Address>(new UnknownAddress(m_family));
 		}
 
-		//Èç¹ûsocketµÄÐ­Òé×åÊÇUnix£¬»¹ÐèÒªÉèÖÃUnixµØÖ·³¤¶È
+		//ï¿½ï¿½ï¿½socketï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 		if (m_family == AF_UNIX)
 		{
-			//¼ì²éÖÇÄÜÖ¸Õë×ª»»ÊÇ·ñ°²È«
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½×ªï¿½ï¿½ï¿½Ç·ï¿½È«
 			shared_ptr<UnixAddress> address = dynamic_pointer_cast<UnixAddress>(remote_address);
-			//ÉèÖÃUnixµØÖ·³¤¶È
+			//ï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 			address->setAddress_length(length);
 		}
 
-		//¸ù¾Ý»ñÈ¡µ½µÄ½á¹ûÉèÖÃ±¾µØµØÖ·²¢·µ»Ø
+		//ï¿½ï¿½ï¿½Ý»ï¿½È¡ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_remote_address = remote_address;
 		return m_remote_address;
 	}
 
-	//»ñÈ¡±¾µØµØÖ·£¬²¢ÔÚÊ×´Îµ÷ÓÃÊ±´ÓÏµÍ³¶ÁÈ¡Ö®
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Îµï¿½ï¿½ï¿½Ê±ï¿½ï¿½ÏµÍ³ï¿½ï¿½È¡Ö®
 	shared_ptr<Address> Socket::getLocal_address()
 	{
-		//Èç¹û±¾µØµØÖ·ÒÑ´æÔÚ£¬Ö±½Ó·µ»ØÖ®
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½Ñ´ï¿½ï¿½Ú£ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ö®
 		if (m_local_address)
 		{
 			return m_local_address;
 		}
 
 		shared_ptr<Address> local_address;
-		//¸ù¾ÝsocketµÄÐ­Òé×åÎªÆä·ÖÅä¶ÔÓ¦ÀàÐÍµÄÄÚ´æ
+		//ï¿½ï¿½ï¿½ï¿½socketï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Íµï¿½ï¿½Ú´ï¿½
 		switch (m_family)
 		{
 		case AF_INET:
@@ -442,7 +442,7 @@ namespace SocketSpace
 
 		socklen_t length = local_address->getAddress_length();
 
-		//µ÷ÓÃgetsockname()º¯Êý»ñÈ¡±¾µØµØÖ·ÐÅÏ¢£¨³É¹¦·µ»Ø0£©£¬µ÷ÓÃÊ§°ÜÔò±¨´í²¢·µ»ØÎ´ÖªµØÖ·
+		//ï¿½ï¿½ï¿½ï¿½getsockname()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ò±¨´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´Öªï¿½ï¿½Ö·
 		if (getsockname(m_socket, local_address->getAddress(), &length) != 0)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -451,22 +451,22 @@ namespace SocketSpace
 			return shared_ptr<Address>(new UnknownAddress(m_family));
 		}
 
-		//Èç¹ûsocketµÄÐ­Òé×åÊÇUnix£¬»¹ÐèÒªÉèÖÃUnixµØÖ·³¤¶È
+		//ï¿½ï¿½ï¿½socketï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 		if (m_family == AF_UNIX)
 		{
-			//¼ì²éÖÇÄÜÖ¸Õë×ª»»ÊÇ·ñ°²È«
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½×ªï¿½ï¿½ï¿½Ç·ï¿½È«
 			shared_ptr<UnixAddress> address = dynamic_pointer_cast<UnixAddress>(local_address);
-			//ÉèÖÃUnixµØÖ·³¤¶È
+			//ï¿½ï¿½ï¿½ï¿½Unixï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 			address->setAddress_length(length);
 		}
 
-		//¸ù¾Ý»ñÈ¡µ½µÄ½á¹ûÉèÖÃ±¾µØµØÖ·²¢·µ»Ø
+		//ï¿½ï¿½ï¿½Ý»ï¿½È¡ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		m_local_address = local_address;
 		return m_local_address;
 	}
 
 
-	//Êä³öÐÅÏ¢µ½Á÷ÖÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ostream& Socket::dump(ostream& os)const
 	{
 		os << "[Socket socket=" << m_socket
@@ -486,22 +486,22 @@ namespace SocketSpace
 		return os;
 	}
 
-	//½áËã¶ÁÈ¡ÊÂ¼þ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Â¼ï¿½
 	bool Socket::settleRead_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::READ);
 	}
-	//½áËãÐ´ÈëÊÂ¼þ
+	//ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Â¼ï¿½
 	bool Socket::settleWrite_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::WRITE);
 	}
-	//½áËã½ÓÊÕÁ´½ÓÊÂ¼þ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 	bool Socket::settleAccept_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::READ);
 	}
-	//½áËãËùÓÐÊÂ¼þ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 	bool Socket::settleAllEvents() const
 	{
 		return IOManager::GetThis()->settleAllEvents(m_socket);
@@ -509,35 +509,35 @@ namespace SocketSpace
 			
 
 	//class Socket:public friend
-	//ÖØÔØ<<ÔËËã·û£¬ÓÃÓÚ½«ÐÅÏ¢Êä³öµ½Á÷ÖÐ
+	//ï¿½ï¿½ï¿½ï¿½<<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ostream& operator<<(ostream& os, const shared_ptr<Socket> socket)
 	{
 		return socket->dump(os);
 	}
 
 	//class Socket:private
-	//³õÊ¼»¯socketÎÄ¼þÃèÊö·û
+	//ï¿½ï¿½Ê¼ï¿½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void Socket::initializeSocket()
 	{
 		int value = 1;
 		setOption(SOL_SOCKET, SO_REUSEADDR, value);
 		if (m_type == SOCK_STREAM)
 		{
-			//½ûÓÃNagleËã·¨£¬´Ó¶øÁ¢¼´·¢ËÍÊý¾Ý°ü¶ø²»ÊÇµÈ´ý
+			//ï¿½ï¿½ï¿½ï¿½Nagleï¿½ã·¨ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÈ´ï¿½
 			setOption(IPPROTO_TCP, TCP_NODELAY, value);
 		}
 	}
-	//ÎªSocket¶ÔÏó´´½¨socketÎÄ¼þÃèÊö·û£¨ÑÓ³Ù³õÊ¼»¯£©
+	//ÎªSocketï¿½ï¿½ï¿½ó´´½ï¿½socketï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³Ù³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	void Socket::newSocket()
 	{
-		//µ÷ÓÃÔ­Ê¼µÄ¿âº¯Êý´´½¨socket
+		//ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½Ä¿âº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socket
 		m_socket = socket(m_family, m_type, m_protocol);
-		//´´½¨³É¹¦Ôò½«Æä³õÊ¼»¯£¨´ó¸ÅÂÊÊÂ¼þ£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½
 		if (SYLAR_LIKELY(m_socket != -1))
 		{
 			initializeSocket();
 		}
-		//·ñÔò±¨´í
+		//ï¿½ï¿½ï¿½ò±¨´ï¿½
 		else
 		{
 			//shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));

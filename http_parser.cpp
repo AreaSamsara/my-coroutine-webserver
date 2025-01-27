@@ -15,7 +15,7 @@ namespace HttpSpace
         HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
         HttpMethod method = CharsToHttpMethod(at);
 
-        //Èç¹ûÊÇ·Ç·¨method£¬Ö±½Ó·µ»Ø²¢·¢³ö¾¯¸æ
+        //ï¿½ï¿½ï¿½ï¿½Ç·Ç·ï¿½methodï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (method == HttpMethod::INVALID_METHOD)
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -57,7 +57,7 @@ namespace HttpSpace
         {
             version = 0x10;
         }
-        //Èç¹ûÊÇ·Ç·¨HTTP°æ±¾£¬Ö±½Ó·µ»Ø²¢·¢³ö¾¯¸æ
+        //ï¿½ï¿½ï¿½ï¿½Ç·Ç·ï¿½HTTPï¿½æ±¾ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         else
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -80,7 +80,7 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http request field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
-            //parser->setError(1002);   //ÓÐÊ±ÄþÔ¸²»±¨´íÒ²²»ÒªÒÅÂäÐÅÏ¢
+            //parser->setError(1002);   //ï¿½ï¿½Ê±ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
             return;
         }
         parser->getRequest()->setHeader(string(field, field_length), string(value, value_length));
@@ -154,7 +154,7 @@ namespace HttpSpace
         {
             version = 0x10;
         }
-        //Èç¹ûÊÇ·Ç·¨HTTP°æ±¾£¬Ö±½Ó·µ»Ø²¢·¢³ö¾¯¸æ
+        //ï¿½ï¿½ï¿½ï¿½Ç·Ç·ï¿½HTTPï¿½æ±¾ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         else
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -181,7 +181,7 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http response field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
-            //parser->setError(1002);   //ÓÐÊ±ÄþÔ¸²»±¨´íÒ²²»ÒªÒÅÂäÐÅÏ¢
+            //parser->setError(1002);   //ï¿½ï¿½Ê±ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
             return;
         }
         parser->getResponse()->setHeader(string(field, field_length), string(value, value_length));

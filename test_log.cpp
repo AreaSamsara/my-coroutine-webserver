@@ -6,21 +6,21 @@
 //	using namespace SingletonSpace;
 //	using namespace LogSpace;
 //
-//	//创建logger
+//	//锟斤拷锟斤拷logger
 //	shared_ptr<Logger> logger(new Logger);
-//	//添加StdoutLogAppender
+//	//锟斤拷锟斤拷StdoutLogAppender
 //	logger->addAppender(shared_ptr<LogAppender>(new StdoutLogAppender));
 //
-//	//添加FileLogAppender
+//	//锟斤拷锟斤拷FileLogAppender
 //	shared_ptr<FileLogAppender> file_appender(new FileLogAppender(LogLevel::DEBUG, logger->getName(), "./log.txt"));
-//	//设置FileLogAppender专属的日志模式
+//	//锟斤拷锟斤拷FileLogAppender专锟斤拷锟斤拷锟斤拷志模式
 //	shared_ptr<LogFormatter> fmt(new LogFormatter("%d%T%p%T%m%n"));
 //	file_appender->setFormatter(fmt);
 //	file_appender->setLevel(LogLevel::ERROR);
 //	logger->addAppender(file_appender);
 //
-//	//设置日志事件
-//	//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
+//	//锟斤拷锟斤拷锟斤拷志锟铰硷拷
+//	//__FILE__锟斤拷锟截碉拷前锟侥硷拷锟斤拷锟侥硷拷锟斤拷锟斤拷锟皆达拷路锟斤拷锟斤拷锟斤拷__LINE__锟斤拷锟截碉拷前锟斤拷锟斤拷锟斤拷锟斤拷;elapse为锟斤拷锟斤拷值
 //	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //
 //	event->getSstream() << "test macro info";
