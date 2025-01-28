@@ -1,11 +1,11 @@
-//#pragma once
-//#include <exception>
-//#include <boost/lexical_cast.hpp>
+// #pragma once
+// #include <exception>
+// #include <boost/lexical_cast.hpp>
 //
-//#include "log.h"
-//#include "singleton.h"
+// #include "log.h"
+// #include "singleton.h"
 //
-//namespace ConfigSpace
+// namespace ConfigSpace
 //{
 //	using namespace LogSpace;
 //	using namespace SingletonSpace;
@@ -74,7 +74,7 @@
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //			}
 //		}
-//		
+//
 //		void setValue(const T& value) { m_value = value; }
 //		const T getValue()const { return m_value; }
 //	private:
@@ -132,4 +132,4 @@
 //	private:
 //		static map<string, shared_ptr<ConfigVarBase>> s_datas;
 //	};
-//}
+// }

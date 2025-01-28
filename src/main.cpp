@@ -10,22 +10,23 @@ using namespace UtilitySpace;
 using namespace TcpServerSpace;
 using namespace ByteArraySpace;
 
-class EchoServer :public TcpServer
+class EchoServer : public TcpServer
 {
 public:
-	//服务器接受数据的类型
+	// 服务器接受数据的类型
 	enum Type
 	{
 		TEXT = 1,
 		BINARY = 0
 	};
 	EchoServer(const Type type);
-	void handleClient(shared_ptr<Socket> client_socket)override;
+	void handleClient(shared_ptr<Socket> client_socket) override;
+
 private:
 	Type m_type = TEXT;
 };
 
-EchoServer::EchoServer(const EchoServer::Type type) :m_type(type) {}
+EchoServer::EchoServer(const EchoServer::Type type) : m_type(type) {}
 
 void EchoServer::handleClient(shared_ptr<Socket> client_socket)
 {
@@ -52,7 +53,7 @@ void EchoServer::handleClient(shared_ptr<Socket> client_socket)
 		{
 			shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 			log_event->getSstream() << "client error,return_value: " << return_value
-				<< " errno=" << errno << " strerror=" << strerror(errno);
+									<< " errno=" << errno << " strerror=" << strerror(errno);
 			Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_ERROR, log_event);
 			break;
 		}
@@ -61,14 +62,14 @@ void EchoServer::handleClient(shared_ptr<Socket> client_socket)
 			bytearray->setPosition(bytearray->getPosition() + return_value);
 
 			bytearray->setPosition(0);
-			//text
+			// text
 			if (m_type == Type::TEXT)
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << bytearray->toString();
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_INFO, log_event);
 			}
-			//binary
+			// binary
 			else
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -90,10 +91,9 @@ void run(const EchoServer::Type type)
 	echo_server->start();
 }
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	//如果参数小于2个，终止程序并提示
+	// 如果参数小于2个，终止程序并提示
 	if (argc < 2)
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -102,10 +102,10 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	//服务器接受数据的类型默认设置为文本
+	// 服务器接受数据的类型默认设置为文本
 	EchoServer::Type type = EchoServer::TEXT;
 
-	//根据第二个参数设置类型
+	// 根据第二个参数设置类型
 	if (strcmp(argv[1], "-b") == 0)
 	{
 		type = EchoServer::BINARY;
