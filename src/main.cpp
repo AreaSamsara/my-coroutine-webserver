@@ -13,7 +13,7 @@ using namespace ByteArraySpace;
 class EchoServer :public TcpServer
 {
 public:
-	//�������������ݵ�����
+	//服务器接受数据的类型
 	enum Type
 	{
 		TEXT = 1,
@@ -93,7 +93,7 @@ void run(const EchoServer::Type type)
 
 int main(int argc, char** argv)
 {
-	//�������С��2������ֹ������ʾ
+	//如果参数小于2个，终止程序并提示
 	if (argc < 2)
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -102,10 +102,10 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	//�������������ݵ�����Ĭ������Ϊ�ı�
+	//服务器接受数据的类型默认设置为文本
 	EchoServer::Type type = EchoServer::TEXT;
 
-	//���ݵڶ���������������
+	//根据第二个参数设置类型
 	if (strcmp(argv[1], "-b") == 0)
 	{
 		type = EchoServer::BINARY;
