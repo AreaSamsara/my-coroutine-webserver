@@ -3,34 +3,34 @@
 namespace MutexSpace
 {
 	// class Semaphore:public
-	// ����Semaphore���󲢳�ʼ���ź���,countΪ�ź�����ʼֵ
+	// 创建Semaphore对象并初始化信号量,count为信号量初始值
 	Semaphore::Semaphore(const uint32_t count)
 	{
-		// ��ʼ���ź������ɹ��򷵻�0�����򱨴�
-		if (sem_init(&m_semaphore, 0, count) != 0) // ����0��ʾ�ڽ����ڲ�ʹ�ã�countΪ�ź�����ʼֵ
+		// 初始化信号量，成功则返回0，否则报错
+		if (sem_init(&m_semaphore, 0, count) != 0) // 参数0表示在进程内部使用，count为信号量初始值
 		{
 			throw logic_error("sem_init error");
 		}
 	}
-	// ����Semaphore���������ź���
+	// 析构Semaphore对象并销毁信号量
 	Semaphore::~Semaphore()
 	{
 		sem_destroy(&m_semaphore);
 	}
 
-	// �����߳�ֱ���ź�������0���������һ
+	// 阻塞线程直到信号量大于0，并将其减一
 	void Semaphore::wait()
 	{
-		// �����߳�ֱ���ź�������0�Ž����һ�����أ��ɹ�����0�����򱨴�
+		// 阻塞线程直到信号量大于0才将其减一并返回，成功返回0，否则报错
 		if (sem_wait(&m_semaphore) != 0)
 		{
 			throw logic_error("sem_wait error");
 		}
 	}
-	// ���ź�����һ
+	// 将信号量加一
 	void Semaphore::notify()
 	{
-		// ���ź�����һ���ɹ�����0�����򱨴�
+		// 将信号量加一，成功返回0，否则报错
 		if (sem_post(&m_semaphore) != 0)
 		{
 			throw logic_error("sem_post error");
