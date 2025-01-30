@@ -19,14 +19,14 @@
 //	public:
 //		ConfigVarBase(const string& name, const string& description = "")
 //			:m_name(name),m_description(description){}
-//		virtual ~ConfigVarBase(){}		//�������������Ӧ������Ϊ�麯��
+//		virtual ~ConfigVarBase(){}		//父类的析构函数应该设置为虚函数
 //
 //		//��ȡ������Ա
 //		const string getName()const { return m_name; }
 //		const string getDescription()const { return m_description; }
 //
-//		virtual string toString() = 0;	//���麯�����������ʵ��
-//		virtual bool fromString(const string& val) = 0;		//���麯�����������ʵ��
+//		virtual string toString() = 0; //纯虚函数，子类必须实现
+//		virtual bool fromString(const string& val) = 0;		//纯虚函数，子类必须实现
 //	protected:
 //		string m_name;
 //		string m_description;
@@ -47,12 +47,12 @@
 //			}
 //			catch (exception& e)
 //			{
-//				//������־�¼�
-//				//__FILE__���ص�ǰ�ļ����ļ������Դ�·������__LINE__���ص�ǰ��������;elapseΪ����ֵ
+//				//设置日志事件
+//				//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "ConfigVar::toString exception" << e.what()
 //					<< "convert:" << typeid(m_value).name() << " to string";
-//				//ʹ��LoggerManager������Ĭ��logger�����־
+//				//使用LoggerManager单例的默认logger输出日志
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //			}
 //			return "";
@@ -65,12 +65,12 @@
 //			}
 //			catch (exception& e)
 //			{
-//				//������־�¼�
-//				//__FILE__���ص�ǰ�ļ����ļ������Դ�·������__LINE__���ص�ǰ��������;elapseΪ����ֵ
+//				//设置日志事件
+//				//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "ConfigVar::toString exception" << e.what()
 //					<< "convert:" << typeid(m_value).name();
-//				//ʹ��LoggerManager������Ĭ��logger�����־
+//				//使用LoggerManager单例的默认logger输出日志
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //			}
 //		}
@@ -93,22 +93,22 @@
 //			auto temp = Lookup<T>(name);
 //			if (temp)
 //			{
-//				//������־�¼�
-//				//__FILE__���ص�ǰ�ļ����ļ������Դ�·������__LINE__���ص�ǰ��������;elapseΪ����ֵ
+//				//设置日志事件
+//				//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "Lookup name=" << name << "exists";
-//				//ʹ��LoggerManager������Ĭ��logger�����־
+//			    //使用LoggerManager单例的默认logger输出日志
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //				return temp;
 //			}
 //			else if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._0123456789") != string::npos)
 //			{
-//				//������־�¼�
-//				//__FILE__���ص�ǰ�ļ����ļ������Դ�·������__LINE__���ص�ǰ��������;elapseΪ����ֵ
+//				//设置日志事件
+//				//__FILE__返回当前文件的文件名（自带路径），__LINE__返回当前代码行数;elapse为测试值
 //				shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //				event->getSstream() << "Lookup name invalid ";
-//				//ʹ��LoggerManager������Ĭ��logger�����־
+//				//使用LoggerManager单例的默认logger输出日志
 //				Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::ERROR, event);
 //
 //				throw invalid_argument(name);

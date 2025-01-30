@@ -101,7 +101,7 @@ namespace LogSpace
 		stringstream m_sstream;	 // 事件内容的stringstream
 	};
 
-	// ��־�����
+	// 日志输出器
 	class Logger
 	{
 	public:
