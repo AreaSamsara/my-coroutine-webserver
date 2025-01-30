@@ -12,41 +12,41 @@
 namespace UtilitySpace
 {
 	using namespace LogSpace;
-	using std::stringstream;
-	using std::string;
-	using std::vector;
 	using std::shared_ptr;
-	
+	using std::string;
+	using std::stringstream;
+	using std::vector;
+
 #if defined __GNUC__ || defined __llvm__
-	/// LIKCLY ��ķ�װ, ���߱������Ż�,��������ʳ���
-#   define SYLAR_LIKELY(x)       __builtin_expect(!!(x), 1)
-/// LIKCLY ��ķ�װ, ���߱������Ż�,��������ʲ�����
-#   define SYLAR_UNLIKELY(x)     __builtin_expect(!!(x), 0)
+	// LIKCLY 宏的封装, 告诉编译器优化,条件大概率成立
+#define SYLAR_LIKELY(x) __builtin_expect(!!(x), 1)
+	// LIKCLY 宏的封装, 告诉编译器优化,条件大概率不成立
+#define SYLAR_UNLIKELY(x) __builtin_expect(!!(x), 0)
 #else
-#   define SYLAR_LIKELY(x)      (x)
-#   define SYLAR_UNLIKELY(x)      (x)
+#define SYLAR_LIKELY(x) (x)
+#define SYLAR_UNLIKELY(x) (x)
 #endif
 
-	//��ȡ��ǰ�߳�id
+	// 获取当前线程id
 	pid_t GetThread_id();
-	//��ȡ��ǰ�߳�����
+	// 获取当前线程名称
 	string GetThread_name();
 
-	//��ȡ��ǰЭ��id
+	// 获取当前协程id
 	uint32_t GetFiber_id();
 
-	//ʱ��ms
+	// 获取当前时间，单位为ms
 	uint64_t GetCurrentMS();
-	//ʱ��us
+	// 获取当前时间，单位为us
 	uint64_t GetCurrentUS();
 
-	void Backtrace(vector<string>& bt, const int size, const int skip = 1);
+	void Backtrace(vector<string> &bt, const int size, const int skip = 1);
 
-	string BacktraceToString(const int size = 64, const int skip = 2, const string& prefix = "");
+	string BacktraceToString(const int size = 64, const int skip = 2, const string &prefix = "");
 
-	//����ջ������ջ��Ϣ�����жϳ���
+	// 回溯栈并发送栈消息，再中断程序
 	void Assert(shared_ptr<LogEvent> event);
 
-	//����ջ������ջ��Ϣ��message�ַ��������жϳ���
-	void Assert(shared_ptr<LogEvent> event, const string& message);
+	// 回溯栈并发送栈消息和message字符串，再中断程序
+	void Assert(shared_ptr<LogEvent> event, const string &message);
 }
