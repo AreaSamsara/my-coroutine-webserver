@@ -1,7 +1,7 @@
 // #include "common/log.h"
 // #include "common/singleton.h"
 // #include "common/utility.h"
-// #include "thread.h"
+// #include "concurrent/thread.h"
 //
 // using namespace SingletonSpace;
 // using namespace LogSpace;

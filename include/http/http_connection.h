@@ -4,7 +4,7 @@
 #include "io/socket_stream.h"
 #include "http/http.h"
 #include "http/parser/uri.h"
-#include "mutex.h"
+#include "concurrent/mutex.h"
 
 namespace HttpConnectionSpace
 {

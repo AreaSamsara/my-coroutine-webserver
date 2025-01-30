@@ -3,8 +3,8 @@
 #include <sys/time.h>
 
 #include "common/singleton.h"
-#include "thread.h"
-#include "fiber.h"
+#include "concurrent/thread.h"
+#include "concurrent/fiber.h"
 
 namespace UtilitySpace
 {

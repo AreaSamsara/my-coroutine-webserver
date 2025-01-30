@@ -1,6 +1,6 @@
 #pragma once
 #include "io/stream.h"
-#include "socket.h"
+#include "tcp_ip/socket.h"
 
 namespace SocketStreamSpace
 {

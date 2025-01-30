@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
-#include "iomanager.h"
-#include "socket.h"
-#include "address.h"
+#include "concurrent/iomanager.h"
+#include "tcp_ip/socket.h"
+#include "tcp_ip/address.h"
 #include "common/noncopyable.h"
 
 namespace TcpServerSpace

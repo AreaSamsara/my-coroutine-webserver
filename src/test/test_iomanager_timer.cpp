@@ -1,14 +1,14 @@
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <arpa/inet.h>
-//#include <unistd.h>
-//#include <fcntl.h>
-//#include "iomanager.h"
+// #include <sys/types.h>
+// #include <sys/socket.h>
+// #include <arpa/inet.h>
+// #include <unistd.h>
+// #include <fcntl.h>
+// #include "concurrent/iomanager.h"
 //
 //
-//using namespace IOManagerSpace;
+// using namespace IOManagerSpace;
 //
-//void test_fiber()
+// void test_fiber()
 //{
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //	log_event->getSstream() << "test_fiber";
@@ -63,17 +63,17 @@
 //		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 //	}
 //
-//}
+// }
 //
-//void test1()
+// void test1()
 //{
 //	//IOManager iom(1,true,"test");
 //	IOManager iom(2, false, "test");
 //	iom.schedule(&test_fiber);
-//}
+// }
 //
 //
-//void timer_callback(shared_ptr<Timer> timer)
+// void timer_callback(shared_ptr<Timer> timer)
 //{
 //	static int i = 0;
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -86,10 +86,10 @@
 //		//iomanager->getTimer_manager()->resetRun_cycle(timer, 2000, true);
 //		iomanager->getTimer_manager()->cancelTimer(timer);
 //	}
-//}
+// }
 //
 //
-//void test_timer()
+// void test_timer()
 //{
 //	shared_ptr<IOManager> iomanager(new IOManager(2, true));
 //
@@ -97,11 +97,11 @@
 //	s_timer->setCallback(bind(timer_callback, s_timer));
 //
 //	iomanager->addTimer(s_timer);
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	//test1();
 //	test_timer();
 //	return 0;
-//}
+// }

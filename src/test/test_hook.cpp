@@ -1,17 +1,17 @@
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <arpa/inet.h>
+// #include <sys/types.h>
+// #include <sys/socket.h>
+// #include <arpa/inet.h>
 //
-//#include "hook.h"
-//#include "iomanager.h"
+// #include "concurrent/hook.h"
+// #include "concurrent/iomanager.h"
 //
-//using namespace IOManagerSpace;
+// using namespace IOManagerSpace;
 //
-//const char SERVER_IP[] = "93.184.215.14";	//example.com
+// const char SERVER_IP[] = "93.184.215.14";	//example.com
 ////const char SERVER_IP[] = "110.242.68.66";	//baidu.com
 //
 //
-//void test_sleep()
+// void test_sleep()
 //{
 //	IOManager iomanager(1);
 //
@@ -38,7 +38,7 @@
 //	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 //}
 //
-//void test_socket()
+// void test_socket()
 //{
 //	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 //
@@ -97,7 +97,7 @@
 //	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
 //}
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	//test_sleep();
 //	//test_socket();

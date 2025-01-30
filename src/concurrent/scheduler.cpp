@@ -1,6 +1,6 @@
-#include "scheduler.h"
+#include "concurrent/scheduler.h"
 #include "common/log.h"
-#include "hook.h"
+#include "concurrent/hook.h"
 
 namespace SchedulerSpace
 {

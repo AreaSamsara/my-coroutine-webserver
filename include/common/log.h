@@ -10,7 +10,7 @@
 
 #include <cassert>
 
-#include "mutex.h"
+#include "concurrent/mutex.h"
 
 namespace LogSpace
 {
