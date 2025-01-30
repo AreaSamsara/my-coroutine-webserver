@@ -1,8 +1,8 @@
-// #include "http_connection.h"
+// #include "http/http_connection.h"
 // #include "common/log.h"
 // #include "common/singleton.h"
 // #include "common/utility.h"
-// #include "servlet.h"
+// #include "http/servlet.h"
 // #include "iomanager.h"
 //
 // using namespace LogSpace;

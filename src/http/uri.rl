@@ -1,4 +1,4 @@
-#include "uri.h"
+#include "http/uri.h"
 #include <sstream>
 
 namespace UriSpace {

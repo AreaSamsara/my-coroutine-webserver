@@ -1,5 +1,5 @@
-#include "http_connection.h"
-#include "http_parser.h"
+#include "http/http_connection.h"
+#include "http/http_parser.h"
 #include "common/log.h"
 #include "common/utility.h"
 #include "common/singleton.h"

@@ -1,9 +1,9 @@
-// #include "http_server.h"
+// #include "http/http_server.h"
 // #include "tcp_server.h"
 // #include "common/log.h"
 // #include "common/singleton.h"
 // #include "common/utility.h"
-// #include "servlet.h"
+// #include "http/servlet.h"
 //
 // using namespace LogSpace;
 // using namespace SingletonSpace;

@@ -1,4 +1,4 @@
-#include "http_server.h"
+#include "http/http_server.h"
 
 namespace HttpServerSpace
 {
@@ -7,14 +7,14 @@ namespace HttpServerSpace
 	using namespace SingletonSpace;
 	using namespace UtilitySpace;
 
-	//class HttpServer:public
-	HttpServer::HttpServer(const bool is_keep_alive, IOManager* iomanager, IOManager* accept_iomanager)
-		:TcpServer(iomanager, accept_iomanager), m_is_keep_alive(is_keep_alive)
+	// class HttpServer:public
+	HttpServer::HttpServer(const bool is_keep_alive, IOManager *iomanager, IOManager *accept_iomanager)
+		: TcpServer(iomanager, accept_iomanager), m_is_keep_alive(is_keep_alive)
 	{
 		m_servlet_dispatch.reset(new ServletDispatch());
 	}
-	
-	//class HttpServer:protected
+
+	// class HttpServer:protected
 	void HttpServer::handleClient(shared_ptr<Socket> client_socket)
 	{
 		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -29,17 +29,16 @@ namespace HttpServerSpace
 			{
 				shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 				log_event->getSstream() << "receive http request fail,errno= " << errno
-					<< " strerror=" << strerror(errno) << " client_socket=" << client_socket << " keep_alive=" << m_is_keep_alive;
+										<< " strerror=" << strerror(errno) << " client_socket=" << client_socket << " keep_alive=" << m_is_keep_alive;
 				Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
 				break;
 			}
 
 			shared_ptr<HttpResponse> response(new HttpResponse(request->getVersion(), request->isClose() || !m_is_keep_alive));
 
-
 			m_servlet_dispatch->handle(request, response, session);
 
-			//response->setBody("hello world");
+			// response->setBody("hello world");
 			session->sendResponse(response);
 
 		} while (m_is_keep_alive);
