@@ -1,8 +1,8 @@
-#include "utility.h"
+#include "common/utility.h"
 #include <sys/syscall.h>
 #include <sys/time.h>
 
-#include "singleton.h"
+#include "common/singleton.h"
 #include "thread.h"
 #include "fiber.h"
 

@@ -1,17 +1,17 @@
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
-//#include "fiber.h"
-//#include "scheduler.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
+// #include "fiber.h"
+// #include "scheduler.h"
 //
-//using namespace SingletonSpace;
-//using namespace LogSpace;
-//using namespace FiberSpace;
-//using namespace UtilitySpace;
-//using namespace ThreadSpace;
-//using namespace SchedulerSpace;
+// using namespace SingletonSpace;
+// using namespace LogSpace;
+// using namespace FiberSpace;
+// using namespace UtilitySpace;
+// using namespace ThreadSpace;
+// using namespace SchedulerSpace;
 //
-//void test_fiber()
+// void test_fiber()
 //{
 //	static int s_count = 5;
 //
@@ -26,9 +26,9 @@
 //		Scheduler::t_scheduler->schedule(&test_fiber);
 //		//Scheduler::t_scheduler->schedule(&test_fiber,GetThread_id());
 //	}
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //	event->setSstream("main begin");
@@ -51,4 +51,4 @@
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //	return 0;
-//}
+// }

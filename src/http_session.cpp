@@ -1,8 +1,8 @@
 #include "http_session.h"
 #include "http_parser.h"
-#include "log.h"
-#include "utility.h"
-#include "singleton.h"
+#include "common/log.h"
+#include "common/utility.h"
+#include "common/singleton.h"
 
 namespace HttpSessionSpace
 {
@@ -10,19 +10,20 @@ namespace HttpSessionSpace
 	using namespace UtilitySpace;
 	using namespace SingletonSpace;
 	using std::stringstream;
-	
+
 	HttpSession::HttpSession(shared_ptr<Socket> socket, const bool is_socket_owner)
-		:SocketStream(socket, is_socket_owner) {}
+		: SocketStream(socket, is_socket_owner) {}
 
 	shared_ptr<HttpRequest> HttpSession::receiveRequest()
 	{
 		shared_ptr<HttpRequestParser> parser(new HttpRequestParser);
 		uint64_t buffer_size = HttpRequestParser::GetHttp_request_buffer_size();
-		//uint64_t buffer_size = 100;
+		// uint64_t buffer_size = 100;
 
-		shared_ptr<char> buffer(new char[buffer_size], [](char* ptr) {delete[]ptr; });
+		shared_ptr<char> buffer(new char[buffer_size], [](char *ptr)
+								{ delete[] ptr; });
 
-		char* data = buffer.get();
+		char *data = buffer.get();
 		int offset = 0;
 
 		while (true)
@@ -72,7 +73,7 @@ namespace HttpSessionSpace
 		{
 			string body;
 			body.resize(content_length);
-			
+
 			int length = 0;
 			if (content_length >= offset)
 			{

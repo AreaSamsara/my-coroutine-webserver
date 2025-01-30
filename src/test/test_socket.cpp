@@ -1,6 +1,6 @@
 // #include "address.h"
-// #include "log.h"
-// #include "singleton.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
 // #include "socket.h"
 // #include "iomanager.h"
 
@@ -9,7 +9,6 @@
 // using namespace SingletonSpace;
 // using namespace SocketSpace;
 // using namespace IOManagerSpace;
-
 
 // void test_socket()
 // {

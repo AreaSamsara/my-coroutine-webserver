@@ -1,15 +1,15 @@
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
-//#include "fiber.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
+// #include "fiber.h"
 //
-//using namespace SingletonSpace;
-//using namespace LogSpace;
-//using namespace FiberSpace;
-//using namespace UtilitySpace;
-//using namespace ThreadSpace;
+// using namespace SingletonSpace;
+// using namespace LogSpace;
+// using namespace FiberSpace;
+// using namespace UtilitySpace;
+// using namespace ThreadSpace;
 //
-//void run_in_fiber()
+// void run_in_fiber()
 //{
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //
@@ -22,9 +22,9 @@
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //	Fiber::YieldTOHold();
-//}
+// }
 //
-//void test_fiber()
+// void test_fiber()
 //{
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //	event->setSstream("main begin");
@@ -52,9 +52,9 @@
 //
 //	event->setSstream("main end");
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	vector<shared_ptr<Thread>> threads;
 //
@@ -69,4 +69,4 @@
 //	}
 //
 //	return 0;
-//}
+// }

@@ -2,8 +2,8 @@
 // #include <exception>
 // #include <boost/lexical_cast.hpp>
 //
-// #include "log.h"
-// #include "singleton.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
 //
 // namespace ConfigSpace
 //{

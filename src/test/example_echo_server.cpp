@@ -1,18 +1,18 @@
-//#include "tcp_server.h"
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
-//#include "bytearray.h"
+// #include "tcp_server.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
+// #include "bytearray.h"
 //
-//using namespace LogSpace;
-//using namespace SingletonSpace;
-//using namespace UtilitySpace;
-//using namespace TcpServerSpace;
-//using namespace ByteArraySpace;
+// using namespace LogSpace;
+// using namespace SingletonSpace;
+// using namespace UtilitySpace;
+// using namespace TcpServerSpace;
+// using namespace ByteArraySpace;
 //
-//class EchoServer :public TcpServer
+// class EchoServer :public TcpServer
 //{
-//public:
+// public:
 //	//�������������ݵ�����
 //	enum Type
 //	{
@@ -21,13 +21,13 @@
 //	};
 //	EchoServer(const Type type);
 //	void handleClient(shared_ptr<Socket> client_socket)override;
-//private:
+// private:
 //	Type m_type = TEXT;
-//};
+// };
 //
-//EchoServer::EchoServer(const EchoServer::Type type) :m_type(type) {}
+// EchoServer::EchoServer(const EchoServer::Type type) :m_type(type) {}
 //
-//void EchoServer::handleClient(shared_ptr<Socket> client_socket)
+// void EchoServer::handleClient(shared_ptr<Socket> client_socket)
 //{
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //	log_event->getSstream() << "handleClient: " << client_socket;
@@ -77,9 +77,9 @@
 //			}
 //		}
 //	}
-//}
+// }
 //
-//void run(const EchoServer::Type type)
+// void run(const EchoServer::Type type)
 //{
 //	shared_ptr<EchoServer> echo_server(new EchoServer(type));
 //	auto address = Address::LookupAny("0.0.0.0:8020");
@@ -88,10 +88,10 @@
 //		sleep(2);
 //	}
 //	echo_server->start();
-//}
+// }
 //
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	//�������С��2������ֹ������ʾ
 //	if (argc < 2)
@@ -114,4 +114,4 @@
 //	IOManager iomanager;
 //	iomanager.schedule(std::bind(&run, type));
 //	return 0;
-//}
+// }

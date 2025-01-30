@@ -1,16 +1,16 @@
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
-//#include "thread.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
+// #include "thread.h"
 //
-//using namespace SingletonSpace;
-//using namespace LogSpace;
-//using namespace ThreadSpace;
+// using namespace SingletonSpace;
+// using namespace LogSpace;
+// using namespace ThreadSpace;
 //
-//SpinLock s_mutex;
-//volatile int count = 0;
+// SpinLock s_mutex;
+// volatile int count = 0;
 //
-//void func1()
+// void func1()
 //{
 //	shared_ptr<LogEvent> event(new LogEvent(__FILE__, __LINE__, 0, time(0)));
 //	event->getSstream() << " name: " << Thread::getThis()->getName()
@@ -24,9 +24,9 @@
 //		//ReadScopedLock<RWMutex> lock(s_mutex);
 //		++count;
 //	}
-//}
+// }
 //
-//void func2()
+// void func2()
 //{
 //	while (true)
 //	{
@@ -34,9 +34,9 @@
 //		event->setSstream("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 //		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //	}
-//}
+// }
 //
-//void func3()
+// void func3()
 //{
 //	while (true)
 //	{
@@ -44,9 +44,9 @@
 //		event->setSstream("==============================");
 //		Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //	}
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	//������־�¼�
 //	//__FILE__���ص�ǰ�ļ����ļ������Դ�·������__LINE__���ص�ǰ��������;elapseΪ����ֵ
@@ -79,4 +79,4 @@
 //	Singleton<LoggerManager>::GetInstance_shared_ptr()->getDefault_logger()->log(LogLevel::INFO, event);
 //
 //	return 0;
-//}
+// }

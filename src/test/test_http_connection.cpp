@@ -1,19 +1,19 @@
-//#include "http_connection.h"
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
-//#include "servlet.h"
-//#include "iomanager.h"
+// #include "http_connection.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
+// #include "servlet.h"
+// #include "iomanager.h"
 //
-//using namespace LogSpace;
-//using namespace SingletonSpace;
-//using namespace UtilitySpace;
-//using namespace HttpConnectionSpace;
-//using namespace ByteArraySpace;
-//using namespace HttpSpace;
-//using namespace IOManagerSpace;
+// using namespace LogSpace;
+// using namespace SingletonSpace;
+// using namespace UtilitySpace;
+// using namespace HttpConnectionSpace;
+// using namespace ByteArraySpace;
+// using namespace HttpSpace;
+// using namespace IOManagerSpace;
 //
-//void test_pool()
+// void test_pool()
 //{
 //	shared_ptr<HttpConnectionPool> connection_pool(new HttpConnectionPool("www.baidu.com", "", 80, 10, 1000 * 30, 5));
 //
@@ -32,9 +32,9 @@
 //		}
 //	, true));
 //	IOManager::GetThis()->addTimer(timer);
-//}
+// }
 //
-//void run()
+// void run()
 //{
 //	shared_ptr<Address> address = Address::LookupAnyIPAddress("www.baidu.com:80");
 //	//������ҵ�ַʧ�ܣ�����
@@ -94,7 +94,7 @@
 //	auto get_result = HttpConnection::DoGet("http://www.baidu.com", 300);
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
-//		log_event->getSstream() 
+//		log_event->getSstream()
 //			<< "result=" << get_result->m_result
 //			<< " error=" << get_result->m_error
 //			<< " response=" << (get_result->m_response ? get_result->m_response->toString() : "nullptr");
@@ -111,11 +111,11 @@
 //
 //
 //	test_pool();
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	IOManager iomanager(2);
 //	iomanager.schedule(run);
 //	return 0;
-//}
+// }

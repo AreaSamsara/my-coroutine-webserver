@@ -1,7 +1,7 @@
-//#include "log.h"
-//#include "singleton.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	using namespace SingletonSpace;
 //	using namespace LogSpace;
@@ -30,4 +30,4 @@
 //	logger->log(LogLevel::ERROR, event);
 //
 //	return 0;
-//}
+// }

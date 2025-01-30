@@ -1,7 +1,7 @@
 #include "tcp_server.h"
-#include "log.h"
-#include "singleton.h"
-#include "utility.h"
+#include "common/log.h"
+#include "common/singleton.h"
+#include "common/utility.h"
 #include "bytearray.h"
 
 using namespace LogSpace;

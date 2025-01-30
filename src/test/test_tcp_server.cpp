@@ -1,15 +1,15 @@
-//#include "tcp_server.h"
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
+// #include "tcp_server.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
 //
-//using namespace LogSpace;
-//using namespace SingletonSpace;
-//using namespace UtilitySpace;
-//using namespace TcpServerSpace;
+// using namespace LogSpace;
+// using namespace SingletonSpace;
+// using namespace UtilitySpace;
+// using namespace TcpServerSpace;
 //
 //
-//void test()
+// void test()
 //{
 //	auto address = Address::LookupAny("0.0.0.0:8033");
 //	auto unix_addres = shared_ptr<UnixAddress>(new UnixAddress("/tmp/unix_address"));
@@ -30,12 +30,12 @@
 //		sleep(2);
 //	}
 //	tcp_server->start();
-//}
+// }
 //
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	IOManager iomanager(2);
 //	iomanager.schedule(test);
 //	return 0;
-//}
+// }

@@ -1,17 +1,17 @@
-//#include "bytearray.h"
-//#include "utility.h"
-//#include "log.h"
-//#include "utility.h"
-//#include "singleton.h"
+// #include "bytearray.h"
+// #include "common/utility.h"
+// #include "common/log.h"
+// #include "common/utility.h"
+// #include "common/singleton.h"
 //
-//using namespace ByteArraySpace;
-//using namespace UtilitySpace;
-//using namespace SingletonSpace;
-//using namespace LogSpace;
-//using std::shared_ptr;
+// using namespace ByteArraySpace;
+// using namespace UtilitySpace;
+// using namespace SingletonSpace;
+// using namespace LogSpace;
+// using std::shared_ptr;
 //
 //
-//void test()
+// void test()
 //{
 //	int count = 100, base_size = 1;
 //
@@ -69,9 +69,9 @@
 //	shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //	log_event->getSstream() << "write/read count=" << count << " base_size=" << base_size << " size=" << bytearray->getData_size();
 //	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-//}
+// }
 //
-//void test_file()
+// void test_file()
 //{
 //	int count = 100, base_size = 1;
 //
@@ -164,12 +164,12 @@
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //		Assert(log_event);
 //	}
-//}
+// }
 //
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	test();
 //	test_file();
 //	return 0;
-//}
+// }

@@ -1,21 +1,21 @@
-//#include "http_parser.h"
-//#include "log.h"
-//#include "singleton.h"
-//#include "utility.h"
+// #include "http_parser.h"
+// #include "common/log.h"
+// #include "common/singleton.h"
+// #include "common/utility.h"
 //
-//using namespace LogSpace;
-//using namespace SingletonSpace;
-//using namespace UtilitySpace;
-//using namespace HttpSpace;
+// using namespace LogSpace;
+// using namespace SingletonSpace;
+// using namespace UtilitySpace;
+// using namespace HttpSpace;
 //
-//const char test_request_data[] =
+// const char test_request_data[] =
 //"POST / HTTP/1.1\r\n"
 //"Host: www.sylar.top\r\n"
 //"Content-Length: 10\r\n\r\n"
 //"1234567890";
 //
 //
-//void test_request()
+// void test_request()
 //{
 //	HttpRequestParser parser;
 //	string tempstr = test_request_data;
@@ -32,9 +32,9 @@
 //	log_event->getSstream() << parser.getRequest()->toString() << endl
 //		<< tempstr;
 //	Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-//}
+// }
 //
-//const char test_response_data[] = "HTTP/1.1 200 OK\r\n"
+// const char test_response_data[] = "HTTP/1.1 200 OK\r\n"
 //"Date: Tue, 04 Jun 2019 15:43:56 GMT\r\n"
 //"Server: Apache\r\n"
 //"Last-Modified: Tue, 12 Jan 2010 13:48:00 GMT\r\n"
@@ -49,7 +49,7 @@
 //"<meta http-equiv=\"refresh\" content=\"0;url=http://www.baidu.com/\">\r\n"
 //"</html>\r\n";
 //
-//void test_response()
+// void test_response()
 //{
 //	HttpResponseParser parser;
 //	string tempstr = test_response_data;
@@ -64,12 +64,12 @@
 //		<< " content_length=" << parser.getContentLength() << endl;
 //	tempstr.resize(tempstr.size() - return_value);
 //	log_event->getSstream() << parser.getResponse()->toString() << endl
-//		<< tempstr; 
+//		<< tempstr;
 //
 //		Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::INFO, log_event);
-//}
+// }
 //
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //	test_request();
 //
@@ -80,4 +80,4 @@
 //	test_response();
 //
 //	return 0;
-//}
+// }

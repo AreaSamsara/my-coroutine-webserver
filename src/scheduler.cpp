@@ -1,5 +1,5 @@
 #include "scheduler.h"
-#include "log.h"
+#include "common/log.h"
 #include "hook.h"
 
 namespace SchedulerSpace
