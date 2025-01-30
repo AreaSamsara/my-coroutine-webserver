@@ -1,6 +1,6 @@
 
 #line 1 "uri.rl"
-#include "http/uri.h"
+#include "http/parser/uri.h"
 #include <sstream>
 
 namespace UriSpace

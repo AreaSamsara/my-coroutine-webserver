@@ -1,7 +1,7 @@
 #pragma once
 #include "tcp_server.h"
-#include "http/http_session.h"
-#include "http/servlet.h"
+#include "http/server/http_session.h"
+#include "http/server/servlet.h"
 
 namespace HttpServerSpace
 {

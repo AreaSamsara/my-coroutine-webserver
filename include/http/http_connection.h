@@ -3,7 +3,7 @@
 #include <list>
 #include "socket_stream.h"
 #include "http/http.h"
-#include "http/uri.h"
+#include "http/parser/uri.h"
 #include "mutex.h"
 
 namespace HttpConnectionSpace

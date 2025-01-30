@@ -2,7 +2,7 @@
 // #include "common/log.h"
 // #include "common/singleton.h"
 // #include "common/utility.h"
-// #include "http/servlet.h"
+// #include "http/server/servlet.h"
 // #include "iomanager.h"
 //
 // using namespace LogSpace;

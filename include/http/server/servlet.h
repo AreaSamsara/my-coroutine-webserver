@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include "http/http.h"
-#include "http/http_session.h"
+#include "http/server/http_session.h"
 #include "mutex.h"
 
 namespace ServletSpace
