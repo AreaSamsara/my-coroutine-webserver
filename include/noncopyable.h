@@ -2,17 +2,17 @@
 
 namespace NoncopyableSpace
 {
-	//���ɸ����࣬��Ϊ���౻�̳�
+	// 不可复制类，作为基类被继承
 	class Noncopyable
 	{
 	public:
-		//��ʽ����Ĭ�Ϲ��캯��
+		// 显式声明默认构造函数
 		Noncopyable() = default;
-		//��ʽ����Ĭ����������
+		// 显式声明默认析构函数
 		~Noncopyable() = default;
-		//���ƹ��캯�������ã�
-		Noncopyable(const Noncopyable&) = delete;
-		//��ֵ����������ã�
-		Noncopyable& operator=(const Noncopyable&) = delete;
+		// 复制构造函数（禁用）
+		Noncopyable(const Noncopyable &) = delete;
+		// 赋值运算符（禁用）
+		Noncopyable &operator=(const Noncopyable &) = delete;
 	};
 }
