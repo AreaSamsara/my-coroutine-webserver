@@ -19,57 +19,57 @@ namespace MutexSpace
 	using std::memory_order_release;
 
 	/*
-	 * ���ϵ��
-	 * ScopedLock,ReadScopedLock,WriteScopedLockΪ������ϵ�У����ڹ���������ϵ��
-	 * ���ȴ�����������������Ҫ����ʱ�����䴴�������߶�����ݻ������������߶����������ڽ���ʱ�Զ�����
+	 * 类关系：
+	 * ScopedLock,ReadScopedLock,WriteScopedLock为监视者系列，用于管理互斥锁系列
+	 * 事先创建互斥锁对象，在需要锁定时再用其创建监视者对象操纵互斥锁，监视者对象生命周期结束时自动解锁
 	 */
 	/*
-	 * ������ϵͳ���÷�����
-	 * 1.�ӻ�����ϵ�кͼ�����ϵ���зֱ�ѡ����ʵ��࣬���ȴ�������������
-	 * 2.�ٽ�����������Ϊ���������ģ��������û��������󴴽������߶���
-	 * 3.�����߶���һ��������ִ���������ܣ�ֱ���������ڽ���ʱ�Զ�����
+	 * 互斥锁系统调用方法：
+	 * 1.从互斥锁系列和监视者系列中分别选择合适的类，事先创建互斥锁对象
+	 * 2.再将互斥锁类作为监视者类的模板参数，用互斥锁对象创建监视者对象
+	 * 3.监视者对象一经创建便执行锁定功能，直到生命周期结束时自动解锁
 	 */
 	/*
-	 * �ź������÷�����
-	 * 1.���ȴ����ź�������
-	 * 2.��Ҫ��������ʱ���ź����������wait()����
-	 * 3.��Ҫ��������ʱ���ź����������notify()����
+	 * 信号量调用方法：
+	 * 1.事先创建信号量对象
+	 * 2.需要阻塞进程时令信号量对象调用wait()方法
+	 * 3.需要继续运行时令信号量对象调用notify()方法
 	 */
 
-	// ������ϵ��
-	class Mutex;				// ͨ�û�����
-	class NullMutex;			// �ջ����������ڵ���
-	class Mutex_Read_Write;		// ��/д������
-	class NullMutex_Read_Write; // �ն�/д�����������ڵ���
-	class SpinLock;				// ���������滻�ϵ��ٵ�Mutex
-	class CASLock;				// ԭ����
+	// 互斥锁系列
+	class Mutex;				// 通用互斥锁
+	class NullMutex;			// 空互斥锁，用于调试
+	class Mutex_Read_Write;		// 读/写互斥锁
+	class NullMutex_Read_Write; // 空读/写互斥锁，用于调试
+	class SpinLock;				// 自旋锁，替换较低速的Mutex
+	class CASLock;				// 原子锁
 
-	class Semaphore; // �ź�����
+	class Semaphore; // 信号量类
 
-	// ������ϵ��
+	// 监视者系列
 
-	// �����ӵ�ͨ�û�����
+	// 被监视的通用互斥锁
 	template <class T>
 	class ScopedLock
 	{
 	public:
-		// ����ScopedLock���󲢽�����������
+		// 创建ScopedLock对象并将互斥锁锁定
 		ScopedLock(T &mutex) : m_mutex(mutex)
 		{
 			m_mutex.lock();
 			m_is_locked = true;
 		}
 
-		// ����ScopedLock���󲢽�����������
+		// 析构ScopedLock对象并将互斥锁解锁
 		~ScopedLock()
 		{
 			unlock();
 		}
 
-		// ����
+		// 锁定
 		void lock()
 		{
-			// ���������δ������������
+			// 如果互斥锁未锁定，锁定之
 			if (!m_is_locked)
 			{
 				m_mutex.lock();
@@ -77,10 +77,10 @@ namespace MutexSpace
 			}
 		}
 
-		// ����
+		// 解锁
 		void unlock()
 		{
-			// ����������������������
+			// 如果互斥锁已锁定，解锁之
 			if (m_is_locked)
 			{
 				m_mutex.unlock();
@@ -89,32 +89,32 @@ namespace MutexSpace
 		}
 
 	private:
-		T &m_mutex;		  // ������
-		bool m_is_locked; // ����״̬
+		T &m_mutex;		  // 互斥锁
+		bool m_is_locked; // 锁定状态
 	};
 
-	// �����ӵĶ�ȡ��
+	// 被监视的读取锁
 	template <class T>
 	class ReadScopedLock
 	{
 	public:
-		// ����ReadScopedLock���󲢽���ȡ������
+		// 创建ReadScopedLock对象并将读取锁锁定
 		ReadScopedLock(T &mutex) : m_mutex(mutex)
 		{
 			m_mutex.read_lock();
 			m_locked = true;
 		}
 
-		// ����ReadScopedLock���󲢽���ȡ������
+		// 析构ReadScopedLock对象并将读取锁解锁
 		~ReadScopedLock()
 		{
 			unlock();
 		}
 
-		// ����
+		// 锁定
 		void lock()
 		{
-			// �����ȡ��δ������������
+			// 如果读取锁未锁定，锁定之
 			if (!m_locked)
 			{
 				m_mutex.read_lock();
@@ -122,10 +122,10 @@ namespace MutexSpace
 			}
 		}
 
-		// ����
+		// 解锁
 		void unlock()
 		{
-			// �����ȡ���������������
+			// 如果读取锁已锁定，解锁之
 			if (m_locked)
 			{
 				m_mutex.unlock();
@@ -134,32 +134,32 @@ namespace MutexSpace
 		}
 
 	private:
-		T &m_mutex;	   // ��ȡ��
-		bool m_locked; // ����״̬
+		T &m_mutex;	   // 读取锁
+		bool m_locked; // 锁定状态
 	};
 
-	// �����ӵ�д����
+	// 被监视的写入锁
 	template <class T>
 	class WriteScopedLock
 	{
 	public:
-		// ����WriteScopedLock���󲢽�д��������
+		// 创建WriteScopedLock对象并将写入锁锁定
 		WriteScopedLock(T &mutex) : m_mutex(mutex)
 		{
 			m_mutex.write_lock();
 			m_locked = true;
 		}
 
-		// ����WriteScopedLock���󲢽�д��������
+		// 析构WriteScopedLock对象并将写入锁解锁
 		~WriteScopedLock()
 		{
 			unlock();
 		}
 
-		// ����
+		// 锁定
 		void lock()
 		{
-			// ���д����δ������������
+			// 如果写入锁未锁定，锁定之
 			if (!m_locked)
 			{
 				m_mutex.write_lock();
@@ -167,10 +167,10 @@ namespace MutexSpace
 			}
 		}
 
-		// ����
+		// 解锁
 		void unlock()
 		{
-			// ���д�����������������
+			// 如果写入锁已锁定，解锁之
 			if (m_locked)
 			{
 				m_mutex.unlock();
@@ -179,136 +179,138 @@ namespace MutexSpace
 		}
 
 	private:
-		T &m_mutex;	   // д����
-		bool m_locked; // ����״̬
+		T &m_mutex;	   // 写入锁
+		bool m_locked; // 锁定状态
 	};
 
-	// ������ϵ��
+	// 互斥锁系列
 
-	// ͨ�û���������ֹ����
+	// 通用互斥锁，禁止复制
 	class Mutex : private Noncopyable
 	{
 	public:
-		// ����Mutex_Read_Write���󲢳�ʼ����/д��
+		// 创建Mutex_Read_Write对象并初始化读/写锁
 		Mutex()
 		{
 			pthread_mutex_init(&m_mutex, nullptr);
 		}
 
-		// ����Mutex_Read_Write�������ٶ�/д��
+		// 析构Mutex_Read_Write对象并销毁读/写锁
 		~Mutex()
 		{
 			pthread_mutex_destroy(&m_mutex);
 		}
 
-		// ����������
+		// 锁定互斥锁
 		void lock()
 		{
 			pthread_mutex_lock(&m_mutex);
 		}
 
-		// ����������
+		// 解锁互斥锁
 		void unlock()
 		{
 			pthread_mutex_unlock(&m_mutex);
 		}
 
 	private:
-		pthread_mutex_t m_mutex; // ������
+		pthread_mutex_t m_mutex; // 互斥锁
 	};
-	// �ջ���������ֹ���ƣ����ڵ���
+	// 空互斥锁，禁止复制，用于调试
 	class NullMutex : private Noncopyable
 	{
 	public:
-		// ʲô������
+		// 什么都不做
 		NullMutex() {}
 		~NullMutex() {}
-		// ����������
+		// 锁定互斥锁
 		void lock() {}
-		// ����������
+		// 解锁互斥锁
 		void unlock() {}
 	};
 
-	// ��/д����������ֹ����
+	// 读/写互斥锁，禁止复制
 	class Mutex_Read_Write : private Noncopyable
 	{
 	public:
-		// ����Mutex_Read_Write���󲢳�ʼ����/д��
+		// 创建Mutex_Read_Write对象并初始化读/写锁
 		Mutex_Read_Write()
 		{
 			pthread_rwlock_init(&m_lock, nullptr);
 		}
 
-		// ����Mutex_Read_Write�������ٶ�/д��
+		// 析构Mutex_Read_Write对象并销毁读/写锁
 		~Mutex_Read_Write()
 		{
 			pthread_rwlock_destroy(&m_lock);
 		}
 
-		// ������ȡ��
+		// 锁定读取锁
 		void read_lock()
 		{
 			pthread_rwlock_rdlock(&m_lock);
 		}
 
-		// ����д����
+		// 锁定写入锁
 		void write_lock()
 		{
 			pthread_rwlock_wrlock(&m_lock);
 		}
 
-		// ������/д��
+		// 解锁读/写锁
 		void unlock()
 		{
 			pthread_rwlock_unlock(&m_lock);
 		}
 
 	private:
-		pthread_rwlock_t m_lock; // ��/д������
+		pthread_rwlock_t m_lock; // 读/写互斥锁
 	};
-	// �ն�/д����������ֹ����,���ڵ���
+	// 空读/写互斥锁，禁止复制,用于调试
 	class NullMutex_Read_Write : private Noncopyable
 	{
 	public:
-		// ʲô������
+		// 什么都不做
 		NullMutex_Read_Write() {}
 		~NullMutex_Read_Write() {}
-		// ������ȡ��
+		// 锁定读取锁
 		void read_lock() {}
-		// ����д����
+		// 锁定写入锁
 		void write_lock() {}
-		// ������/д��
+		// 锁定读/写锁
 		void unlock() {}
 	};
 
-	// ����������ֹ����
+	// 自旋锁，禁止复制
 	class SpinLock : private Noncopyable
 	{
 	public:
+		// 创建SpinLock对象并初始化自旋锁
 		SpinLock()
 		{
 			pthread_spin_init(&m_mutex, 0);
 		}
+		// 析构SpinLock对象并销毁自旋锁
 		~SpinLock()
 		{
 			pthread_spin_destroy(&m_mutex);
 		}
-
+		// 锁定自旋锁
 		void lock()
 		{
 			pthread_spin_lock(&m_mutex);
 		}
-
+		// 解锁自旋锁
 		void unlock()
 		{
 			pthread_spin_unlock(&m_mutex);
 		}
 
 	private:
-		pthread_spinlock_t m_mutex;
+		pthread_spinlock_t m_mutex; // 自旋互斥锁
 	};
 
-	// ԭ��������ֹ����
+	// 原子锁，禁止复制
 	class CASLock : private Noncopyable
 	{
 	public:
@@ -336,21 +338,21 @@ namespace MutexSpace
 		volatile atomic_flag m_mutex;
 	};
 
-	// �ź����࣬��ֹ����
+	// 信号量类，禁止复制
 	class Semaphore : private Noncopyable
 	{
 	public:
-		// ����Semaphore���󲢳�ʼ���ź���,countΪ�ź�����ʼֵ
+		// 创建Semaphore对象并初始化信号量,count为信号量初始值
 		Semaphore(const uint32_t count = 0);
-		// ����Semaphore���������ź���
+		// 析构Semaphore对象并销毁信号量
 		~Semaphore();
 
-		// �����߳�ֱ���ź�������0���������һ
+		// 阻塞线程直到信号量大于0，并将其减一
 		void wait();
-		// ���ź�����һ
+		// 将信号量加一
 		void notify();
 
 	private:
-		sem_t m_semaphore; // �ź���
+		sem_t m_semaphore; // 信号量
 	};
 }
