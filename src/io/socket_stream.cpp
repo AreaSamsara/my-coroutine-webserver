@@ -1,4 +1,4 @@
-#include "socket_stream.h"
+#include "io/socket_stream.h"
 
 namespace SocketStreamSpace
 {
@@ -6,7 +6,7 @@ namespace SocketStreamSpace
 	using namespace SocketSpace;
 
 	SocketStream::SocketStream(shared_ptr<Socket> socket, const bool is_socket_owner)
-		:m_socket(socket), m_is_socket_owner(is_socket_owner){}
+		: m_socket(socket), m_is_socket_owner(is_socket_owner) {}
 	SocketStream::~SocketStream()
 	{
 		if (m_is_socket_owner && m_socket)
@@ -15,7 +15,7 @@ namespace SocketStreamSpace
 		}
 	}
 
-	int SocketStream::read(void* buffer, const size_t read_length)
+	int SocketStream::read(void *buffer, const size_t read_length)
 	{
 		if (m_socket && m_socket->isConnected())
 		{
@@ -32,7 +32,7 @@ namespace SocketStreamSpace
 		{
 			vector<iovec> iovectors;
 			bytearray->getWriteBuffers(iovectors, read_length);
-			int return_value=m_socket->recv(&iovectors[0], iovectors.size());
+			int return_value = m_socket->recv(&iovectors[0], iovectors.size());
 			if (return_value > 0)
 			{
 				bytearray->setPosition(bytearray->getPosition() + return_value);
@@ -45,7 +45,7 @@ namespace SocketStreamSpace
 		}
 	}
 
-	int SocketStream::write(const void* buffer, const size_t write_length)
+	int SocketStream::write(const void *buffer, const size_t write_length)
 	{
 		if (m_socket && m_socket->isConnected())
 		{

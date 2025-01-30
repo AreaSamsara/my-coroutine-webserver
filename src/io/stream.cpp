@@ -1,15 +1,15 @@
-#include "stream.h"
+#include "io/stream.h"
 
 namespace StreamSpace
 {
-	int Stream::read_fixed_size(void* buffer, const size_t read_length)
+	int Stream::read_fixed_size(void *buffer, const size_t read_length)
 	{
 		size_t offset = 0;
 		size_t length_to_read = read_length;
 		while (length_to_read > 0)
 		{
-			size_t return_value = read((char*)buffer + offset, length_to_read);
-			//���read()����������ֱ�ӷ��ظ�ֵ
+			size_t return_value = read((char *)buffer + offset, length_to_read);
+			// ���read()����������ֱ�ӷ��ظ�ֵ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -19,13 +19,13 @@ namespace StreamSpace
 		}
 		return read_length;
 	}
-	int Stream::read_fixed_size(shared_ptr<ByteArray> bytearray,const size_t read_length)
+	int Stream::read_fixed_size(shared_ptr<ByteArray> bytearray, const size_t read_length)
 	{
 		size_t length_to_read = read_length;
 		while (length_to_read > 0)
 		{
 			size_t return_value = read(bytearray, length_to_read);
-			//���read()����������ֱ�ӷ��ظ�ֵ
+			// ���read()����������ֱ�ӷ��ظ�ֵ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -35,14 +35,14 @@ namespace StreamSpace
 		return read_length;
 	}
 
-	int Stream::write_fixed_size(const void* buffer, const size_t write_length)
+	int Stream::write_fixed_size(const void *buffer, const size_t write_length)
 	{
 		size_t offset = 0;
 		size_t length_to_write = write_length;
 		while (length_to_write > 0)
 		{
-			size_t return_value = write((char*)buffer + offset, length_to_write);
-			//���write()����������ֱ�ӷ��ظ�ֵ
+			size_t return_value = write((char *)buffer + offset, length_to_write);
+			// ���write()����������ֱ�ӷ��ظ�ֵ
 			if (return_value <= 0)
 			{
 				return return_value;
@@ -58,7 +58,7 @@ namespace StreamSpace
 		while (length_to_write > 0)
 		{
 			size_t return_value = write(bytearray, length_to_write);
-			//���write()����������ֱ�ӷ��ظ�ֵ
+			// ���write()����������ֱ�ӷ��ظ�ֵ
 			if (return_value <= 0)
 			{
 				return return_value;

@@ -2,7 +2,7 @@
 // #include "common/log.h"
 // #include "common/singleton.h"
 // #include "common/utility.h"
-// #include "bytearray.h"
+// #include "io/bytearray.h"
 //
 // using namespace LogSpace;
 // using namespace SingletonSpace;
