@@ -124,7 +124,7 @@ namespace LogSpace
 		setFormatter(formatter);
 	}
 
-	// 读取或修改日志等级
+	// 获取或修改日志等级
 	LogLevel::Level Logger::getlevel()
 	{
 		// 先监视互斥锁，保护m_level
