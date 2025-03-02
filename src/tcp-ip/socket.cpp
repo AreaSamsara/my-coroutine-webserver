@@ -20,9 +20,10 @@ namespace SocketSpace
 			m_is_connected = true;
 		}
 	}
-	// ����֮ǰ�ر�socket
+
 	Socket::~Socket()
 	{
+		// 析构之前关闭socket
 		close();
 	}
 
