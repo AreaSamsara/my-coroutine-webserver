@@ -1,6 +1,6 @@
-#include "tcp_ip/socket.h"
+#include "tcp-ip/socket.h"
 #include <netinet/tcp.h>
-#include "tcp_ip/fdmanager.h"
+#include "tcp-ip/fdmanager.h"
 #include "concurrent/hook.h"
 
 namespace SocketSpace
