@@ -26,23 +26,22 @@ namespace ServletSpace
 
 	void ServletDispatch::addServlet(const string &uri, shared_ptr<Servlet> servlet)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas[uri] = servlet;
 	}
 
-	void ServletDispatch::addServlet(const string &uri, function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response,
-																		 shared_ptr<HttpSession> session)>
-															callback)
+	void ServletDispatch::addServlet(const string &uri,
+									 function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response, shared_ptr<HttpSession> session)> callback)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas[uri].reset(new FunctionServlet(callback));
 	}
 
 	void ServletDispatch::addGlobServlet(const string &uri, shared_ptr<Servlet> servlet)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
@@ -55,23 +54,21 @@ namespace ServletSpace
 		m_globs.push_back(make_pair(uri, servlet));
 	}
 
-	void ServletDispatch::addGlobServlet(const string &uri, function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response,
-																			 shared_ptr<HttpSession> session)>
-																callback)
+	void ServletDispatch::addGlobServlet(const string &uri, function<int32_t(shared_ptr<HttpRequest> request, shared_ptr<HttpResponse> response, shared_ptr<HttpSession> session)> callback)
 	{
 		return addGlobServlet(uri, shared_ptr<FunctionServlet>(new FunctionServlet(callback)));
 	}
 
 	void ServletDispatch::deleteServlet(const string &uri)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		m_datas.erase(uri);
 	}
 
 	void ServletDispatch::deleteGlobServlet(const string &uri)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
@@ -85,7 +82,7 @@ namespace ServletSpace
 
 	shared_ptr<Servlet> ServletDispatch::getServlet(const string &uri)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		auto iterator = m_datas.find(uri);
 		return iterator == m_datas.end() ? nullptr : iterator->second;
@@ -93,7 +90,7 @@ namespace ServletSpace
 
 	shared_ptr<Servlet> ServletDispatch::getGlobServlet(const string &uri)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
@@ -107,7 +104,7 @@ namespace ServletSpace
 
 	shared_ptr<Servlet> ServletDispatch::getMatched_servlet(const string &uri)
 	{
-		// �ȼ��ӻ�����������
+		// 先监视互斥锁，保护
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
 		auto iterator = m_datas.find(uri);
 		if (iterator != m_datas.end())
@@ -117,7 +114,7 @@ namespace ServletSpace
 
 		for (auto iterator = m_globs.begin(); iterator != m_globs.end(); ++iterator)
 		{
-			// ����ɹ�ƥ�䣨����0��
+			// 如果成功匹配（返回0）
 			if (fnmatch(iterator->first.c_str(), uri.c_str(), 0) == 0)
 			{
 				return iterator->second;

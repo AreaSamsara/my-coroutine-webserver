@@ -69,12 +69,11 @@ namespace ServletSpace
 					   shared_ptr<HttpSession> session) override;
 
 	private:
-		// uri(/test/xxx) -> servlet	��׼ƥ��
+		// uri(/test/xxx) -> servlet
 		unordered_map<string, shared_ptr<Servlet>> m_datas;
-		// uri(/test/*) -> servlet	ģ��ƥ��
+		// uri(/test/*) -> servlet
 		vector<pair<string, shared_ptr<Servlet>>> m_globs;
 		shared_ptr<Servlet> m_default_servlet;
-		// ����������/д����
 		Mutex_Read_Write m_mutex;
 	};
 
