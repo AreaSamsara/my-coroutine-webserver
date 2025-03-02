@@ -26,7 +26,7 @@ namespace HttpSpace
     private:
         http_parser m_parser;
         shared_ptr<HttpRequest> m_request;
-        /// ������
+        /// 错误码
         /// 1000: invalid method
         /// 1001: invalid version
         /// 1002: invalid field
@@ -41,7 +41,7 @@ namespace HttpSpace
     {
     public:
         HttpResponseParser();
-        // chunk��ʾ��Ӧ�Ƿ�ֶ�
+        // chunk表示响应是否分段
         size_t execute(char *data, size_t length, const bool chunk);
         int isFinished();
         int hasError();
@@ -59,7 +59,7 @@ namespace HttpSpace
     private:
         httpclient_parser m_parser;
         shared_ptr<HttpResponse> m_response;
-        /// ������
+        /// 错误码
         /// 1001: invalid version
         /// 1002: invalid field
         int m_error;

@@ -14,7 +14,7 @@ namespace HttpSpace
         HttpRequestParser *parser = static_cast<HttpRequestParser *>(data);
         HttpMethod method = CharsToHttpMethod(at);
 
-        // ����ǷǷ�method��ֱ�ӷ��ز���������
+        // 如果是非法method，直接返回并发出警告
         if (method == HttpMethod::INVALID_METHOD)
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -55,7 +55,7 @@ namespace HttpSpace
         {
             version = 0x10;
         }
-        // ����ǷǷ�HTTP�汾��ֱ�ӷ��ز���������
+        // 如果是非法HTTP版本，直接返回并发出警告
         else
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -77,7 +77,7 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http request field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
-            // parser->setError(1002);   //��ʱ��Ը������Ҳ��Ҫ������Ϣ
+            // parser->setError(1002);     //有时宁愿不报错也不要遗落信息
             return;
         }
         parser->getRequest()->setHeader(string(field, field_length), string(value, value_length));
@@ -148,7 +148,7 @@ namespace HttpSpace
         {
             version = 0x10;
         }
-        // ����ǷǷ�HTTP�汾��ֱ�ӷ��ز���������
+        // 如果是非法HTTP版本，直接返回并发出警告
         else
         {
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
@@ -173,7 +173,7 @@ namespace HttpSpace
             shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
             log_event->getSstream() << "invalid http response field length == 0";
             Singleton<LoggerManager>::GetInstance_normal_ptr()->getDefault_logger()->log(LogLevel::LOG_WARN, log_event);
-            // parser->setError(1002);   //��ʱ��Ը������Ҳ��Ҫ������Ϣ
+            // parser->setError(1002);   //有时宁愿不报错也不要遗落信息
             return;
         }
         parser->getResponse()->setHeader(string(field, field_length), string(value, value_length));
