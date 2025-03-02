@@ -155,7 +155,7 @@ namespace SocketSpace
 		{
 			// 获取new_socket对应的文件描述符实体（应该已经在hook版本的accept()函数中创建）
 			shared_ptr<FileDescriptorEntity> file_descriptor_entity = Singleton<FileDescriptorManager>::GetInstance_normal_ptr()->getFile_descriptor(new_socket);
-			// 如果该实体存在，且是socket并不处于关闭状态，则将socket对象初始化并返回
+			// 如果该实体存在且为不处于关闭状态的socket，则将socket对象初始化并返回
 			if (file_descriptor_entity != nullptr && file_descriptor_entity->isSocket() && !file_descriptor_entity->isClose())
 			{
 				socket->m_socket = new_socket;
@@ -394,7 +394,6 @@ namespace SocketSpace
 		// 如果socket的协议族是Unix，还需要设置Unix地址长度
 		if (m_family == AF_UNIX)
 		{
-			// 检查智能指针转换是否安全
 			shared_ptr<UnixAddress> address = dynamic_pointer_cast<UnixAddress>(remote_address);
 			// 设置Unix地址长度
 			address->setAddress_length(length);
@@ -486,7 +485,7 @@ namespace SocketSpace
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::WRITE);
 	}
-	// 结算接收链接事件
+	// 结算接收链接事件（暂时不知道有什么用）
 	bool Socket::settleAccept_event() const
 	{
 		return IOManager::GetThis()->settleEvent(m_socket, IOManager::READ);

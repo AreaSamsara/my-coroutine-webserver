@@ -125,7 +125,7 @@ namespace SocketSpace
 		friend ostream &operator<<(ostream &os, const shared_ptr<Socket> socket);
 
 	private:
-		// 初始化socket文件描述符
+		// 初始化socket文件描述符(延迟初始化)
 		void initializeSocket();
 		// 为Socket对象创建socket文件描述符（延迟初始化）
 		void newSocket();
