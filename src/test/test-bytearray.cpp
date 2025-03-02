@@ -121,7 +121,7 @@
 //
 //	bytearray->setPosition(0);
 //
-//	if (!bytearray->writeToFile("./test_bytearray.txt"))
+//	if (!bytearray->writeToFile("./test-bytearray.txt"))
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //		Assert(log_event);
@@ -129,7 +129,7 @@
 //
 //	shared_ptr<ByteArray> bytearray2(new ByteArray(base_size * 2));
 //
-//	if (!bytearray2->readFromFile("./test_bytearray.txt"))
+//	if (!bytearray2->readFromFile("./test-bytearray.txt"))
 //	{
 //		shared_ptr<LogEvent> log_event(new LogEvent(__FILE__, __LINE__));
 //		Assert(log_event);
