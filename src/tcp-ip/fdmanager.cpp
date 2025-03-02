@@ -10,30 +10,30 @@ namespace FdManagerSpace
 	FileDescriptorEntity::FileDescriptorEntity(const int file_descriptor)
 		: m_file_descriptor(file_descriptor), m_is_socket(false), m_is_systemNonblock(false), m_is_userNonblock(false), m_is_close(false)
 	{
-		// ���Ի�ȡ�ļ�״̬
+		// 尝试获取文件状态
 		struct stat file_descriptor_state;
-		// �����ȡ�ɹ���fstat()������-1��������S_ISSOCK�������Ƿ�Ϊsocket������Ĭ������Ϊ��socket��
+		// 如果获取成功（fstat()不返回-1），根据S_ISSOCK设置其是否为socket（否则默认设置为非socket）
 		if (fstat(m_file_descriptor, &file_descriptor_state) != -1)
 		{
 			m_is_socket = S_ISSOCK(file_descriptor_state.st_mode);
 		}
 
-		// ������ļ���������socket�������ļ�������Ϊhook������������Ĭ������Ϊhook������
+		// 如果该文件描述符是socket，设置文件描述符为hook非阻塞（否则默认设置为hook阻塞）
 		if (m_is_socket)
 		{
-			// ���Ի�ȡ�ļ���־��ʹ��ԭʼ�⺯����
+			// 尝试获取文件标志（使用原始库函数）
 			int flags = fcntl_origin(m_file_descriptor, F_GETFL, 0);
-			// ����ļ���־δ���÷�����������֮��ʹ��ԭʼ�⺯����
+			// 如果文件标志未设置非阻塞，设置之（使用原始库函数）
 			if (!(flags & O_NONBLOCK))
 			{
 				fcntl_origin(m_file_descriptor, F_SETFL, flags | O_NONBLOCK);
 			}
-			// �����ļ�������Ϊhook������
+			// 设置文件描述符为hook非阻塞
 			m_is_systemNonblock = true;
 		}
 	}
 
-	// �������ͻ�ȡ��Ӧ�ĳ�ʱʱ��
+	// 根据类型获取对应的超时时间
 	uint64_t FileDescriptorEntity::getTimeout(const int type) const
 	{
 		if (type == SO_RCVTIMEO)
@@ -46,7 +46,7 @@ namespace FdManagerSpace
 		}
 	}
 
-	// �����������ö�Ӧ�ĳ�ʱʱ��
+	// 根据类型设置对应的超时时间
 	void FileDescriptorEntity::setTimeout(const int type, const uint64_t timeout)
 	{
 		if (type == SO_RCVTIMEO)
@@ -62,64 +62,64 @@ namespace FdManagerSpace
 	// class FileDescriptorManager:public
 	FileDescriptorManager::FileDescriptorManager()
 	{
-		// ������ʼ��С����Ϊ64
+		// 容器初始大小设置为64
 		m_file_descriptor_entities.resize(64);
 	}
 
-	// ��ȡ�ļ���������Ӧ��ʵ�壬���ڸ�ʵ�岻������auto_createΪtrueʱ����֮
+	// 获取文件描述符对应的实体，并在该实体不存在且auto_create为true时创建之
 	shared_ptr<FileDescriptorEntity> FileDescriptorManager::getFile_descriptor(const int file_descriptor, const bool auto_create)
 	{
-		// ����ļ�������Ϊ-1����Ч����ֱ�ӷ���nullptr
+		// 如果文件描述符为-1（无效），直接返回nullptr
 		if (file_descriptor == -1)
 		{
 			return nullptr;
 		}
 
-		// �ȼӻ�����������m_file_descriptor_entities
+		// 先加互斥锁，保护m_file_descriptor_entities
 		ReadScopedLock<Mutex_Read_Write> readlock(m_mutex);
-		// ���������С����
+		// 如果容器大小不足
 		if (m_file_descriptor_entities.size() <= file_descriptor)
 		{
-			// �������Ҫ�Զ������µ�ʵ�壬��ֱ�ӷ��ؿ�ָ��
+			// 如果不需要自动创建新的实体，则直接返回空指针
 			if (!auto_create)
 			{
 				return nullptr;
 			}
-			// ��������������С������ֵ��1.5����������ʵ�壬����֮
+			// 否则扩充容器大小到需求值的1.5倍并创建新实体，返回之
 			else
 			{
-				// ������ȡ��
+				// 解锁读取锁
 				readlock.unlock();
-				// �ȼӻ�����������m_file_descriptor_entities
+				// 先加互斥锁，保护m_file_descriptor_entities
 				WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-				// ����������С������ֵ��1.5��
+				// 扩充容器大小到需求值的1.5倍
 				m_file_descriptor_entities.resize(1.5 * file_descriptor);
 
-				// ���ݴ�����ļ�������������Ӧʵ�岢����
+				// 根据传入的文件描述符创建对应实体并返回
 				shared_ptr<FileDescriptorEntity> file_descriptor_entity(new FileDescriptorEntity(file_descriptor));
 				m_file_descriptor_entities[file_descriptor] = file_descriptor_entity;
 				return file_descriptor_entity;
 			}
 		}
-		// ���������С����
+		// 如果容器大小充足
 		else
 		{
-			// ����ļ���������Ӧ��ʵ�岻Ϊ�ջ���Ҫ�Զ�������ֱ�ӷ��ض�Ӧ��ʵ��
+			// 如果文件描述符对应的实体不为空或不需要自动创建，直接返回对应的实体
 			if (m_file_descriptor_entities[file_descriptor] || !auto_create)
 			{
 				return m_file_descriptor_entities[file_descriptor];
 			}
-			// ���򴴽���Ӧʵ�岢����
+			// 否则创建对应实体并返回
 			else
 			{
-				// ������ȡ��
+				// 解锁读取锁
 				readlock.unlock();
 
-				// �ȼӻ�����������m_file_descriptor_entities
+				// 先加互斥锁，保护m_file_descriptor_entities
 				WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
 
-				// ���ݴ�����ļ�������������Ӧʵ�岢����
+				// 根据传入的文件描述符创建对应实体并返回
 				shared_ptr<FileDescriptorEntity> file_descriptor_entity(new FileDescriptorEntity(file_descriptor));
 				m_file_descriptor_entities[file_descriptor] = file_descriptor_entity;
 				return file_descriptor_entity;
@@ -127,12 +127,12 @@ namespace FdManagerSpace
 		}
 	}
 
-	// ɾ���ļ���������Ӧ��ʵ��
+	// 删除文件描述符对应的实体
 	void FileDescriptorManager::deleteFile_descriptor(const int file_descriptor)
 	{
-		// �ȼӻ�����������m_file_descriptor_entities
+		// 先加互斥锁，保护m_file_descriptor_entities
 		WriteScopedLock<Mutex_Read_Write> writelock(m_mutex);
-		// ���ڴ�����ļ���������Чʱ������Ӧ��ʵ�����
+		// 仅在传入的文件描述符有效时，将对应的实体清空
 		if (m_file_descriptor_entities.size() > file_descriptor)
 		{
 			m_file_descriptor_entities[file_descriptor].reset();
