@@ -62,7 +62,7 @@ namespace HttpSpace
 	// class CaseInsensitiveLess:public
 	bool CaseInsensitiveLess::operator()(const string &lhs, const string &rhs) const
 	{
-		// ���ֵ�˳��Ƚ������ַ����������ִ�Сд
+		// 按字典顺序比较两个字符串，不区分大小写
 		return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
 	}
 
@@ -161,7 +161,7 @@ namespace HttpSpace
 		//...
 		//...
 
-		// ��һ��
+		// 第一行
 		os << HttpMethodToString(m_method) << " "
 		   << m_path
 		   << (m_query.empty() ? "" : "?")
@@ -176,7 +176,7 @@ namespace HttpSpace
 
 		os << "connection: " << (m_is_close ? "close" : "keep-alive") << "\r\n";
 
-		// ����ͷ��
+		// 请求头部
 		for (auto &header : m_headers)
 		{
 			if (strcasecmp(header.first.c_str(), "connection") != 0)
@@ -185,7 +185,7 @@ namespace HttpSpace
 			}
 		}
 
-		// ������
+		// 请求体
 		if (!m_body.empty())
 		{
 			os << "content-length: " << m_body.size() << "\r\n\r\n"

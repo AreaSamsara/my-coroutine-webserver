@@ -112,7 +112,7 @@ namespace HttpConnectionSpace
 		uint32_t m_max_size;
 		uint32_t m_max_alive_time;
 		uint32_t m_max_request;
-		// ������
+		// 互斥锁
 		Mutex m_mutex;
 		list<HttpConnection *> m_connections;
 		atomic<int32_t> m_total = {0};

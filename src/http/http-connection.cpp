@@ -37,7 +37,7 @@ namespace HttpConnectionSpace
 		// uint64_t buffer_size = 100;
 
 		shared_ptr<char> buffer(new char[buffer_size + 1], [](char *ptr)
-								{ delete[] ptr; }); // ���һ���ֽ�ר��ȥ���Ǹ�0������
+								{ delete[] ptr; }); // 多加一个字节专门去放那个0？？？
 
 		char *data = buffer.get();
 		int offset = 0;
@@ -113,7 +113,7 @@ namespace HttpConnectionSpace
 						return nullptr;
 					}
 					length -= length_parsed;
-					// ���ѹ��û�����ֱ�ӷ���nullptr
+					// 如果压根没解读，直接返回nullptr
 					if (length == buffer_size)
 					{
 						close();
@@ -334,7 +334,7 @@ namespace HttpConnectionSpace
 		HttpConnection *ptr = nullptr;
 
 		{
-			// �ȼ��ӻ�����������
+			// 先监视互斥锁，保护
 			ScopedLock<Mutex> lock(m_mutex);
 
 			while (!m_connections.empty())
@@ -540,7 +540,7 @@ namespace HttpConnectionSpace
 		}
 		else
 		{
-			// �ȼ��ӻ�����������
+			// 先监视互斥锁，保护
 			ScopedLock<Mutex> lock(pool->m_mutex);
 			pool->m_connections.push_back(ptr);
 		}

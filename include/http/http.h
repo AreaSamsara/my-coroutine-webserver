@@ -125,7 +125,7 @@ namespace HttpSpace
     XX(510, NOT_EXTENDED, Not Extended)                                       \
     XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required)
 
-    // HTTP����ö��
+    // HTTP方法枚举
     enum HttpMethod
     {
 #define XX(num, name, string) name = num,
@@ -134,7 +134,7 @@ namespace HttpSpace
             INVALID_METHOD
     };
 
-    // HTTP״̬ö��
+    // HTTP状态枚举
     enum class HttpStatus
     {
 #define XX(code, name, desc) name = code,
@@ -147,7 +147,7 @@ namespace HttpSpace
     const char *HttpMethodToString(const HttpMethod &method);
     const char *HttpStatusToString(const HttpStatus &status);
 
-    // ���Դ�Сд�Ƚ��ַ���
+    // 忽略大小写比较字符串
     class CaseInsensitiveLess
     {
     public:
