@@ -319,7 +319,7 @@ namespace AddressSpace
 		memset(&hints, 0, sizeof(hints));
 		// 获取规范主机名
 		// hints.ai_flags = AI_NUMERICHOST;
-		hints.ai_flags = AI_CANONNAME; // 根据弹幕建议修改的
+		hints.ai_flags = AI_CANONNAME; // 暂时根据弹幕建议修改的
 		// 指定地址族为未指定（让getaddrinfo决定）
 		hints.ai_family = AF_UNSPEC;
 
