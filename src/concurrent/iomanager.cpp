@@ -231,8 +231,8 @@ namespace IOManagerSpace
 		////将该回调函数置空
 		// callback = nullptr;
 
-		auto &file_descriptor_task = file_descriptor_event->getTask(event_type); // new
-		file_descriptor_task.reset();											 // new
+		auto &file_descriptor_task = file_descriptor_event->getTask(event_type);
+		file_descriptor_task.reset();
 
 		// deleteEvent()函数正常执行，返回true
 		return true;
@@ -260,7 +260,7 @@ namespace IOManagerSpace
 		// 先监视互斥锁，保护
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
-		// 要删除取消的事件应是已被文件描述符注册的事件，否则返回false
+		// 要结算的事件应是已被文件描述符注册的事件，否则返回false
 		if (!(file_descriptor_context->m_registered_event_types & event_type))
 		{
 			return false;
@@ -276,7 +276,7 @@ namespace IOManagerSpace
 		// 将文件描述符事件的裸指针存放在epollevent的data_ptr中
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		// 控制epoll，成功返回0，失败返回-1；控制失败则报错且deleteEvent()返回false
+		// 控制epoll，成功返回0，失败返回-1；控制失败则报错且settleEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -293,7 +293,7 @@ namespace IOManagerSpace
 		// 当前等待执行的事件数量减一
 		--m_pending_event_count;
 
-		// cancelEvent()函数正常执行，返回true
+		// settleEvent()函数正常执行，返回true
 		return true;
 	}
 
@@ -319,7 +319,7 @@ namespace IOManagerSpace
 		// 先监视互斥锁，保护
 		ScopedLock<Mutex> lock(file_descriptor_context->m_mutex);
 
-		// 要删除全部事件的文件描述符事件的已注册事件不应为空，否则返回false
+		// 要结算全部事件的文件描述符事件的已注册事件不应为空，否则返回false
 		if (!file_descriptor_context->m_registered_event_types)
 		{
 			return false;
@@ -335,7 +335,7 @@ namespace IOManagerSpace
 		// 将文件描述符事件的裸指针存放在epollevent的data_ptr中
 		epollevent.data.ptr = file_descriptor_context.get();
 
-		// 控制epoll，成功返回0，失败返回-1；控制失败则报错且cancelAllEvent()返回false
+		// 控制epoll，成功返回0，失败返回-1；控制失败则报错且settleAllEvent()返回false
 		int return_value = epoll_ctl(m_epoll_file_descriptor, operation_code, file_descriptor, &epollevent);
 		if (return_value)
 		{
@@ -368,7 +368,7 @@ namespace IOManagerSpace
 			Assert(log_event);
 		}
 
-		// cancelAllEvent()函数正常执行，返回true
+		// settleAllEvent()函数正常执行，返回true
 		return true;
 	}
 
