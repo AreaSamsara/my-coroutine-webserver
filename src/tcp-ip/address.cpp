@@ -430,7 +430,7 @@ namespace AddressSpace
 	}
 
 	// 获取该地址的网段
-	shared_ptr<IPAddress> IPv4Address::networdAddress(const uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv4Address::networkAddress(const uint32_t prefix_len)
 	{
 		// 掩码的掩盖位数不应该超过32位，否则返回nullptr
 		if (prefix_len > 32)
@@ -568,7 +568,7 @@ namespace AddressSpace
 	}
 
 	// 获取该地址的网段
-	shared_ptr<IPAddress> IPv6Address::networdAddress(const uint32_t prefix_len)
+	shared_ptr<IPAddress> IPv6Address::networkAddress(const uint32_t prefix_len)
 	{
 		// 将当前地址与子网掩码（掩码的反码）取与，得到网段
 		sockaddr_in6 netword_address(m_address);

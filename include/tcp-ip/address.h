@@ -102,7 +102,7 @@ namespace AddressSpace
 		// 获取该地址的广播地址
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) = 0;
 		// 获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) = 0;
+		virtual shared_ptr<IPAddress> networkAddress(const uint32_t prefix_len) = 0;
 		// 获取子网掩码地址
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) = 0;
 
@@ -152,7 +152,7 @@ namespace AddressSpace
 		// 获取该地址的广播地址
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
 		// 获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> networkAddress(const uint32_t prefix_len) override;
 		// 获取子网掩码地址
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 
@@ -190,7 +190,7 @@ namespace AddressSpace
 		// 获取该地址的广播地址
 		virtual shared_ptr<IPAddress> broadcastAddress(const uint32_t prefix_len) override;
 		// 获取该地址的网段
-		virtual shared_ptr<IPAddress> networdAddress(const uint32_t prefix_len) override;
+		virtual shared_ptr<IPAddress> networkAddress(const uint32_t prefix_len) override;
 		// 获取子网掩码地址
 		virtual shared_ptr<IPAddress> subnetMask(const uint32_t prefix_len) override;
 
